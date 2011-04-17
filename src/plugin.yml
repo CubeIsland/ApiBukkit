@@ -1,0 +1,5 @@
+name: ApiCraft
+main: org.kokakiwi.apicraft.ApiCraft
+version: 0.3-Infected
+authors:
+  - Phillip Schichtel
