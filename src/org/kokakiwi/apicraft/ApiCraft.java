@@ -2,82 +2,125 @@ package org.kokakiwi.apicraft;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.logging.Logger;
+import org.bukkit.Server;
 
-//import org.bukkit.event.Event;
-//import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import org.kokakiwi.apicraft.net.*;
+import org.kokakiwi.apicraft.net.Request.AbstractRequestController;
 
 public class ApiCraft extends JavaPlugin
 {
     
     public static final Logger logger = Logger.getLogger("Minecraft.ApiCraft");
-    public PluginDescriptionFile pdf;
-    public WebServer webserver;
-    private Configuration config;
-    private static final ApiCraftListener aListener = new ApiCraftListener();
+    protected Server server;
+    protected PluginManager pm;
+    protected PluginDescriptionFile pdf;
+    protected File dataFolder;
+    protected ApiWebServer webserver;
+    protected Configuration config;
+    
+    protected boolean initiated = false;
 
     @Override
     public void onDisable()
     {
         logger.info("Stopping Web Server...");
-        webserver.stop();
+        
+        Iterator<AbstractRequestController> controllerIter = this.webserver.getAllRequestControllers().iterator();
+        
+        while (controllerIter.hasNext())
+        {
+            this.pm.disablePlugin(controllerIter.next().getPlugin());
+        }
+        
+        this.webserver.stop();
+        this.webserver = null;
         logger.info("ApiCraft is disabled!");
     }
 
     @Override
     public void onEnable()
     {
-        pdf = getDescription();
+        this.init();
         
-        config = new Configuration(new File(getDataFolder(), "config.yml"));
-        
-        if(!getDataFolder().exists())
-        {
-            getDataFolder().mkdirs();
-        }
-        
-        if(!new File(getDataFolder(), "cache/").exists())
-        {
-            new File(getDataFolder(), "cache/").mkdirs();
-        }
-        
-        if(!new File(getDataFolder(), "config.yml").exists())
-        {
-            try
-            {
-                new File(getDataFolder(), "config.yml").createNewFile();
-                config.setProperty("Configuration.webServerPort", 6561);
-                                config.setProperty("Configuration.APIPassword", "changeMe");
-                config.save();
-            }
-            catch (IOException e)
-            {
-                logger.severe("ApiCraft : Error during creating config file!");
-                e.printStackTrace();
-                getServer().getPluginManager().disablePlugin(this);
-            }
-        }
-        
+        config = new Configuration(new File(this.dataFolder, "config.yml"));
         config.load();
         
-        logger.info("ApiCraft : Starting the webserver...");
+        logger.info("ApiCraft: Starting the webserver...");
         try
         {
-            webserver = new WebServer(this, config);
-            logger.info("ApiCraft : Web server started!");
+            this.webserver = new ApiWebServer(this, config);
+            logger.info("ApiCraft: Web server started!");
         }
         catch (IOException e)
         {
-            getServer().getPluginManager().disablePlugin(this);
+            logger.severe("ApiCraft: Failed to start the web server!");
+            this.pm.disablePlugin(this);
+            return;
         }
         
-        //getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, aListener, Priority.Normal, this);
+        logger.info(this.pdf.getName() + " v" + this.pdf.getVersion() + " is enabled!");
+    }
+    
+    public void init()
+    {
+        if (!this.initiated)
+        {
+            this.pdf = this.getDescription();
+            this.dataFolder = this.getDataFolder();
+            this.server = this.getServer();
+            this.pm = this.server.getPluginManager();
         
-        logger.info(pdf.getName() + " v" + pdf.getVersion() + " is enabled!");
+            if (!getDataFolder().exists())
+            {
+                getDataFolder().mkdirs();
+            }
+
+            if (!new File(getDataFolder(), "cache/").exists())
+            {
+                new File(getDataFolder(), "cache/").mkdirs();
+            }
+
+            if (!new File(getDataFolder(), "config.yml").exists())
+            {
+                try
+                {
+                    new File(getDataFolder(), "config.yml").createNewFile();
+                    config.setProperty("Configuration.webServerPort", 6561);
+                    config.setProperty("Configuration.APIPassword", "changeMe");
+                    config.save();
+                }
+                catch (IOException e)
+                {
+                    logger.severe("ApiCraft : Error during creating config file!");
+                    e.printStackTrace();
+                    getServer().getPluginManager().disablePlugin(this);
+                }
+            }
+            
+            this.initiated = true;
+        }
+    }
+    
+    public void setRequestController(String name, AbstractRequestController controller)
+    {
+        if (this.webserver != null)
+        {
+            this.webserver.setRequestController(name, controller);
+        }
+    }
+    
+    public void removeRequestController(String name)
+    {
+        if (this.webserver != null)
+        {
+            this.webserver.removeRequestController(name);
+        }
     }
 
 }
