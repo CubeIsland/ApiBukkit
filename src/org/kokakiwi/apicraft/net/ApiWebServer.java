@@ -67,7 +67,7 @@ public class ApiWebServer extends NanoHTTPD
             try
             {
                 AbstractRequestController controller = requestControllers.get(pathParts[0]);
-                if (controller.isAuthNeeded() && !params.getProperty("password").equals(this.APIPassword))
+                if (controller.isAuthNeeded() && !params.getProperty("password", "").equals(this.APIPassword))
                 {
                     System.out.println("Wrong API password");
                     return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "Wrong API password");

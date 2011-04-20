@@ -26,7 +26,6 @@ public class ApiCraft extends JavaPlugin
     
     protected boolean initiated = false;
 
-    @Override
     public void onDisable()
     {
         logger.info("Stopping Web Server...");
@@ -43,7 +42,6 @@ public class ApiCraft extends JavaPlugin
         logger.info("ApiCraft is disabled!");
     }
 
-    @Override
     public void onEnable()
     {
         this.init();
@@ -55,7 +53,7 @@ public class ApiCraft extends JavaPlugin
         try
         {
             this.webserver = new ApiWebServer(this, config);
-            logger.info("ApiCraft: Web server started!");
+            logger.info((new StringBuilder()).append("ApiCraft: Web server started on port ").append(config.getString("Configuration.webServerPort", "6561")).append("!").toString());
         }
         catch (IOException e)
         {
@@ -64,7 +62,7 @@ public class ApiCraft extends JavaPlugin
             return;
         }
         
-        logger.info(this.pdf.getName() + " v" + this.pdf.getVersion() + " is enabled!");
+        logger.info((new StringBuilder()).append(this.pdf.getName()).append(" ").append(this.pdf.getVersion()).append(" is enabled!").toString());
     }
     
     public void init()
@@ -107,6 +105,12 @@ public class ApiCraft extends JavaPlugin
         }
     }
     
+    /**
+     * Sets an RequestController for the given name
+     * 
+     * @param name the name of the controller
+     * @param controller an controller instance
+     */
     public void setRequestController(String name, AbstractRequestController controller)
     {
         if (this.webserver != null)
@@ -115,6 +119,11 @@ public class ApiCraft extends JavaPlugin
         }
     }
     
+    /**
+     * Removes the RequestController for the given name
+     * 
+     * @param name the name of the controller
+     */
     public void removeRequestController(String name)
     {
         if (this.webserver != null)

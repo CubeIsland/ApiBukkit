@@ -19,13 +19,8 @@ public class XMLFormat implements IResponseFormat
     
     public String format(Object o, String rootNodeName)
     {
-        return this.format(o, rootNodeName, 0);
-    }
-    
-    public String format(Object o, String rootNodeName, int indent)
-    {
         String response = "";
-        response += addTabs(indent) + "<" + rootNodeName + ">\r\n";
+        response += "<" + rootNodeName + ">";
         if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
@@ -35,11 +30,11 @@ public class XMLFormat implements IResponseFormat
                 Object value = entry.getValue();
                 if (value instanceof Iterable || value instanceof Map)
                 {
-                    response += this.format(value, name, indent + 1);
+                    response += this.format(value, name);
                 }
                 else
                 {
-                    response += addTabs(indent + 1) + "<" + name + ">" + String.valueOf(value) + "</" + name + ">\r\n";
+                    response += "<" + name + ">" + String.valueOf(value) + "</" + name + ">";
                 }
             }
         }
@@ -53,22 +48,22 @@ public class XMLFormat implements IResponseFormat
                 
                 if (value instanceof Iterable || value instanceof Map)
                 {
-                    response += this.format(value, rootNodeName, indent + 1);
+                    response += this.format(value, rootNodeName);
                 }
                 else
                 {
-                    response += addTabs(indent + 1) + "<" + rootNodeName + ">" + String.valueOf(value) + "</" + rootNodeName + ">\r\n";
+                    response += "<" + rootNodeName + ">" + String.valueOf(value) + "</" + rootNodeName + ">";
                 }
             }
         }
         else
         {
-            response += addTabs(indent + 1) + String.valueOf(0);
+            response += String.valueOf(o);
         }
         
-        response += addTabs(indent) + "</" + rootNodeName + ">\r\n";
+        response += "</" + rootNodeName + ">";
         
-        return response;
+        return "<?xml version=\"1.0\" ?>\n" + response;
     }
 
     private static String addTabs(int indent)

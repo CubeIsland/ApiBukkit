@@ -28,15 +28,15 @@ public class JsonFormat implements IResponseFormat
                 Object value = entry.getValue();
                 if (value instanceof Iterable || value instanceof Map)
                 {
-                    response += "\"" + name + "\" : " + this.format(value);
+                    response += "\"" + name + "\":" + this.format(value);
                 }
                 else if (value instanceof Number)
                 {
-                    response += "\"" + name + "\" : " + String.valueOf(value);
+                    response += "\"" + name + "\":" + String.valueOf(value);
                 }
                 else
                 {
-                    response += "\"" + name + "\" : \"" + String.valueOf(value) + "\"";
+                    response += "\"" + name + "\":\"" + String.valueOf(value) + "\"";
                 }
                 if (counter < dataSize)
                 {
