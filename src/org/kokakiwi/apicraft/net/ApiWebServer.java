@@ -42,7 +42,7 @@ public class ApiWebServer extends NanoHTTPD
         if (uri.length() == 0)
         {
             System.out.println("Fail: Invalid path");
-            return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "Invalid path");
+            return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, "Invalid path");
         }
         String[] pathParts = uri.split("/");
         
@@ -58,7 +58,7 @@ public class ApiWebServer extends NanoHTTPD
         }
         if (pathParts.length < 1 || controllerName == null)
         {
-            return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "Invalid path");
+            return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, "Invalid path");
         }
         
         Object response = null;
@@ -114,7 +114,7 @@ public class ApiWebServer extends NanoHTTPD
         else
         {
             System.out.println("No response to respond with!");
-            return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, "No response");
+            return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, "No response");
         }
     }
     

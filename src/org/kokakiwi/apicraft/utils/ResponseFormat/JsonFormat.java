@@ -12,6 +12,7 @@ public class JsonFormat implements IResponseFormat
         return ApiWebServer.MIME_JSON;
     }
     
+    @SuppressWarnings("unchecked")
     public String format(Object o)
     {
         String response = "";

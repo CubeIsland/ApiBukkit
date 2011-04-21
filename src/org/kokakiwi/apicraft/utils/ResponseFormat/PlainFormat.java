@@ -12,6 +12,7 @@ public class PlainFormat implements IResponseFormat
         return ApiWebServer.MIME_PLAINTEXT;
     }
     
+    @SuppressWarnings("unchecked")
     public String format(Object o)
     {
         String response = "";

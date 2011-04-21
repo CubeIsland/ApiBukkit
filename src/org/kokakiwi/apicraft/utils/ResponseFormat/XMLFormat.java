@@ -17,6 +17,7 @@ public class XMLFormat implements IResponseFormat
         return this.format(o, "response");
     }
     
+    @SuppressWarnings("unchecked")
     public String format(Object o, String rootNodeName)
     {
         String response = "";
