@@ -1,9 +1,8 @@
-package org.kokakiwi.apicraft.net;
+package de.codeinfection.quickwango.ApiBukkit.Net;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,59 +54,21 @@ import java.util.HashMap;
  *
  * </ul>
  *
- * <p><b>Ways to use: </b><ul>
- *
- *    <li> Run as a standalone app, serves files from current directory and shows requests</li>
- *    <li> Subclass serve() and embed to your own program </li>
- *    <li> Call serveFile() from serve() with your own base directory </li>
- *
- * </ul>
- *
  * See the end of the source file for distribution license
  * (Modified BSD licence)
  */
-public class NanoHTTPD
+public abstract class NanoHTTPD
 {
-    // ==================================================
-    // API parts
-    // ==================================================
-
     /**
-     * Override this to customize the server.<p>
+     * Override this to customize the server.
      *
-     * (By default, this delegates to serveFile() and allows directory listing.)
-     *
-     * @param uri    Percent-decoded URI without parameters, for example "/index.cgi"
-     * @param method    "GET", "POST" etc.
-     * @param parms    Parsed, percent decoded parameters from URI and, in case of POST, data.
-     * @param header    Header entries, percent decoded
-     * @return HTTP response, see class Response for details
+     * @param  uri      Percent-decoded URI without parameters, for example "/index.cgi"
+     * @param  method   "GET", "POST" etc.
+     * @param  parms    Parsed, percent decoded parameters from URI and, in case of POST, data.
+     * @param  header   Header entries, percent decoded
+     * @return HTTP     response, see class Response for details
      */
-    public Response serve(String uri, String method, Properties header, Properties parms, Properties files)
-    {
-        System.out.println(method + " '" + uri + "' ");
-
-        Enumeration e = header.propertyNames();
-        while (e.hasMoreElements())
-        {
-            String value = (String)e.nextElement();
-            System.out.println("  HDR: '" + value + "' = '" + header.getProperty( value ) + "'" );
-        }
-        e = parms.propertyNames();
-        while (e.hasMoreElements())
-        {
-            String value = (String)e.nextElement();
-            System.out.println("  PRM: '" + value + "' = '" + parms.getProperty( value ) + "'" );
-        }
-        e = files.propertyNames();
-        while (e.hasMoreElements())
-        {
-            String value = (String)e.nextElement();
-            System.out.println("  UPLOADED: '" + value + "' = '" + files.getProperty( value ) + "'" );
-        }
-
-        return serveFile( uri, header, new File("."), true );
-    }
+    public abstract Response serve(String uri, String method, Properties header, Properties parms, Properties files);
 
     /**
      * HTTP response.
@@ -186,10 +147,12 @@ public class NanoHTTPD
      */
     public static final String
         HTTP_OK             = "200 OK",
+        HTTP_NOCONTENT      = "204 No Content",
         HTTP_REDIRECT       = "301 Moved Permanently",
+        HTTP_BADREQUEST     = "400 Bad Request",
+        HTTP_UNAUTHORIZED   = "401 Unauthorized",
         HTTP_FORBIDDEN      = "403 Forbidden",
         HTTP_NOTFOUND       = "404 Not Found",
-        HTTP_BADREQUEST     = "400 Bad Request",
         HTTP_INTERNALERROR  = "500 Internal Server Error",
         HTTP_NOTIMPLEMENTED = "501 Not Implemented";
 
@@ -462,9 +425,7 @@ public class NanoHTTPD
                 {}
             }
             catch (InterruptedException ie)
-            {
-                // Thrown by sendError, ignore and exit the thread.
-            }
+            {} // Thrown by sendError, ignore and exit the thread.
         }
 
         /**
@@ -897,174 +858,6 @@ public class NanoHTTPD
     private int myTcpPort;
     private final ServerSocket myServerSocket;
     private Thread myThread;
-
-    // ==================================================
-    // File server code
-    // ==================================================
-
-    /**
-     * Serves file from homeDir and its' subdirectories (only).
-     * Uses only URI, ignores all headers and HTTP parameters.
-     */
-    public Response serveFile(String uri, Properties header, File homeDir, boolean allowDirectoryListing)
-    {
-        // Make sure we won't die of an exception later
-        if (!homeDir.isDirectory())
-        {
-            return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, "INTERNAL ERRROR: serveFile(): given homeDir is not a directory.");
-        }
-
-        // Remove URL arguments
-        uri = uri.trim().replace(File.separatorChar, '/');
-        if (uri.indexOf( '?' ) >= 0)
-        {
-            uri = uri.substring(0, uri.indexOf('?'));
-        }
-
-        // Prohibit getting out of current directory
-        if (uri.startsWith("..") || uri.endsWith("..") || uri.indexOf("../") >= 0)
-        {
-            return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "FORBIDDEN: Won't serve ../ for security reasons.");
-        }
-
-        File f = new File(homeDir, uri);
-        if (!f.exists())
-        {
-            return new Response(HTTP_NOTFOUND, MIME_PLAINTEXT, "Error 404, file not found.");
-        }
-
-        // List the directory, if necessary
-        if (f.isDirectory())
-        {
-            // Browsers get confused without '/' after the
-            // directory, send a redirect.
-            if (!uri.endsWith("/"))
-            {
-                uri += "/";
-                Response r = new Response(HTTP_REDIRECT, MIME_HTML, "<html><body>Redirected: <a href=\"" + uri + "\">" + uri + "</a></body></html>");
-                r.addHeader("Location", uri);
-                return r;
-            }
-
-            // First try index.html and index.htm
-            if ( new File(f, "index.html").exists())
-            {
-                f = new File(homeDir, uri + "/index.html");
-            }
-            else if (new File(f, "index.htm").exists())
-            {
-                f = new File(homeDir, uri + "/index.htm");
-            }
-            else if (allowDirectoryListing) // No index file, list the directory
-            {
-                String[] files = f.list();
-                String msg = "<html><body><h1>Directory " + uri + "</h1><br/>";
-
-                if (uri.length() > 1)
-                {
-                    String u = uri.substring(0, uri.length() - 1);
-                    int slash = u.lastIndexOf('/');
-                    if (slash >= 0 && slash < u.length())
-                    {
-                        msg += "<b><a href=\"" + uri.substring(0, slash + 1) + "\">..</a></b><br/>";
-                    }
-                }
-
-                for (int i = 0; i < files.length; ++i)
-                {
-                    File curFile = new File(f, files[i]);
-                    boolean dir = curFile.isDirectory();
-                    if (dir)
-                    {
-                        msg += "<b>";
-                        files[i] += "/";
-                    }
-
-                    msg += "<a href=\"" + encodeUri(uri + files[i]) + "\">" + files[i] + "</a>";
-
-                    // Show file size
-                    if (curFile.isFile())
-                    {
-                        long len = curFile.length();
-                        msg += " &nbsp;<font size=2>(";
-                        if (len < 1024)
-                        {
-                            msg += len + " bytes";
-                        }
-                        else if (len < 1024 * 1024)
-                        {
-                            msg += len / 1024 + "." + (len % 1024 / 10 % 100) + " KB";
-                        }
-                        else
-                        {
-                            msg += len / (1024 * 1024) + "." + len % (1024 * 1024) / 10 % 100 + " MB";
-                        }
-
-                        msg += ")</font>";
-                    }
-                    msg += "<br/>";
-                    if (dir)
-                    {
-                        msg += "</b>";
-                    }
-                }
-                msg += "</body></html>";
-                return new Response(HTTP_OK, MIME_HTML, msg);
-            }
-            else
-            {
-                return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "FORBIDDEN: No directory listing.");
-            }
-        }
-
-        try
-        {
-            // Get MIME type from file name extension, if possible
-            String mime = null;
-            int dot = f.getCanonicalPath().lastIndexOf('.');
-            if (dot >= 0)
-            {
-                mime = (String)theMimeTypes.get(f.getCanonicalPath().substring( dot + 1 ).toLowerCase());
-            }
-            if (mime == null)
-            {
-                mime = MIME_DEFAULT_BINARY;
-            }
-
-            // Support (simple) skipping:
-            long startFrom = 0;
-            String range = header.getProperty("range");
-            if (range != null)
-            {
-                if (range.startsWith("bytes="))
-                {
-                    range = range.substring("bytes=".length());
-                    int minus = range.indexOf('-');
-                    if (minus > 0)
-                    {
-                        range = range.substring(0, minus);
-                    }
-                    try
-                    {
-                        startFrom = Long.parseLong(range);
-                    }
-                    catch (NumberFormatException nfe)
-                    {}
-                }
-            }
-
-            FileInputStream fis = new FileInputStream(f);
-            fis.skip(startFrom);
-            Response r = new Response(HTTP_OK, mime, fis);
-            r.addHeader("Content-length", "" + (f.length() - startFrom));
-            r.addHeader("Content-range", "" + startFrom + "-" + (f.length() - 1) + "/" + f.length());
-            return r;
-        }
-        catch (IOException ioe)
-        {
-            return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "FORBIDDEN: Reading file failed.");
-        }
-    }
 
     /**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE

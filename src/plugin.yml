@@ -1,5 +1,6 @@
-name: ApiCraft
-main: org.kokakiwi.apicraft.ApiCraft
-version: 0.3-Infected
+name: ApiBukkit
+main: de.codeinfection.quickwango.ApiBukkit.ApiBukkit
+version: 0.3
 authors:
   - Phillip Schichtel
+website: http://code-infection.de

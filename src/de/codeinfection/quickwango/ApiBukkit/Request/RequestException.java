@@ -1,4 +1,4 @@
-package org.kokakiwi.apicraft.net.Request;
+package de.codeinfection.quickwango.ApiBukkit.Request;
 
 /**
  *

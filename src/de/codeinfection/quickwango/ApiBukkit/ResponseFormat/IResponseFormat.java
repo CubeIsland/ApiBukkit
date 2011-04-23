@@ -1,4 +1,4 @@
-package org.kokakiwi.apicraft.utils.ResponseFormat;
+package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 
 /**
  *

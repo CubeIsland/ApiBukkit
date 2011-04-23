@@ -1,47 +1,52 @@
-package org.kokakiwi.apicraft.net;
+package de.codeinfection.quickwango.ApiBukkit.Net;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import org.bukkit.util.config.Configuration;
 
-import org.kokakiwi.apicraft.*;
-import org.kokakiwi.apicraft.utils.ResponseFormat.*;
-import org.kokakiwi.apicraft.net.NanoHTTPD.Response;
-import org.kokakiwi.apicraft.net.Request.AbstractRequestController;
-import org.kokakiwi.apicraft.net.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
+import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
+import de.codeinfection.quickwango.ApiBukkit.Net.NanoHTTPD.Response;
+import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
+import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController.RequestAction;
+import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
 
-public class ApiWebServer extends NanoHTTPD
+public class ApiBukkitServer extends NanoHTTPD
 {
-    protected ApiCraft plugin;
+    protected ApiBukkit plugin;
     protected String APIPassword;
-    protected static HashMap<String, IResponseFormat> responseFormats;
-    protected HashMap<String, AbstractRequestController> requestControllers;
+    protected final static ConcurrentHashMap<String, IResponseFormat> responseFormats;
+    static
+    {
+        responseFormats = new ConcurrentHashMap<String, IResponseFormat>();
+    }
+    protected final ConcurrentHashMap<String, AbstractRequestController> requestControllers;
     protected static String defaultResponseFormat = "plain";
 
-    public ApiWebServer(ApiCraft plugin, Configuration config) throws IOException
+    public ApiBukkitServer(ApiBukkit plugin, Configuration config) throws IOException
     {
         super(config.getInt("Configuration.webServerPort", 6561));
         this.APIPassword = config.getString("Configuration.APIPassword", "changeMe");
         this.plugin = plugin;
         
-        responseFormats = new HashMap<String, IResponseFormat>();
         responseFormats.put("plain", new PlainFormat());
         responseFormats.put("json", new JsonFormat());
         responseFormats.put("xml", new XMLFormat());
         
-        requestControllers = new HashMap<String, AbstractRequestController>();
+        requestControllers = new ConcurrentHashMap<String, AbstractRequestController>();
     }
 
     @Override
     public Response serve(String uri, String method, Properties header, Properties params, Properties files)
-    {   
-        System.out.println(uri + " was requested...");
+    {
+        ApiBukkit.log(uri + " was requested...");
         uri = uri.substring(1);
         if (uri.length() == 0)
         {
-            System.out.println("Fail: Invalid path");
+            ApiBukkit.error("Fail: Invalid path");
             return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, "Invalid path");
         }
         String[] pathParts = uri.split("/");
@@ -58,6 +63,7 @@ public class ApiWebServer extends NanoHTTPD
         }
         if (pathParts.length < 1 || controllerName == null)
         {
+            ApiBukkit.error("Invalid path");
             return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, "Invalid path");
         }
         
@@ -69,29 +75,46 @@ public class ApiWebServer extends NanoHTTPD
                 AbstractRequestController controller = requestControllers.get(pathParts[0]);
                 if (controller.isAuthNeeded() && !params.getProperty("password", "").equals(this.APIPassword))
                 {
-                    System.out.println("Wrong API password");
-                    return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, "Wrong API password");
+                    ApiBukkit.error("Wrong API password");
+                    return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, "Wrong API password");
                 }
                 params.remove("password");
-                response = controller.execute(action, params, this.plugin.getServer());
+                
+                RequestAction requestAction = controller.getAction(action);
+                if (requestAction != null)
+                {
+                    response = requestAction.run(params, this.plugin.getServer());
+                }
+                else
+                {
+                    response = controller.defaultAction(action, params, this.plugin.getServer());
+                }
             }
             catch (RequestException e)
             {
-                System.out.println("Fail: " + e.getMessage());
+                ApiBukkit.logException(e);
                 return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, e.getMessage());
+            }
+            catch (NotImplementedException e)
+            {
+                ApiBukkit.logException(e);
+                return new Response(HTTP_NOTIMPLEMENTED, MIME_PLAINTEXT, "Not implemented");
+            }
+            catch (Throwable t)
+            {
+                ApiBukkit.logException(t);
+                return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, "Unknown error occurred while processing the controller!\nPlease notify the server adminstrator of this error.");
             }
         }
         else
         {
-            System.out.println("Fail: Controller not found");
+            ApiBukkit.error("Controller not found");
             return new Response(HTTP_NOTFOUND, MIME_PLAINTEXT, "Controller not found");
         }
         
-        
-        
         if (response != null)
         {
-            String formatProperty = params.getProperty("format");
+            String formatProperty = params.getProperty("format", defaultResponseFormat);
             IResponseFormat responseFormat = null;
             if (responseFormats.containsKey(formatProperty))
             {
@@ -103,18 +126,19 @@ public class ApiWebServer extends NanoHTTPD
             }
             if (responseFormat != null)
             {
+                ApiBukkit.debug("Responding normaly: HTTP 200");
                 return new Response(HTTP_OK, responseFormat.getMime(), responseFormat.format(response));
             }
             else
             {
-                System.out.println("Fail: No valid response format found");
+                ApiBukkit.error("No valid response format found");
                 return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, "No valid response format found!");
             }
         }
         else
         {
-            System.out.println("No response to respond with!");
-            return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, "No response");
+            ApiBukkit.debug("Responding without content: HTTP 204");
+            return new Response(HTTP_NOCONTENT, MIME_PLAINTEXT, "");
         }
     }
     
@@ -143,16 +167,38 @@ public class ApiWebServer extends NanoHTTPD
     
     public void setRequestController(String name, AbstractRequestController controller)
     {
-        this.requestControllers.put(name, controller);
+        synchronized (this.requestControllers)
+        {
+            this.requestControllers.put(name, controller);
+        }
+    }
+    
+    public boolean setControllerAlias(String alias, String controller)
+    {
+        synchronized (this.requestControllers)
+        {
+            if (!this.requestControllers.containsKey(alias) && this.requestControllers.containsKey(controller))
+            {
+                this.requestControllers.put(alias, this.requestControllers.get(controller));
+                return true;
+            }
+            return false;
+        }
     }
     
     public void removeRequestController(String name)
     {
-        this.requestControllers.remove(name);
+        synchronized (this.requestControllers)
+        {
+            this.requestControllers.remove(name);
+        }
     }
     
     public Collection<AbstractRequestController> getAllRequestControllers()
     {
-        return this.requestControllers.values();
+        synchronized (this.requestControllers)
+        {
+            return this.requestControllers.values();
+        }
     }
 }

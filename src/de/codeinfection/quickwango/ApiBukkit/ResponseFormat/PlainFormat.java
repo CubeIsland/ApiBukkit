@@ -1,15 +1,15 @@
-package org.kokakiwi.apicraft.utils.ResponseFormat;
+package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 
 import java.util.Iterator;
 import java.util.Map;
-import org.kokakiwi.apicraft.net.ApiWebServer;
+import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 
 public class PlainFormat implements IResponseFormat
 {
     
     public String getMime()
     {
-        return ApiWebServer.MIME_PLAINTEXT;
+        return ApiBukkitServer.MIME_PLAINTEXT;
     }
     
     @SuppressWarnings("unchecked")
