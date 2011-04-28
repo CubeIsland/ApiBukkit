@@ -1,6 +1,6 @@
 name: ApiBukkit
 main: de.codeinfection.quickwango.ApiBukkit.ApiBukkit
-version: 0.3
+version: 0.3.1
 authors:
   - Phillip Schichtel
 website: http://code-infection.de

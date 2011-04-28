@@ -14,11 +14,6 @@ public class PlainFormat implements IResponseFormat
         return ApiBukkitServer.MIME_PLAINTEXT;
     }
     
-    public String format(ApiError error)
-    {
-        return this.format(error.asList());
-    }
-    
     @SuppressWarnings("unchecked")
     public String format(Object o)
     {

@@ -18,11 +18,6 @@ public class XMLFormat implements IResponseFormat
         return this.format(o, "response");
     }
     
-    public String format(ApiError error)
-    {
-        return this.format(error.asList());
-    }
-    
     @SuppressWarnings("unchecked")
     public String format(Object o, String rootNodeName)
     {

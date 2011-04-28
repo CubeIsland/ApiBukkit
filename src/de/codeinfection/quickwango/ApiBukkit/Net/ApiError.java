@@ -55,4 +55,10 @@ public enum ApiError
         this.errorMessage = message;
         return this;
     }
+    
+    @Override
+    public String toString()
+    {
+        return this.errorMessage;
+    }
 }

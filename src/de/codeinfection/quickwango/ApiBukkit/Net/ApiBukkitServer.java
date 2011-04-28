@@ -191,8 +191,8 @@ public class ApiBukkitServer extends NanoHTTPD
     
     protected String error(ApiError error)
     {
-        IResponseFormat format = getResponseFormat("plain");
-        return format.format(error);
+        IResponseFormat formater = getResponseFormat("plain");
+        return formater.format(error.asList());
     }
     
     public Collection<AbstractRequestController> getAllRequestControllers()

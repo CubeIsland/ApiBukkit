@@ -13,11 +13,6 @@ public class JsonFormat implements IResponseFormat
         return ApiBukkitServer.MIME_JSON;
     }
     
-    public String format(ApiError error)
-    {
-        return this.format(error.asList());
-    }
-    
     @SuppressWarnings("unchecked")
     public String format(Object o)
     {
