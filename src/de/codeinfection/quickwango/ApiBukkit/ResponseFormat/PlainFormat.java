@@ -3,7 +3,6 @@ package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 import java.util.Iterator;
 import java.util.Map;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
-import de.codeinfection.quickwango.ApiBukkit.Net.ApiError;
 
 public class PlainFormat implements IResponseFormat
 {
