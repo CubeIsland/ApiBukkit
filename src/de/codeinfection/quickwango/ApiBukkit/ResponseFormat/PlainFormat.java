@@ -3,13 +3,20 @@ package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 import java.util.Iterator;
 import java.util.Map;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.Net.ApiError;
 
 public class PlainFormat implements IResponseFormat
 {
     
+    
     public String getMime()
     {
         return ApiBukkitServer.MIME_PLAINTEXT;
+    }
+    
+    public String format(ApiError error)
+    {
+        return this.format(error.asList());
     }
     
     @SuppressWarnings("unchecked")
@@ -31,7 +38,7 @@ public class PlainFormat implements IResponseFormat
                 }
                 else
                 {
-                    response += String.valueOf(value);
+                    response += encode(String.valueOf(value));
                 }
                 if (counter < dataSize)
                 {
@@ -53,7 +60,7 @@ public class PlainFormat implements IResponseFormat
                 }
                 else
                 {
-                    response += String.valueOf(value);
+                    response += encode(String.valueOf(value));
                 }
                 if (iter.hasNext())
                 {
@@ -63,8 +70,13 @@ public class PlainFormat implements IResponseFormat
         }
         else
         {
-            response = String.valueOf(o);
+            response = encode(String.valueOf(o));
         }
         return response;
+    }
+    
+    protected static String encode(String string)
+    {
+        return string.replaceAll("%", "%25").replaceAll(",", "%2C");
     }
 }

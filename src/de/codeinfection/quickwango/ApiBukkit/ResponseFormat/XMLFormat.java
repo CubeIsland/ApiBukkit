@@ -3,6 +3,7 @@ package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 import java.util.Iterator;
 import java.util.Map;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.Net.ApiError;
 
 public class XMLFormat implements IResponseFormat
 {
@@ -15,6 +16,11 @@ public class XMLFormat implements IResponseFormat
     public String format(Object o)
     {
         return this.format(o, "response");
+    }
+    
+    public String format(ApiError error)
+    {
+        return this.format(error.asList());
     }
     
     @SuppressWarnings("unchecked")

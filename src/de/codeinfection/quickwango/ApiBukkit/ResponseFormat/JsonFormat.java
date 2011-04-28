@@ -3,6 +3,7 @@ package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 import java.util.Iterator;
 import java.util.Map;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.Net.ApiError;
 
 public class JsonFormat implements IResponseFormat
 {
@@ -10,6 +11,11 @@ public class JsonFormat implements IResponseFormat
     public String getMime()
     {
         return ApiBukkitServer.MIME_JSON;
+    }
+    
+    public String format(ApiError error)
+    {
+        return this.format(error.asList());
     }
     
     @SuppressWarnings("unchecked")
