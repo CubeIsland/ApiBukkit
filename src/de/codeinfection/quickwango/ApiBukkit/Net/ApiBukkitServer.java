@@ -72,6 +72,7 @@ public class ApiBukkitServer extends NanoHTTPD
         {
             try
             {
+                ApiBukkit.debug("Selecting controller '" + pathParts[0] + "'");
                 AbstractRequestController controller = requestControllers.get(pathParts[0]);
                 if (controller.isAuthNeeded() && !params.getProperty("password", "").equals(this.APIPassword))
                 {
@@ -83,21 +84,23 @@ public class ApiBukkitServer extends NanoHTTPD
                 RequestAction requestAction = controller.getAction(action);
                 if (requestAction != null)
                 {
+                    ApiBukkit.debug("Running action '" + action + "'");
                     response = requestAction.run(params, this.plugin.getServer());
                 }
                 else
                 {
+                    ApiBukkit.debug("Runnung default action");
                     response = controller.defaultAction(action, params, this.plugin.getServer());
                 }
             }
             catch (RequestException e)
             {
-                ApiBukkit.logException(e);
-                return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, this.error(ApiError.WRONG_API_PASSWORD.setMessage(e.getMessage())));
+                ApiBukkit.error("ControllerException: " + e.getMessage());
+                return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, this.error(ApiError.CONTROLLER_EXCEPTION.setMessage(e.getMessage())));
             }
             catch (NotImplementedException e)
             {
-                ApiBukkit.logException(e);
+                ApiBukkit.error("action not implemented");
                 return new Response(HTTP_NOTIMPLEMENTED, MIME_PLAINTEXT, this.error(ApiError.ACTION_NOT_IMPLEMENTED));
             }
             catch (Throwable t)
@@ -171,7 +174,10 @@ public class ApiBukkitServer extends NanoHTTPD
     
     public void setRequestController(String name, AbstractRequestController controller)
     {
-        this.requestControllers.put(name, controller);
+        if (controller != null)
+        {
+            this.requestControllers.put(name, controller);
+        }
     }
     
     public boolean setControllerAlias(String alias, String controller)
