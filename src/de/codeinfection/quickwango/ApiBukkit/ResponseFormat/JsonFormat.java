@@ -20,32 +20,6 @@ public class JsonFormat implements IResponseFormat
         {
             response += "[" + String.valueOf(o) + "]";
         }
-        else if (o.getClass().isArray())
-        {
-            Object[] data = (Object[]) o;
-            int end = data.length - 1;
-            response += "[";
-            for (int i = 0; i < data.length; i++)
-            {
-                if (data[i] == null || data[i] instanceof Number || data[i] instanceof Boolean)
-                {
-                    response += String.valueOf(data[i]);
-                }
-                else if (data[i] instanceof Iterable || data[i] instanceof Map)
-                {
-                    response += this.format(data[i]);
-                }
-                else
-                {
-                    response += "\"" + String.valueOf(data[i]) + "\"";
-                }
-                if (i < end)
-                {
-                    response += ",";
-                }
-            }
-            response += "]";
-        }
         else if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
@@ -61,7 +35,7 @@ public class JsonFormat implements IResponseFormat
                 {
                     response += "\"" + name + "\":" + String.valueOf(value);
                 }
-                else if (value instanceof Iterable || value instanceof Map)
+                else if (value instanceof Iterable || value instanceof Map || value.getClass().isArray())
                 {
                     response += "\"" + name + "\":" + this.format(value);
                 }
@@ -88,7 +62,7 @@ public class JsonFormat implements IResponseFormat
                 {
                     response += String.valueOf(value);
                 }
-                else if (value instanceof Iterable || value instanceof Map)
+                else if (value instanceof Iterable || value instanceof Map || value.getClass().isArray())
                 {
                     response += this.format(value);
                 }
@@ -97,6 +71,32 @@ public class JsonFormat implements IResponseFormat
                     response += "\"" + String.valueOf(value) + "\"";
                 }
                 if (iter.hasNext())
+                {
+                    response += ",";
+                }
+            }
+            response += "]";
+        }
+        else if (o.getClass().isArray())
+        {
+            Object[] data = (Object[]) o;
+            int end = data.length - 1;
+            response += "[";
+            for (int i = 0; i < data.length; i++)
+            {
+                if (data[i] == null || data[i] instanceof Number || data[i] instanceof Boolean)
+                {
+                    response += String.valueOf(data[i]);
+                }
+                else if (data[i] instanceof Iterable || data[i] instanceof Map || data[i].getClass().isArray())
+                {
+                    response += this.format(data[i]);
+                }
+                else
+                {
+                    response += "\"" + String.valueOf(data[i]) + "\"";
+                }
+                if (i < end)
                 {
                     response += ",";
                 }

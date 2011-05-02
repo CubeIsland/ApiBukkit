@@ -17,7 +17,11 @@ public class PlainFormat implements IResponseFormat
     public String format(Object o)
     {
         String response = "";
-        if (o instanceof Map)
+        if (o == null)
+        {
+            response = "";
+        }
+        else if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
             int dataSize = data.size();
@@ -26,14 +30,7 @@ public class PlainFormat implements IResponseFormat
             {
                 counter++;
                 Object value = entry.getValue();
-                if (value instanceof Iterable || value instanceof Map)
-                {
-                    response += this.format(value);
-                }
-                else
-                {
-                    response += encode(String.valueOf(value));
-                }
+                response += this.format(value);
                 if (counter < dataSize)
                 {
                     response += ",";
@@ -47,16 +44,21 @@ public class PlainFormat implements IResponseFormat
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                
-                if (value instanceof Iterable || value instanceof Map)
-                {
-                    response += this.format(value);
-                }
-                else
-                {
-                    response += encode(String.valueOf(value));
-                }
+                response += this.format(value);
                 if (iter.hasNext())
+                {
+                    response += ",";
+                }
+            }
+        }
+        else if (o.getClass().isArray())
+        {
+            Object[] data = (Object[]) o;
+            int end = data.length - 1;
+            for (int i = 0; i < data.length; i++)
+            {
+                response += this.format(data[i]);
+                if (i < end)
                 {
                     response += ",";
                 }

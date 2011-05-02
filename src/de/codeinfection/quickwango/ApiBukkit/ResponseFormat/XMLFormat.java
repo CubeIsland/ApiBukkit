@@ -6,6 +6,8 @@ import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 
 public class XMLFormat implements IResponseFormat
 {
+    private final static String XMLDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
+    private static int depth = 0;
     
     public String getMime()
     {
@@ -20,23 +22,19 @@ public class XMLFormat implements IResponseFormat
     @SuppressWarnings("unchecked")
     public String format(Object o, String rootNodeName)
     {
+        depth++;
         String response = "";
         response += "<" + rootNodeName + ">";
-        if (o instanceof Map)
+        if (o == null)
+        {} // null -> do nothing
+        else if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
             for (Map.Entry entry : data.entrySet())
             {
                 String name = entry.getKey().toString();
                 Object value = entry.getValue();
-                if (value instanceof Iterable || value instanceof Map)
-                {
-                    response += this.format(value, name);
-                }
-                else
-                {
-                    response += "<" + name + ">" + String.valueOf(value) + "</" + name + ">";
-                }
+                response += this.format(value, name);
             }
         }
         else if (o instanceof Iterable)
@@ -46,15 +44,15 @@ public class XMLFormat implements IResponseFormat
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                
-                if (value instanceof Iterable || value instanceof Map)
-                {
-                    response += this.format(value, rootNodeName);
-                }
-                else
-                {
-                    response += "<" + rootNodeName + ">" + String.valueOf(value) + "</" + rootNodeName + ">";
-                }
+                response += this.format(value, rootNodeName);
+            }
+        }
+        else if (o.getClass().isArray())
+        {
+            Object[] data = (Object[]) o;
+            for (int i = 0; i < data.length; i++)
+            {
+                response += this.format(data[i], rootNodeName);
             }
         }
         else
@@ -63,8 +61,14 @@ public class XMLFormat implements IResponseFormat
         }
         
         response += "</" + rootNodeName + ">";
+        depth--;
         
-        return "<?xml version=\"1.0\" ?>\n" + response;
+        if (depth == 0)
+        {
+            response = XMLDeclaration + response;
+        }
+        
+        return response;
     }
 
     private static String addTabs(int indent)
