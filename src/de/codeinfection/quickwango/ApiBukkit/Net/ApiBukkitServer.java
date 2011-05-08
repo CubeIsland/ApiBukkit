@@ -42,6 +42,7 @@ public class ApiBukkitServer extends NanoHTTPD
     @Override
     public Response serve(String uri, String method, Properties header, Properties params, Properties files)
     {
+        params.put("__REQUEST_PATH__", uri);
         ApiBukkit.log(uri + " was requested...");
         uri = uri.substring(1);
         if (uri.length() == 0)
@@ -74,16 +75,23 @@ public class ApiBukkitServer extends NanoHTTPD
             {
                 ApiBukkit.debug("Selecting controller '" + pathParts[0] + "'");
                 AbstractRequestController controller = requestControllers.get(pathParts[0]);
-                if (controller.isAuthNeeded() && !params.getProperty("password", "").equals(this.APIPassword))
-                {
-                    ApiBukkit.error(ApiError.WRONG_API_PASSWORD.getMessage());
-                    return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.WRONG_API_PASSWORD));
-                }
+                String password = params.getProperty("password", "");
                 params.remove("password");
                 
                 RequestAction requestAction = controller.getAction(action);
                 if (requestAction != null)
                 {
+                    Boolean controllerAuthNeeded = controller.isAuthNeeded();
+                    Boolean actionAuthNeeded = requestAction.isAuthNeeded();
+                    if (actionAuthNeeded == null)
+                    {
+                        actionAuthNeeded = controllerAuthNeeded;
+                    }
+                    if (actionAuthNeeded && !password.equals(this.APIPassword))
+                    {
+                        ApiBukkit.error(ApiError.WRONG_API_PASSWORD.getMessage());
+                        return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.WRONG_API_PASSWORD));
+                    }
                     ApiBukkit.debug("Running action '" + action + "'");
                     response = requestAction.run(params, this.plugin.getServer());
                 }

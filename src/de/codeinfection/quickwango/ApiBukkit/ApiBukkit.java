@@ -6,13 +6,13 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.bukkit.Server;
-
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
+import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
 {
@@ -138,6 +138,12 @@ public class ApiBukkit extends JavaPlugin
             this.webserver.removeRequestController(name);
             ApiBukkit.debug("Removed " + name);
         }
+    }
+    
+    public File apiDataFolder(Plugin plugin)
+    {
+        return new File(this.dataFolder, plugin.getDescription().getName());
+        
     }
     
     public static void log(String message)

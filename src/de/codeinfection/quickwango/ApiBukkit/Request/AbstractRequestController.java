@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.bukkit.Server;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -13,18 +13,18 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public abstract class AbstractRequestController
 {
-    protected JavaPlugin plugin;
+    protected Plugin plugin;
     private boolean authNeeded;
     private HashMap<String, RequestAction> actions;
     
-    public AbstractRequestController(JavaPlugin plugin, boolean authNeeded)
+    public AbstractRequestController(Plugin plugin, boolean authNeeded)
     {
         this.plugin = plugin;
         this.authNeeded = authNeeded;
         this.actions = new HashMap<String, RequestAction>();
     }
     
-    public JavaPlugin getPlugin()
+    public Plugin getPlugin()
     {
         return this.plugin;
     }
@@ -62,8 +62,25 @@ public abstract class AbstractRequestController
     
     abstract public Object defaultAction(String action, Properties params, Server server) throws RequestException;
     
-    public interface RequestAction
+    public abstract class RequestAction
     {
-        public Object run(Properties params, Server server) throws RequestException;
+        private Boolean authNeeded;
+        
+        public RequestAction()
+        {
+            this.authNeeded = null;
+        }
+        
+        public RequestAction(boolean authNeeded)
+        {
+            this.authNeeded = authNeeded;
+        }
+        
+        public Boolean isAuthNeeded()
+        {
+            return this.authNeeded;
+        }
+        
+        public abstract Object run(Properties params, Server server) throws RequestException;
     }
 }
