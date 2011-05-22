@@ -43,11 +43,12 @@ public class ApiBukkitServer extends NanoHTTPD
     public Response serve(String uri, String method, Properties header, Properties params, Properties files)
     {
         params.put("__REQUEST_PATH__", uri);
+        params.put("__REQUEST_METHOD__", method);
         ApiBukkit.log(uri + " was requested...");
         uri = uri.substring(1);
         if (uri.length() == 0)
         {
-            ApiBukkit.error(ApiError.INVALID_PATH.getMessage());
+            ApiBukkit.error("Invalid path requested!");
             return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, this.error(ApiError.INVALID_PATH));
         }
         String[] pathParts = uri.split("/");
@@ -64,7 +65,7 @@ public class ApiBukkitServer extends NanoHTTPD
         }
         if (pathParts.length < 1 || controllerName == null)
         {
-            ApiBukkit.error(ApiError.INVALID_PATH.getMessage());
+            ApiBukkit.error("Invalid path requested!");
             return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, this.error(ApiError.INVALID_PATH));
         }
         
@@ -89,7 +90,7 @@ public class ApiBukkitServer extends NanoHTTPD
                     }
                     if (actionAuthNeeded && !password.equals(this.APIPassword))
                     {
-                        ApiBukkit.error(ApiError.WRONG_API_PASSWORD.getMessage());
+                        ApiBukkit.error("Wrong API password");
                         return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.WRONG_API_PASSWORD));
                     }
                     ApiBukkit.debug("Running action '" + action + "'");
@@ -104,7 +105,7 @@ public class ApiBukkitServer extends NanoHTTPD
             catch (RequestException e)
             {
                 ApiBukkit.error("ControllerException: " + e.getMessage());
-                return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, this.error(ApiError.CONTROLLER_EXCEPTION.setMessage(e.getMessage())));
+                return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, this.error(ApiError.REQUEST_EXCEPTION, e.getErrCode()));
             }
             catch (NotImplementedException e)
             {
@@ -119,7 +120,7 @@ public class ApiBukkitServer extends NanoHTTPD
         }
         else
         {
-            ApiBukkit.error(ApiError.CONTROLLER_NOT_FOUND.getMessage());
+            ApiBukkit.error("Controller not found!");
             return new Response(HTTP_NOTFOUND, MIME_PLAINTEXT, this.error(ApiError.CONTROLLER_NOT_FOUND));
         }
         
@@ -206,7 +207,16 @@ public class ApiBukkitServer extends NanoHTTPD
     protected String error(ApiError error)
     {
         IResponseFormat formater = getResponseFormat("plain");
-        return formater.format(error.asList());
+        return formater.format(error);
+    }
+    
+    protected String error(ApiError error, int errCode)
+    {
+        IResponseFormat formater = getResponseFormat("plain");
+        return formater.format(new Object[] {
+            error,
+            errCode
+        });
     }
     
     public Collection<AbstractRequestController> getAllRequestControllers()
