@@ -13,6 +13,7 @@ import de.codeinfection.quickwango.ApiBukkit.Net.NanoHTTPD.Response;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController.RequestAction;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ValidateController;
 
 public class ApiBukkitServer extends NanoHTTPD
 {
@@ -35,6 +36,8 @@ public class ApiBukkitServer extends NanoHTTPD
         responseFormats.put("plain", new PlainFormat());
         responseFormats.put("json", new JsonFormat());
         responseFormats.put("xml", new XMLFormat());
+        
+        this.requestControllers.put("validate", new ValidateController(null));
         
         requestControllers = new ConcurrentHashMap<String, AbstractRequestController>();
     }
@@ -183,7 +186,7 @@ public class ApiBukkitServer extends NanoHTTPD
     
     public void setRequestController(String name, AbstractRequestController controller)
     {
-        if (controller != null)
+        if (controller != null && !name.equals("validate"))
         {
             this.requestControllers.put(name, controller);
         }
@@ -191,7 +194,7 @@ public class ApiBukkitServer extends NanoHTTPD
     
     public boolean setControllerAlias(String alias, String controller)
     {
-        if (!this.requestControllers.containsKey(alias) && this.requestControllers.containsKey(controller))
+        if (!this.requestControllers.containsKey(alias) && this.requestControllers.containsKey(controller) && !alias.equals("validate"))
         {
             this.requestControllers.put(alias, this.requestControllers.get(controller));
             return true;
