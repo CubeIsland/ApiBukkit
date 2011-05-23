@@ -37,9 +37,8 @@ public class ApiBukkitServer extends NanoHTTPD
         responseFormats.put("json", new JsonFormat());
         responseFormats.put("xml", new XMLFormat());
         
+        this.requestControllers = new ConcurrentHashMap<String, AbstractRequestController>();
         this.requestControllers.put("validate", new ValidateController(null));
-        
-        requestControllers = new ConcurrentHashMap<String, AbstractRequestController>();
     }
 
     @Override
@@ -73,12 +72,12 @@ public class ApiBukkitServer extends NanoHTTPD
         }
         
         Object response = null;
-        if (requestControllers.containsKey(pathParts[0]))
+        if (this.requestControllers.containsKey(pathParts[0]))
         {
             try
             {
                 ApiBukkit.debug("Selecting controller '" + pathParts[0] + "'");
-                AbstractRequestController controller = requestControllers.get(pathParts[0]);
+                AbstractRequestController controller = this.requestControllers.get(pathParts[0]);
                 String password = params.getProperty("password", "");
                 params.remove("password");
                 
