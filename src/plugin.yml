@@ -4,3 +4,10 @@ version: 0.3.2
 authors:
   - Phillip Schichtel
 website: http://code-infection.de
+commands:
+  apiinfo:
+    usage: /<command>
+    description: prints the API config to the sender
+  apireload:
+    usage: /<command>
+    description: reloads the API server

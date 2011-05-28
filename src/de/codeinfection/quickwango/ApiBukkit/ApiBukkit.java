@@ -2,16 +2,20 @@ package de.codeinfection.quickwango.ApiBukkit;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
+//import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
@@ -30,15 +34,18 @@ public class ApiBukkit extends JavaPlugin
     public void onDisable()
     {
         ApiBukkit.log("Disabling dependent plugins...");
-        Iterator<AbstractRequestController> controllerIter = this.webserver.getAllRequestControllers().iterator();
+        /*Iterator<AbstractRequestController> controllerIter = this.webserver.getAllRequestControllers().iterator();
         while (controllerIter.hasNext())
         {
             this.pm.disablePlugin(controllerIter.next().getPlugin());
-        }
+        }*/
         
         ApiBukkit.log("Stopping Web Server...");
-        this.webserver.stop();
-        this.webserver = null;
+        if (this.webserver != null)
+        {
+            this.webserver.stop();
+            this.webserver = null;
+        }
         
         ApiBukkit.log(String.format("%s Version %s is now disabled!", this.pdf.getName(), this.pdf.getVersion()));
     }
@@ -46,6 +53,9 @@ public class ApiBukkit extends JavaPlugin
     public void onEnable()
     {
         this.init();
+        
+        this.getCommand("apireload").setExecutor(new ApireloadCommand());
+        this.getCommand("apiinfo").setExecutor(new ApiinfoCommand());
         
         try
         {
@@ -62,7 +72,7 @@ public class ApiBukkit extends JavaPlugin
         ApiBukkit.log(String.format("%s Version %s is now enabled!", this.pdf.getName(), this.pdf.getVersion()));
     }
     
-    public void init()
+    protected void init()
     {
         try
         {
@@ -169,5 +179,41 @@ public class ApiBukkit extends JavaPlugin
         System.err.println("ApiBukkit: " + t.getClass().getName());
         System.err.println("Message: " + t.getMessage());
         t.printStackTrace(System.err);
+    }
+    
+    
+    private class ApireloadCommand implements CommandExecutor
+    {
+        public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
+        {
+            if (!(sender instanceof Player))
+            {
+                onDisable();
+                init();
+                System.out.println("API reloaded!");
+            }
+            else
+            {
+                sender.sendMessage("This command must be executed in the console!");
+            }
+            return true;
+        }
+    }
+    
+    private class ApiinfoCommand implements CommandExecutor
+    {
+        public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
+        {
+            if (!(sender instanceof Player))
+            {
+                sender.sendMessage("API Port: " + config.getString("Configuration.webServerPort"));
+                sender.sendMessage("API Password: " + config.getString("Configuration.APIPassword"));
+            }
+            else
+            {
+                sender.sendMessage("This command must be executed in the console!");
+            }
+            return true;
+        }
     }
 }
