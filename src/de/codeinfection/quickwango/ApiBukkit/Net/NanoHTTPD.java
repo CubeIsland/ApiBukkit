@@ -245,20 +245,23 @@ public abstract class NanoHTTPD
      */
     private class HTTPSession implements Runnable
     {
+        private Socket socket;
+        private Thread thread;
+        
         public HTTPSession(Socket s)
         {
-            mySocket = s;
-            Thread t = new Thread(this);
-            t.setDaemon(true);
-            t.start();
+            this.socket = s;
+            this.thread = new Thread(this);
+            this.thread.setDaemon(true);
+            this.thread.start();
         }
 
         public void run()
         {
             try
             {
-                InputStream is = mySocket.getInputStream();
-                if (is == null)
+                InputStream inputStream = this.socket.getInputStream();
+                if (inputStream == null)
                 {
                     return;
                 }
@@ -266,24 +269,24 @@ public abstract class NanoHTTPD
                 // Read the first 8192 bytes.
                 // The full header should fit in here.
                 // Apache's default header limit is 8KB.
-                int bufsize = 8192;
-                byte[] buf = new byte[bufsize];
-                int rlen = is.read(buf, 0, bufsize);
+                final int BUFFER_SIZE = 8192;
+                byte[] buffer = new byte[BUFFER_SIZE];
+                int rlen = inputStream.read(buffer, 0, BUFFER_SIZE);
                 if (rlen <= 0)
                 {
                     return;
                 }
 
                 // Create a BufferedReader for parsing the header.
-                ByteArrayInputStream hbis = new ByteArrayInputStream(buf, 0, rlen);
+                ByteArrayInputStream hbis = new ByteArrayInputStream(buffer, 0, rlen);
                 BufferedReader hin = new BufferedReader(new InputStreamReader(hbis));
                 Properties pre = new Properties();
-                Properties parms = new Properties();
+                Properties params = new Properties();
                 Properties header = new Properties();
                 Properties files = new Properties();
 
                 // Decode the header into parms and header java properties
-                decodeHeader(hin, pre, parms, header);
+                decodeHeader(hin, pre, params, header);
                 String method = pre.getProperty("method");
                 String uri = pre.getProperty("uri");
 
@@ -305,7 +308,7 @@ public abstract class NanoHTTPD
                 boolean sbfound = false;
                 while (splitbyte < rlen)
                 {
-                    if (buf[splitbyte] == '\r' && buf[++splitbyte] == '\n' && buf[++splitbyte] == '\r' && buf[++splitbyte] == '\n')
+                    if (buffer[splitbyte] == '\r' && buffer[++splitbyte] == '\n' && buffer[++splitbyte] == '\r' && buffer[++splitbyte] == '\n')
                     {
                         sbfound = true;
                         break;
@@ -315,10 +318,10 @@ public abstract class NanoHTTPD
                 splitbyte++;
 
                 // Write the part of body already read to ByteArrayOutputStream f
-                ByteArrayOutputStream f = new ByteArrayOutputStream();
+                ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
                 if (splitbyte < rlen)
                 {
-                    f.write(buf, splitbyte, rlen-splitbyte);
+                    byteArrayStream.write(buffer, splitbyte, rlen-splitbyte);
                 }
 
                 // While Firefox sends on the first read all the data fitting
@@ -337,23 +340,23 @@ public abstract class NanoHTTPD
                 }
 
                 // Now read all the body and write it to f
-                buf = new byte[512];
+                buffer = new byte[512];
                 while (rlen >= 0 && size > 0)
                 {
-                    rlen = is.read(buf, 0, 512);
+                    rlen = inputStream.read(buffer, 0, 512);
                     size -= rlen;
                     if (rlen > 0)
                     {
-                        f.write(buf, 0, rlen);
+                        byteArrayStream.write(buffer, 0, rlen);
                     }
                 }
 
                 // Get the raw body as a byte []
-                byte[] fbuf = f.toByteArray();
+                byte[] fbuf = byteArrayStream.toByteArray();
 
                 // Create a BufferedReader for easily reading it as string.
                 ByteArrayInputStream bin = new ByteArrayInputStream(fbuf);
-                BufferedReader in = new BufferedReader( new InputStreamReader(bin));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(bin));
 
                 // If the method is POST, there may be parameters
                 // in data section, too, read it:
@@ -383,37 +386,43 @@ public abstract class NanoHTTPD
                         st.nextToken();
                         String boundary = st.nextToken();
 
-                        decodeMultipartData(boundary, fbuf, in, parms, files);
+                        decodeMultipartData(boundary, fbuf, reader, params, files);
                     }
                     else
                     {
                         // Handle application/x-www-form-urlencoded
                         String postLine = "";
                         char pbuf[] = new char[512];
-                        int read = in.read(pbuf);
+                        int read = reader.read(pbuf);
                         while (read >= 0 && !postLine.endsWith("\r\n"))
                         {
                             postLine += String.valueOf(pbuf, 0, read);
-                            read = in.read(pbuf);
+                            read = reader.read(pbuf);
                         }
                         postLine = postLine.trim();
-                        decodeParms(postLine, parms);
+                        decodeParms(postLine, params);
                     }
                 }
 
                 // Ok, now do the serve()
-                Response r = serve(uri, method, header, parms, files);
-                if (r == null)
+                Response response = serve(uri, method, header, params, files);
+                if (response == null)
                 {
                     sendError(HTTP_INTERNALERROR, "SERVER INTERNAL ERROR: Serve() returned a null response.");
                 }
                 else
                 {
-                    sendResponse(r.status, r.mimeType, r.header, r.data);
+                    sendResponse(response.status, response.mimeType, response.header, response.data);
                 }
 
-                in.close();
-                is.close();
+                reader.close();
+                inputStream.close();
+                this.socket.shutdownInput();
+                this.socket.shutdownOutput();
+                if (!this.socket.isClosed())
+                {
+                    this.socket.close();
+                }
             }
             catch (IOException ioe)
             {
@@ -760,7 +769,7 @@ public abstract class NanoHTTPD
                     throw new Error("sendResponse(): Status can't be null.");
                 }
 
-                OutputStream out = mySocket.getOutputStream();
+                OutputStream out = this.socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(out);
                 pw.print("HTTP/1.0 " + status + " \r\n");
 
@@ -813,14 +822,12 @@ public abstract class NanoHTTPD
                 // Couldn't write? No can do.
                 try
                 {
-                    mySocket.close();
+                    this.socket.close();
                 }
                 catch (Throwable t)
                 {}
             }
         }
-
-        private Socket mySocket;
     }
 
     /**
