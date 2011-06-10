@@ -53,7 +53,8 @@ public class ApiBukkit extends JavaPlugin
     public void onEnable()
     {
         this.init();
-        
+
+        debug = this.config.getBoolean("Configuration.debugMode", false);
         this.getCommand("apireload").setExecutor(new ApireloadCommand());
         this.getCommand("apiinfo").setExecutor(new ApiinfoCommand());
         
@@ -94,6 +95,7 @@ public class ApiBukkit extends JavaPlugin
                 {
                     this.config.setProperty("Configuration.webServerPort", 6561);
                     this.config.setProperty("Configuration.APIPassword", "changeMe");
+                    this.config.setProperty("Configuration.debugMode", true);
                     this.config.save();
                 }
 
