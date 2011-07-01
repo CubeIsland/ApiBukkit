@@ -1,8 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
 import java.io.File;
-import java.io.IOException;
-//import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.bukkit.Server;
@@ -20,91 +18,95 @@ import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
 {
-    public static final Logger logger = Logger.getLogger("Minecraft.ApiCraft");
-    public static boolean debug = true;
+    public static final Logger logger = Logger.getLogger("Minecraft");
     protected Server server;
     protected PluginManager pm;
     protected PluginDescriptionFile pdf;
     protected File dataFolder;
     protected ApiBukkitServer webserver;
     protected Configuration config;
+    protected boolean zombi = false;
     
     protected boolean initiated = false;
 
+    // Configuration
+    protected int port = 6561;
+    protected String password = "changeMeToASuperSecurePassword";
+    public static boolean debug = false;
+
     public void onDisable()
     {
-        ApiBukkit.log("Disabling dependent plugins...");
-        /*Iterator<AbstractRequestController> controllerIter = this.webserver.getAllRequestControllers().iterator();
-        while (controllerIter.hasNext())
-        {
-            this.pm.disablePlugin(controllerIter.next().getPlugin());
-        }*/
-        
-        ApiBukkit.log("Stopping Web Server...");
+        log("Stopping Web Server...");
         if (this.webserver != null)
         {
             this.webserver.stop();
-            this.webserver = null;
         }
         
-        ApiBukkit.log(String.format("%s Version %s is now disabled!", this.pdf.getName(), this.pdf.getVersion()));
+        log(String.format("%s Version %s is now disabled!", this.pdf.getName(), this.pdf.getVersion()));
     }
 
     public void onEnable()
     {
+        this.dataFolder = this.getDataFolder().getAbsoluteFile();
+        this.config = new Configuration(new File(this.dataFolder, "config.yml"));
+        if (!this.dataFolder.exists())
+        {
+            this.dataFolder.mkdirs();
+        }
+
+        this.config.load();
+        if (this.config.getNode("Configuration") == null)
+        {
+            this.config.setProperty("Configuration.port", this.port);
+            this.config.setProperty("Configuration.password", this.password);
+            this.config.setProperty("Configuration.debug", debug);
+            this.config.save();
+        }
+
+        this.port = this.config.getInt("Configuration.port", this.port);
+        this.password = this.config.getString("Configuration.password", this.password);
+        debug = this.config.getBoolean("Configuration.debug", debug);
+        
         this.init();
 
-        debug = this.config.getBoolean("Configuration.debugMode", false);
         this.getCommand("apireload").setExecutor(new ApireloadCommand());
         this.getCommand("apiinfo").setExecutor(new ApiinfoCommand());
         
         try
         {
-            this.webserver = new ApiBukkitServer(this, config);
-            ApiBukkit.log(String.format("Web server started on port %s!", config.getString("Configuration.webServerPort", "6561")));
+            log(String.format("Starting the web server on port %s!", this.port));
+            this.webserver.start(this.port, this.password);
+            log("Web server started!");
         }
-        catch (IOException e)
+        catch (Throwable t)
         {
-            ApiBukkit.error("Failed to start the web server!");
-            this.pm.disablePlugin(this);
+            error("Failed to start the web server!");
+            logException(t);
+            error("Staying in zombi state...");
+            this.zombi = true;
             return;
         }
         
-        ApiBukkit.log(String.format("%s Version %s is now enabled!", this.pdf.getName(), this.pdf.getVersion()));
+        log(String.format("%s Version %s is now enabled!", this.pdf.getName(), this.pdf.getVersion()));
     }
     
     protected void init()
     {
-        try
+        if (!this.initiated)
         {
-            this.dataFolder = this.getDataFolder().getAbsoluteFile();
-            this.config = new Configuration(new File(this.dataFolder, "config.yml"));
-            this.config.load();
-            if (!this.initiated)
+            try
             {
                 this.pdf = this.getDescription();
                 this.server = this.getServer();
                 this.pm = this.server.getPluginManager();
-
-                if (!this.dataFolder.exists())
-                {
-                    this.dataFolder.mkdirs();
-                }
-
-                if (this.config.getNode("Configuration") == null)
-                {
-                    this.config.setProperty("Configuration.webServerPort", 6561);
-                    this.config.setProperty("Configuration.APIPassword", "changeMe");
-                    this.config.setProperty("Configuration.debugMode", true);
-                    this.config.save();
-                }
+                this.webserver = new ApiBukkitServer(this);
 
                 this.initiated = true;
             }
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace(System.err);
+            catch (Throwable t)
+            {
+                t.printStackTrace(System.err);
+            }
         }
     }
     
@@ -160,19 +162,19 @@ public class ApiBukkit extends JavaPlugin
     
     public static void log(String message)
     {
-        logger.log(Level.INFO, "ApiBukkit: " + message);
+        logger.log(Level.INFO, "[ApiBukkit] " + message);
     }
     
     public static void error(String message)
     {
-        logger.log(Level.SEVERE, "ApiBukkit: " + message);
+        logger.log(Level.SEVERE, "[ApiBukkit] " + message);
     }
     
     public static void debug(String message)
     {
         if (debug)
         {
-            logger.log(Level.INFO, "[DEBUG] ApiBukkit: " + message);
+            log("[DEBUG] ApiBukkit: " + message);
         }
     }
     
@@ -191,12 +193,12 @@ public class ApiBukkit extends JavaPlugin
             if (!(sender instanceof Player))
             {
                 onDisable();
-                init();
-                System.out.println("API reloaded!");
+                onEnable();
+                log("API reloaded!");
             }
             else
             {
-                sender.sendMessage("This command must be executed in the console!");
+                sender.sendMessage("This command cannot be executed as a player!");
             }
             return true;
         }
@@ -208,12 +210,19 @@ public class ApiBukkit extends JavaPlugin
         {
             if (!(sender instanceof Player))
             {
-                sender.sendMessage("API Port: " + config.getString("Configuration.webServerPort"));
-                sender.sendMessage("API Password: " + config.getString("Configuration.APIPassword"));
+                if (!zombi)
+                {
+                    sender.sendMessage("API Port: " + port);
+                    sender.sendMessage("API Password: " + password);
+                }
+                else
+                {
+                    sender.sendMessage("The API is currenty in a zombi state. Check your log for errors and try to reload the plugin and/or the server.");
+                }
             }
             else
             {
-                sender.sendMessage("This command must be executed in the console!");
+                sender.sendMessage("This command cannot be executed as a player!");
             }
             return true;
         }

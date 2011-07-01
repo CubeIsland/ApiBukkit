@@ -21,6 +21,7 @@ import java.util.TimeZone;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public abstract class NanoHTTPD
      * @param  header   Header entries, percent decoded
      * @return HTTP     response, see class Response for details
      */
-    public abstract Response serve(String uri, String method, Properties header, Properties parms, Properties files);
+    public abstract Response serve(String uri, InetAddress remoteIp, String method, Properties header, Properties parms, Properties files);
 
     /**
      * HTTP response.
@@ -142,6 +143,23 @@ public abstract class NanoHTTPD
         public Properties header = new Properties();
     }
 
+    private class HttpSeverThread implements Runnable
+    {
+        public void run()
+        {
+            try
+            {
+                HTTPSession session;
+                while (true)
+                {
+                    session = new HTTPSession(httpServerSocket.accept());
+                }
+            }
+            catch (IOException ioe)
+            {}
+        }
+    }
+
     /**
      * Some HTTP response status codes
      */
@@ -197,30 +215,25 @@ public abstract class NanoHTTPD
     // Socket & server code
     // ==================================================
 
+    private int httpServerPort;
+    private ServerSocket httpServerSocket;
+    private Thread httpServerThread;
+
+    public NanoHTTPD()
+    {}
+
     /**
      * Starts a HTTP server to given port.<p>
      * Throws an IOException if the socket is already in use
      */
-    public NanoHTTPD(int port) throws IOException
+    public void start(int port) throws IOException
     {
-        myTcpPort = port;
-        myServerSocket = new ServerSocket(myTcpPort);
-        myThread = new Thread(new Runnable() {
-            public void run()
-            {
-                try
-                {
-                    while (true)
-                    {
-                        new HTTPSession(myServerSocket.accept());
-                    }
-                }
-                catch (IOException ioe)
-                {}
-            }
-        });
-        myThread.setDaemon(true);
-        myThread.start();
+        this.httpServerThread = new Thread(new HttpSeverThread());
+        this.httpServerThread.setDaemon(true);
+        this.httpServerPort = port;
+        this.httpServerSocket = new ServerSocket(this.httpServerPort);
+        this.httpServerSocket.setPerformancePreferences(2, 1, 0);
+        this.httpServerThread.start();
     }
 
     /**
@@ -230,12 +243,10 @@ public abstract class NanoHTTPD
     {
         try
         {
-            myServerSocket.close();
-            myThread.join();
+            httpServerSocket.close();
+            httpServerThread.join();
         }
-        catch (IOException ioe)
-        {}
-        catch (InterruptedException e)
+        catch (Throwable t)
         {}
     }
 
@@ -248,9 +259,9 @@ public abstract class NanoHTTPD
         private Socket socket;
         private Thread thread;
         
-        public HTTPSession(Socket s)
+        public HTTPSession(Socket socket)
         {
-            this.socket = s;
+            this.socket = socket;
             this.thread = new Thread(this);
             this.thread.setDaemon(true);
             this.thread.start();
@@ -405,7 +416,7 @@ public abstract class NanoHTTPD
                 }
 
                 // Ok, now do the serve()
-                Response response = serve(uri, method, header, params, files);
+                Response response = serve(uri, socket.getInetAddress(), method, header, params, files);
                 if (response == null)
                 {
                     sendError(HTTP_INTERNALERROR, "SERVER INTERNAL ERROR: Serve() returned a null response.");
@@ -861,10 +872,6 @@ public abstract class NanoHTTPD
         }
         return newUri;
     }
-
-    private int myTcpPort;
-    private final ServerSocket myServerSocket;
-    private Thread myThread;
 
     /**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE

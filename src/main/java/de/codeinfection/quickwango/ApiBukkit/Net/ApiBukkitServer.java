@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import org.bukkit.util.config.Configuration;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
@@ -14,23 +13,23 @@ import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController.RequestAction;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
 import de.codeinfection.quickwango.ApiBukkit.ValidateController;
+import java.net.InetAddress;
 
 public class ApiBukkitServer extends NanoHTTPD
 {
     protected ApiBukkit plugin;
     protected String APIPassword;
     protected final static ConcurrentHashMap<String, IResponseFormat> responseFormats;
+    protected final ConcurrentHashMap<String, AbstractRequestController> requestControllers;
+    protected static String defaultResponseFormat = "plain";
+
     static
     {
         responseFormats = new ConcurrentHashMap<String, IResponseFormat>();
     }
-    protected final ConcurrentHashMap<String, AbstractRequestController> requestControllers;
-    protected static String defaultResponseFormat = "plain";
 
-    public ApiBukkitServer(ApiBukkit plugin, Configuration config) throws IOException
+    public ApiBukkitServer(ApiBukkit plugin) throws IOException
     {
-        super(config.getInt("Configuration.webServerPort", 6561));
-        this.APIPassword = config.getString("Configuration.APIPassword", "changeMe");
         this.plugin = plugin;
         
         responseFormats.put("plain", new PlainFormat());
@@ -41,12 +40,19 @@ public class ApiBukkitServer extends NanoHTTPD
         this.requestControllers.put("validate", new ValidateController(null));
     }
 
+    public void start(int port, String password) throws IOException
+    {
+        this.APIPassword = password;
+        this.start(port);
+    }
+
     @Override
-    public Response serve(String uri, String method, Properties header, Properties params, Properties files)
+    public Response serve(String uri, InetAddress remoteIp, String method, Properties header, Properties params, Properties files)
     {
         params.put("__REQUEST_PATH__", uri);
         params.put("__REQUEST_METHOD__", method);
-        ApiBukkit.log(uri + " was requested...");
+        params.put("__REMOTE_ADDR__", remoteIp.getHostAddress());
+        ApiBukkit.log(uri + " was requested by " + remoteIp.getHostAddress() + "...");
         uri = uri.substring(1);
         if (uri.length() == 0)
         {
