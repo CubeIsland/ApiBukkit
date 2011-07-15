@@ -1,0 +1,8 @@
+name: BasicApi
+main: de.codeinfection.quickwango.BasicApi.BasicApi
+version: "${project.version}"
+authors:
+  - Phillip Schichtel
+website: http://code-infection.de
+depend:
+  - ApiBukkit

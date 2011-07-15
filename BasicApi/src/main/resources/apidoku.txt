@@ -1,0 +1,691 @@
+ApiBukkit
+===========
+
+Generally:
+    /<controller>/[action]
+
+    Bei Controllern die eine Authentifizierung fordern, muss der Parameter password mitgesendet werden.
+    Bei jeder Anfrage kann der format-Parameter mitgesendet werden, der das Format der Ausgabe festlegt.
+    Folgende Formate werden standardmäßig unterstützt:
+
+Ausgabeformate:
+    plain:
+        Syntax:
+            wert1,wert2,wert3
+        parsing:
+            PHP: $data = explode(',', $response);
+            C#: String[] data = response.split(',');
+            Java: String[] data = response.split(",");
+    xml:
+        Syntax:
+            <?xml version="1.0" ?>
+            <response>
+                <name1>wert</name1>
+                <name2>
+                    <name21>wert</name21>
+                    <name22>wert</name22>
+                </name2>
+                <name3>wert</name3>
+            </response>
+        parsing:
+            PHP(5.0+): $data = new SimpleXMLElement($response);
+    json:
+        Syntax:
+            {"name1":"wert","name2":{"name21":"wert","name22":"wert"},"name3":"wert"}
+        parsing:
+            PHP(5.2+): $data = json_decode($response);
+
+    Der Server antwortet mit folgenden Codes:
+        200 (OK):
+            Der Request war erfolgreich und die Daten werden im angegebenen Format ausgeliefert (Standard: plain)
+        204 (No Content):
+            Der Request war erfolgreich, aber es gibt keine Antwort
+        400 (Bad request):
+            Ungültiger Pfad wurde aufgerufen und bei Ausnahmen im RequestController(Error: 1, 3)
+        401 (Unauthorized):
+            Der Zugriff auf den Controller wurder verweigert (falsches oder kein API-Passwort gesendet) (Error: 2)
+        404 (Not found):
+            RequestController wurde nicht gefunden (Error: 5)
+        500 (Internal error):
+            Bei unbekannten Fehlern während der Verarbeitung des Requests (Errors: -1)
+        501 (Not Implemented):
+            Zugriff auf eine Aktion, die zwar registriert ist, aber noch nicht implementiert. (Error: 4)
+    
+    Desweiteren wird bei Fehlern ein Error-Code und eine Error-Nachricht ausgeben (im "plain"-Format):
+       -1: Unbekannter Fehler
+        1: Ungültiger Pfad
+        2: Falsches oder kein API-Passwort
+        3: RequestException vom Controller
+        4: NotImplementedException einer Action
+        5: Controller nicht gefunden
+
+Controllers:
+
+    validate:
+        Description:
+            Dieser Controller ist für die Validierung der API von außen zuständig
+        Authorization: Yes
+        Actions:
+            password:
+                Description:
+                    Zur Validierung des API Passworts
+                    Korrektes Passwort: 204
+                    Falsches Passwort: 401
+
+
+
+BasicApi
+==========
+
+Controllers:
+
+    command:
+        Description:
+            Kann beliebige Commands ausführen, auch Standardcommands.
+            Der Controller hat keine Actions, sondern er verwendet die Standardaction um Commands auszuführen.
+        Aliases:
+            - cmd
+        Authorization: Yes
+        Actions:
+            default:
+                Description:
+                    Wird genutzt um die Commands auszuführen.
+                Parameters:
+                    Optional:
+                        params: die Parameter, die an den Command übergeben werden sollen, getrennt durch ein Komma (,)
+                        sender: ein Spieler, der als Absender des Commands angegeben wird
+                Errors:
+                    1: Kein Befehl übergeben
+                    2: Command konnte nicht gefunden werden
+
+    serverinfos:
+        Description:
+            Dieser Controller ist nur für die Kompatibilität mit ApiCraft
+        Authorization: No
+        Actions:
+            default:
+                Description:
+                    Listet die verfügbaren Actions.
+                Result:
+                    - Liste der Actions (String[])
+
+            max-players:
+                Description:
+                    Gibt die maximale Spielerzahl zurück.
+                Aliases:
+                    - playerlimit
+                Result:
+                    - Spielerlimit (int)
+
+            whois:
+                Description:
+                    Gibt Informationen zu einem Spieler zurück.
+                    Diese Action nutzt die URL zur Parameter übergabe:
+                    /serverinfos/whois/<spielername>
+                Result:
+                    pseudo (string)
+                    displayName (string)
+                    health (int)
+
+            online:
+                Description:
+                    Gibt die Anzahl der Spieler zurück, die auf dem Server sind.
+                Result:
+                    - Spielerzahl (int)
+
+            players-online:
+                Description:
+                    Gibt eine Liste der Spielernamen zurück, die auf dem Server sind
+                Result:
+                    - Liste der Spieler (string[])
+            
+    server:
+        Description:
+            Dieser Controller ermöglicht die Verwaltung des Servers
+        Authorization: Yes
+        Actions:
+            info:
+                Description:
+                    Gibt einige Informationen über den Server zurück.
+                Result:
+                    id: die ID des Servers (string)
+                    name: der Name des Servers (string)
+                    ip: die IP des Servers (string)
+                    port: der Port des Servers (int)
+                    maxplayers: das Spielerlimit (int)
+                    players: die Anzahl der Spieler auf dem Server (int)
+                    worlds: die Anzahl der Welten (int)
+                    plugins: die Anzahl der Plugins (int)
+                    version: die Bukkit Version (string)
+                    uptime: die Anzahl der Sekunden, die der Server schon läuft (im mom immer null) (int)
+                    onlinemode: ob der Server im Online-Modus ist (bool)
+
+            reload:
+                Description:
+                    Führt einen Reload des Server aus.
+
+            broadcast:
+                Description:
+                    Sendet eine Nachricht an alle Spieler des Servers.
+                Parameters:
+                    Required:
+                        message: die Nachricht
+                Errors:
+                    1: Kein Nachricht übergeben
+
+            kill:
+                Description:
+                    Terminiert die VM des Servers (System.exit(0)).
+
+            stop:
+                Description:
+                    Beendet den Server ordnungsgemäß.
+
+            garbagecollect:
+                Description:
+                    Führt den Java Garbage Collector auf dem Server aus.
+                Aliases:
+                    - gc
+
+            stats:
+                Description:
+                    Gibt Speicherdaten des Servers zurück.
+                Result:
+                    maxmemory (int)
+                    freememory (int)
+                    
+            version:
+                Description:
+                    Gibt die Version des Servers zurück.
+                Aliases:
+                    - bukkitversion
+                Result:
+                    - Server Version (string)
+
+            maxplayers:
+                Description:
+                    Gibt die maximale Spielerzahl zurück.
+                Aliases:
+                    - playerlimit
+                Result:
+                    - Spielerlimit (int)
+
+    player:
+        Description:
+            Dieser Controller ermöglicht die Verwaltung der Spieler
+        Authorization: Yes
+        Actions:
+            default:
+                Description:
+                    Listet die verfügbaren Actions.
+                Result:
+                    - Liste der Actions (String[])
+
+            info:
+                Description:
+                    Gibt einige Informationen über einen Spieler zurück.
+                Parameters:
+                    Required:
+                        player: der Name des Spielers
+                Result:
+                    name: der Name des Spielers (string)
+                    displayName: der Anzeigename des Spielers (string)
+                    health: das Leben des Spielers (int)
+                    world: die Welt in der sich der Spieler befindet (string)
+                    ip: die IP des Spielers
+                    position:
+                        - die X Koordinate
+                        - die Y Koordinate
+                        - die Z Koordinate
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+
+            list:
+                Description:
+                    Gibt eine Liste der Spieler zurück, die auf dem Server sind.
+                Authorization: No
+                Result:
+                    - Liste der Spieler (string[])
+
+            give:
+                Description:
+                    Gibt einem Spieler eine bestimmte Anzahl eines Item.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                        itemid: die ID des Items
+                    Optional:
+                        amount: die Anzahl der Items
+                            default: 1
+                        blockdata: Die Blockdata des Items (zB. Farbe bei Wolle)
+                            default: 0
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+                    3: Ungültige ItemID übergeben
+                    4: Unbekannte ItemID übergeben
+            kick:
+                Description:
+                    Kickt einen Spieler vom Server.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                    Optional:
+                        reason: der Grund des Kicks
+                            default: ""
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+
+            teleport:
+                Description:
+                    Teleportiert einen Spieler zu einem bestimmten Punkt.
+                Aliases:
+                    - tp
+                Parameters:
+                    Required:
+                        player: der Spielername
+                        location: die Zielkoordinate (x,y,z[,yaw])
+                        oder
+                        targetplayer: der Name eines Spielers, zu dem teleportiert werden soll
+                    Optional:
+                        world: der Name der Zielwelt
+                            default: die Welt des Spielers
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+                    3: Welt nicht gefunden
+                    4: Ungültige Position übergeben
+                    5: Es konnte keine gültige Position gefunden werden
+
+            tell:
+                Description:
+                    Sendet eine Nachricht an einen Spieler (Farben sind möglich).
+                Aliases:
+                    - msg
+                Parameters:
+                    Required:
+                        player: der Spielername
+                        message: die Nachricht
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+                    3: Keine Nachricht übergeben
+
+            clearinventory:
+                Description:
+                    Leert das Inventar eines Spielers.
+                Aliases:
+                    - clearinv
+                Parameters:
+                    Required:
+                        player: der Spielername
+                        itemid: die ID
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+
+            kill:
+                Description:
+                    Killt einen Spieler.
+                Aliases:
+                    - slay
+                Parameters:
+                    Required:
+                        player: der Spielername
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+
+
+            heal:
+                Description:
+                    Heilt einen Spieler.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+
+            burn:
+                Description:
+                    Zündet einen Spieler an.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                    Optional:
+                        duration: die Dauer des Feuers in Sekunden
+                            default: 5
+                Errors:
+                    1: Kein Spieler übergeben
+                    2: Spieler nicht gefunden
+                    3: Ungültiger Wert für die Dauer
+    plugin:
+        Description:
+            Dieser Controller ermöglicht das Plugin-Management
+        Authorization: Yes
+        Aliases:
+            - pluginmanager
+        Actions:
+            default:
+                Description:
+                    Listet die verfügbaren Actions.
+                Result:
+                    - Liste der Actions (String[])
+            list:
+                Description:
+                    Listet alle Plugins, die der Server geladen hat.
+                Result:
+                    - Liste der Pluginnamen (string[])
+
+            info:
+                Description:
+                    Gibt einige nützliche Informationen über ein Plugin zurück.
+                Parameters:
+                    Required:
+                        plugin: der Name des Plugins
+                Result:
+                    name: der Name des Plugins
+                    fullName: der komplette Name des Plugins
+                    version: die Version des Plugins
+                    description: die Beschreibung des Plugins
+                    website: die Website des Plugins
+                    authors: die Autoren des Plugins
+                    depend: die Abhängigkeiten des Plugins
+                    commands: die Befehle des Plugins
+                    enabled: der Status des Plugins
+                    dataFolder: das Datenverzeichnis des Plugins
+                Errors:
+                    1: Kein Plugin übergeben
+                    2: Plugin nicht gefunden
+
+            load: *** DISABLED ***
+                Description:
+                    Läd und aktiviert ein Plugin.
+                Parameters:
+                    plugin: der Name der Jar des Plugins (ohne .jar)
+                Result:
+                    - Name des Plugins (string)
+                Errors:
+                    1: Kein Plugin übergeben
+                    2: Plugin konnt enicht geladen werden
+                    3: Ungültiges Plugin
+                    4: Ungültige Pluginbeschreibung
+                    5: Fehlende Abhängigkeit
+
+            reload: *** DISABLED ***
+                Description:
+                    Läd ein Plugin neu.
+                Parameters:
+                    plugin: der Name des Plugins
+                Errors:
+                    1: Kein Plugin übergeben
+                    2: Plugin nicht gefunden
+
+            reloadall:
+                Description:
+                    Läd alle Plugins neu.
+
+            enable: *** DISABLED ***
+                Description:
+                    Aktiviert ein Plugin.
+                Parameters:
+                    plugin: der Name des Plugins
+                Errors:
+                    1: Kein Plugin übergeben
+                    2: Plugin nicht gefunden
+
+            disable: *** DISABLED ***
+                Description:
+                    Deaktivert ein Plugin.
+                Parameters:
+                    plugin: der Name des Plugins
+                Errors:
+                    1: Kein Plugin übergeben
+                    2: Plugin nicht gefunden
+
+    world:
+        Description:
+            Dieser Controller ermöglicht das Verwalten der Welten.
+        Authorization: Yes
+        Actions:
+            default:
+                Description:
+                    Listet alle verfügbaren Aktionen auf.
+                Result:
+                    - Liste der Aktionen
+            list:
+                Description:
+                    Listet alle Welten.
+                Result:
+                    - Liste der Weltnamen (string)
+
+            create:
+                Description:
+                    Erstellt eine Welt
+                Parameters:
+                    Required:
+                        name: der Name der Welt
+                    Optional:
+                        seed: der Seed der neuen Welt
+                        environment: der Typ der Welt (normal oder nether)
+                Errors:
+                    1: Keine Weltname übergeben
+                    2: Die Welt existiert bereits
+                    3: Ungültiger Typ angegeben
+
+            info:
+                Description:
+                    Gibt einige nützliche Informationen über eine Welt zurück.
+                Parameters:
+                    Required:
+                        world: der Name der Welt
+                Result:
+                    name: Name der Welt (string)
+                    time: die Zeit der Welt (long)
+                    fullTime: die volle Zeit (long)
+                    seed: der Seed der Welt (long)
+                    pvp: der PVP Status (bool)
+                    environment: der Typ der Welt (string)
+                    thunderDuration: die Dauer des Sturms (int)
+                    weatherDuration: die Dauer des Wetters (int)
+                    spawnLocation:
+                        - X Koordinate
+                        - Y Koordinate
+                        - Z Koordinate
+                Errors:
+                    1: Keine Welt übergeben
+                    2: Welt nicht gefunden
+
+            pvp:
+                Description:
+                    setzt den PVP Status der Welt.
+                Parameters:
+                    Required:
+                        world: der Name der Welt
+                    Optional:
+                        pvp: der Status (on oder off)
+                Errors:
+                    1: Keine Welt übergeben
+                    2: Welt nicht gefunden
+                    3: Ungültiger Status übergeben
+
+            spawn:
+                Description:
+                    Setzt den Spawnpunkt der Welt.
+                Parameters:
+                    Required:
+                        world: der Name der Welt
+                        location: die Koordinaten (x,y,z)
+                Errors:
+                    1: Keine Welt übergeben
+                    2: Welt nicht gefunden
+                    3: Keine Position übergeben
+                    4: Spieler nicht gefunden
+                    5: Keine gültige Position übergeben
+
+            storm:
+                Description:
+                    Setzt den Sturm-Status der Welt.
+                Parameters:
+                    Required:
+                        world: der Name der Welt
+                        storm: der Sturm-Status (on oder off)
+                Errors:
+                    1: Keine Welt übergeben
+                    2: Welt nicht gefunden
+                    3: Ungültiger Status übergeben
+
+            time:
+                Description:
+                    Setzt die Zeit einer Welt.
+                Parameters:
+                    Required:
+                        time: die Zeit (0 - 24000)
+                        world: die Welt
+                Errors:
+                    1: Keine Welt übergeben
+                    2: Welt nicht gefunden
+                    3: Keine Zeit übergeben
+                    4: Die Zeit ist keinen gültige Zahl
+
+            spawnflags:
+                Description:
+                    Setzt die Spawn-Flags, also ob Monster und/oder Tiere spawnen.
+                Parameters:
+                    Required:
+                        world: die Welt
+                    Optional:
+                        monsters: on oder off
+                        animals: on oder off
+                Errors:
+                    1: Keine Welt übergeben
+                    2: Welt nicht gefunden
+
+    ban:
+        Description:
+            Dieser Controller ermöglicht das Bannen und Entbannen von Spielern.
+        Authorization: Yes
+        Actions:
+            default:
+                Description:
+                    Listet alle verfügbaren Aktionen auf.
+                Result:
+                    - Liste der Aktionen
+
+            add:
+                Description:
+                    Verbannt einen Spieler oder eine IP(v4) vom Server.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                         - oder -
+                        ip: die IP
+                    Optional:
+                        reason: der Grund des Bans
+                            default: ""
+                Errors:
+                    1: Kein Spieler oder keine IP übergeben
+                    2: Die übergebene IP ist nicht gültig
+
+            remove:
+                Description:
+                    Hebt einen IP- oder Playerbann auf:
+                Parameters:
+                    Required:
+                        player: der Spielername
+                        - oder -
+                        ip: die IP
+                Errors:
+                    1: Kein Spieler oder keine IP übergeben
+                    2: Die übergebene IP ist nicht gültig
+
+            get:
+                Description:
+                    Gibt die Banlisten des Server zurück
+                Result:
+                    player:
+                        - Liste der gebannten Spieler
+                    ip:
+                        - Liste der gebannten IPs
+
+    whitelist:
+        Description:
+            Dieser Controller ermöglicht das Verwalten der Whitelist.
+        Authorization: Yes
+        Actions:
+            default:
+                Description:
+                    Listet alle verfügbaren Aktionen auf.
+                Result:
+                    - Liste der Aktionen
+            add:
+                Description:
+                    Trägt einen Spieler in die Whitelist ein.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                Errors:
+                    1: Kein Spieler übergeben
+            remove:
+                Description:
+                    Entfernt einen Spieler von der Whitelist.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                Errors:
+                    1: Kein Spieler übergeben
+            is:
+                Description:
+                    Prüft ob ein Spieler auf der Whitelist steht.
+                Result:
+                    - Ob der Spieler auf der Whitelist steht (bool)
+                Errors:
+                    1: Kein Spieler übergeben
+            get:
+                Description:
+                    Gibt die Whitelist zurück.
+                Result:
+                    - die Whitelist (string[])
+
+    operator:
+        Description:
+            Dieser Controller ermöglicht das Verwalten der Operatoren.
+        Authorization: Yes
+        Actions:
+            default:
+                Description:
+                    Listet alle verfügbaren Aktionen auf.
+                Result:
+                    - Liste der Aktionen
+            add:
+                Description:
+                    Macht einen Spieler zum Operator.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                Errors:
+                    1: Kein Spieler übergeben
+            remove:
+                Description:
+                    Degradiert einen Operator.
+                Parameters:
+                    Required:
+                        player: der Spielername
+                Errors:
+                    1: Kein Spieler übergeben
+            is:
+                Description:
+                    Prüft ob ein Spieler ein Operator ist.
+                Result:
+                    - Ob der Spieler ein Operator ist (bool)
+                Errors:
+                    1: Kein Spieler übergeben
+            get:
+                Description:
+                    Gibt die Operatoren zurück.
+                Result:
+                    - die Operatoren (string[])
+            
