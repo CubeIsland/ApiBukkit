@@ -35,6 +35,7 @@ public class PlayerController extends AbstractRequestController
         this.registerAction("list",             new ListAction());
         this.registerAction("teleport",         new TeleportAction());
         this.registerAction("tell",             new TellAction());
+        this.registerAction("displayname",      new DisplaynameAction());
         
         this.setActionAlias("msg",              "tell");
         this.setActionAlias("clearinv",         "clearinventory");
@@ -440,6 +441,41 @@ public class PlayerController extends AbstractRequestController
                 {
                     player.getInventory().clear();
                     ApiBukkit.log("cleared inventory of player " + playerName);
+                }
+                else
+                {
+                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                }
+            }
+            else
+            {
+                throw new RequestException("No player given!", 1);
+            }
+            return null;
+        }
+    }
+
+    private class DisplaynameAction extends RequestAction
+    {
+        @Override
+        public Object run(Properties params, Server server) throws RequestException
+        {
+            String playerName = params.getProperty("player");
+            if (playerName != null)
+            {
+                Player player = server.getPlayer(playerName);
+                if (player != null)
+                {
+                    String newDisplayName = params.getProperty("displayname");
+                    if (newDisplayName != null)
+                    {
+                        player.setDisplayName(newDisplayName);
+                        ApiBukkit.log("changed the display name of player " + playerName + "to '" + newDisplayName + "' !");
+                    }
+                    else
+                    {
+                        throw new RequestException("No display name given!", 3);
+                    }
                 }
                 else
                 {
