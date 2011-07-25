@@ -57,7 +57,7 @@ public class XMLFormat implements IResponseFormat
         }
         else
         {
-            response += String.valueOf(o);
+            response += String.valueOf(o).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         }
         
         response += "</" + rootNodeName + ">";
