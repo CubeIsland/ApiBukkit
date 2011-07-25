@@ -3,7 +3,6 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
-import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -84,14 +83,7 @@ public class ServerController extends AbstractRequestController
             data.put("version", server.getVersion());
             data.put("plugins", server.getPluginManager().getPlugins().length);
             data.put("uptime", (System.currentTimeMillis() / 1000) - timeStamp);
-            if (BasicApi.classMethodExists("getOnlineMode", Server.class))
-            {
-                data.put("onlinemode", server.getOnlineMode());
-            }
-            else
-            {
-                data.put("onlinemode", null);
-            }
+            data.put("onlinemode", server.getOnlineMode());
             
             return data;
         }
