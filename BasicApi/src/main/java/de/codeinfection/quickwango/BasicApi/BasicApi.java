@@ -40,31 +40,6 @@ public class BasicApi extends JavaPlugin
         }
     }
 
-    public void onDisable()
-    {
-        this.api.removeRequestController("command");
-        this.api.removeRequestController("cmd");
-        
-        this.api.removeRequestController("serverinfos");
-        
-        this.api.removeRequestController("plugin");
-        this.api.removeRequestController("pluginmanager");
-        
-        this.api.removeRequestController("server");
-        
-        this.api.removeRequestController("world");
-
-        this.api.removeRequestController("player");
-
-        this.api.removeRequestController("ban");
-
-        this.api.removeRequestController("whitelist");
-
-        this.api.removeRequestController("operator");
-        
-        System.out.println(this.pdf.getName() + " " + this.pdf.getVersion() + " is now disabled!");
-    }
-
     public void onEnable()
     {
         this.init();
@@ -103,6 +78,31 @@ public class BasicApi extends JavaPlugin
         this.api.setRequestController("operator", new OperatorController(this));
         
         System.out.println(this.pdf.getName() + " " + this.pdf.getVersion() + " is now enabled!");
+    }
+
+    public void onDisable()
+    {
+        this.api.removeRequestController("command");
+        this.api.removeRequestController("cmd");
+
+        this.api.removeRequestController("serverinfos");
+
+        this.api.removeRequestController("plugin");
+        this.api.removeRequestController("pluginmanager");
+
+        this.api.removeRequestController("server");
+
+        this.api.removeRequestController("world");
+
+        this.api.removeRequestController("player");
+
+        this.api.removeRequestController("ban");
+
+        this.api.removeRequestController("whitelist");
+
+        this.api.removeRequestController("operator");
+
+        System.out.println(this.pdf.getName() + " " + this.pdf.getVersion() + " is now disabled!");
     }
 
     private void init()
