@@ -2,7 +2,6 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
-import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -62,22 +61,8 @@ public class WorldController extends AbstractRequestController
                     data.put("environment", world.getEnvironment().toString());
                     data.put("thunderDuration", world.getThunderDuration());
                     data.put("weatherDuration", world.getWeatherDuration());
-                    if (BasicApi.classMethodExists("getAllowAnimals", World.class))
-                    {
-                        data.put("animals", world.getAllowAnimals());
-                    }
-                    else
-                    {
-                        data.put("animals", null);
-                    }
-                    if (BasicApi.classMethodExists("getAllowMonsters", World.class))
-                    {
-                        data.put("monsters", world.getAllowMonsters());
-                    }
-                    else
-                    {
-                        data.put("monsters", null);
-                    }
+                    data.put("animals", world.getAllowAnimals());
+                    data.put("monsters", world.getAllowMonsters());
 
                     Location spawnLoc = world.getSpawnLocation();
                     data.put("spawnLocation", new Integer[] {
@@ -422,10 +407,6 @@ public class WorldController extends AbstractRequestController
                 World world = server.getWorld(worldName);
                 if (world != null)
                 {
-                    if (!BasicApi.classMethodExists("setSpawnFlags", World.class))
-                    {
-                        throw new UnsupportedOperationException();
-                    }
                     boolean monsters = world.getAllowMonsters();
                     boolean animals = world.getAllowAnimals();
 
