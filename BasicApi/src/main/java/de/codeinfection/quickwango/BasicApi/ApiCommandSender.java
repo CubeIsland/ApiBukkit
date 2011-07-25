@@ -12,12 +12,13 @@ import org.bukkit.command.CommandSender;
 public class ApiCommandSender implements CommandSender
 {
     protected boolean active;
-    protected Server server;
-    protected List<String> messages;
+    protected final Server server;
+    protected final List<String> messages;
 
     public ApiCommandSender(final Server server)
     {
         this.active = false;
+        this.server = server;
         this.messages = new ArrayList<String>();
     }
 
@@ -57,7 +58,8 @@ public class ApiCommandSender implements CommandSender
         return true;
     }
 
-    public Server getServer() {
+    public Server getServer()
+    {
         return this.server;
     }
 }
