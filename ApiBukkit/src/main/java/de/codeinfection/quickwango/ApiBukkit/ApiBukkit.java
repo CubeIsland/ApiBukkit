@@ -30,17 +30,6 @@ public class ApiBukkit extends JavaPlugin
     protected String password = "changeMeToASuperSecurePassword";
     public static boolean debug = false;
 
-    public void onDisable()
-    {
-        log("Stopping Web Server...");
-        if (this.webserver != null)
-        {
-            this.webserver.stop();
-        }
-        
-        log(String.format("%s Version %s is now disabled!", this.pdf.getName(), this.pdf.getVersion()));
-    }
-
     public void onEnable()
     {
         this.dataFolder = this.getDataFolder().getAbsoluteFile();
@@ -97,6 +86,17 @@ public class ApiBukkit extends JavaPlugin
         }
         
         log(String.format("%s Version %s is now enabled!", this.pdf.getName(), this.pdf.getVersion()));
+    }
+
+    public void onDisable()
+    {
+        log("Stopping Web Server...");
+        if (this.webserver != null)
+        {
+            this.webserver.stop();
+        }
+
+        log(String.format("%s Version %s is now disabled!", this.pdf.getName(), this.pdf.getVersion()));
     }
     
     protected void init()
