@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
 import de.codeinfection.quickwango.ApiBukkit.Net.NanoHTTPD.Response;
@@ -115,7 +113,7 @@ public class ApiBukkitServer extends NanoHTTPD
                 ApiBukkit.error("ControllerException: " + e.getMessage());
                 return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, this.error(ApiError.REQUEST_EXCEPTION, e.getErrCode()));
             }
-            catch (NotImplementedException e)
+            catch (UnsupportedOperationException e)
             {
                 ApiBukkit.error("action not implemented");
                 return new Response(HTTP_NOTIMPLEMENTED, MIME_PLAINTEXT, this.error(ApiError.ACTION_NOT_IMPLEMENTED));

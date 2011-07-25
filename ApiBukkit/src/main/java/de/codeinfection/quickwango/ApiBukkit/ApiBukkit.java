@@ -4,16 +4,12 @@ import java.io.File;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
@@ -25,7 +21,7 @@ public class ApiBukkit extends JavaPlugin
     protected File dataFolder;
     protected ApiBukkitServer webserver;
     protected Configuration config;
-    protected boolean zombi = false;
+    protected boolean zombie = false;
     
     protected boolean initiated = false;
 
@@ -63,14 +59,27 @@ public class ApiBukkit extends JavaPlugin
             this.config.save();
         }
 
-        this.port = this.config.getInt("Configuration.port", this.port);
-        this.password = this.config.getString("Configuration.password", this.password);
         debug = this.config.getBoolean("Configuration.debug", debug);
-        
-        this.init();
+        this.port = this.config.getInt("Configuration.port", this.port);
 
-        this.getCommand("apireload").setExecutor(new ApireloadCommand());
-        this.getCommand("apiinfo").setExecutor(new ApiinfoCommand());
+        this.init();
+        
+        String cfgPassword = this.config.getString("Configuration.password", this.password);
+        if (!cfgPassword.equals(this.password))
+        {
+            this.password = cfgPassword;
+        }
+        else
+        {
+            error("####################################");
+            error("It is not allowed to use ApiBukkit with the default password!");
+            error("");
+            error("Staying in a zombie state...");
+            error("####################################");
+            return;
+        }
+
+        this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
         try
         {
@@ -82,8 +91,8 @@ public class ApiBukkit extends JavaPlugin
         {
             error("Failed to start the web server!");
             logException(t);
-            error("Staying in zombi state...");
-            this.zombi = true;
+            error("Staying in a zombie state...");
+            this.zombie = true;
             return;
         }
         
@@ -108,6 +117,21 @@ public class ApiBukkit extends JavaPlugin
                 t.printStackTrace(System.err);
             }
         }
+    }
+
+    public boolean isZombie()
+    {
+        return this.zombie;
+    }
+
+    public int getApiPort()
+    {
+        return this.port;
+    }
+
+    public String getApiPassword()
+    {
+        return this.password;
     }
     
     /**
@@ -183,48 +207,5 @@ public class ApiBukkit extends JavaPlugin
         System.err.println("ApiBukkit: " + t.getClass().getName());
         System.err.println("Message: " + t.getMessage());
         t.printStackTrace(System.err);
-    }
-    
-    
-    private class ApireloadCommand implements CommandExecutor
-    {
-        public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
-        {
-            if (!(sender instanceof Player))
-            {
-                onDisable();
-                onEnable();
-                log("API reloaded!");
-            }
-            else
-            {
-                sender.sendMessage("This command cannot be executed as a player!");
-            }
-            return true;
-        }
-    }
-    
-    private class ApiinfoCommand implements CommandExecutor
-    {
-        public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
-        {
-            if (!(sender instanceof Player))
-            {
-                if (!zombi)
-                {
-                    sender.sendMessage("API Port: " + port);
-                    sender.sendMessage("API Password: " + password);
-                }
-                else
-                {
-                    sender.sendMessage("The API is currenty in a zombi state. Check your log for errors and try to reload the plugin and/or the server.");
-                }
-            }
-            else
-            {
-                sender.sendMessage("This command cannot be executed as a player!");
-            }
-            return true;
-        }
     }
 }

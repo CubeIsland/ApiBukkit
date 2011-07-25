@@ -14,7 +14,6 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
@@ -425,7 +424,7 @@ public class WorldController extends AbstractRequestController
                 {
                     if (!BasicApi.classMethodExists("setSpawnFlags", World.class))
                     {
-                        throw new NotImplementedException();
+                        throw new UnsupportedOperationException();
                     }
                     boolean monsters = world.getAllowMonsters();
                     boolean animals = world.getAllowAnimals();
