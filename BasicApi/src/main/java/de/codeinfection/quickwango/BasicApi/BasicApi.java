@@ -52,11 +52,6 @@ public class BasicApi extends JavaPlugin
             return;
         }
         
-        if (!this.api.isEnabled())
-        {
-            this.pm.enablePlugin(this.api);
-        }
-        
         this.api.setRequestController("command", new CommandController(this));
         this.api.setControllerAlias("cmd", "command");
         
