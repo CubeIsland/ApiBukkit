@@ -5,9 +5,9 @@ import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
@@ -99,9 +99,9 @@ public class OperatorController extends AbstractRequestController
             List<String> operators = new ArrayList<String>();
             try
             {
-                Field oplist = ServerConfigurationManager.class.getField("h");
+                Field oplist = ServerConfigurationManager.class.getDeclaredField("h");
                 oplist.setAccessible(true);
-                operators.addAll((HashSet)oplist.get(cserver));
+                operators.addAll((Set)oplist.get(cserver));
             }
             catch (Throwable t)
             {

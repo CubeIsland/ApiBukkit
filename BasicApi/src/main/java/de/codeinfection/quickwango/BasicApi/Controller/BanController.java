@@ -6,10 +6,10 @@ import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import net.minecraft.server.ServerConfigurationManager;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
@@ -115,21 +115,30 @@ public class BanController extends AbstractRequestController
         public Object run(Properties params, Server server) throws RequestException
         {
             List<String> players = new ArrayList<String>();
-            List<String> ips = new ArrayList<String>();
             try
             {
-                Field playerlist = ServerConfigurationManager.class.getField("banByName");
+                Field playerlist = ServerConfigurationManager.class.getDeclaredField("banByName");
                 playerlist.setAccessible(true);
-                players.addAll((HashSet)playerlist.get(cserver));
-
-                Field iplist = ServerConfigurationManager.class.getField("banByIP");
-                iplist.setAccessible(true);
-                ips.addAll((HashSet)iplist.get(cserver));
+                players.addAll((Set)playerlist.get(cserver));
             }
             catch (Throwable t)
             {
-                ApiBukkit.error("Failed to get the bans!");
-                ApiBukkit.error("Error:");
+                ApiBukkit.error("Failed to get the banned players!");
+                ApiBukkit.error("Error: " + t.getClass().getName().replaceFirst(t.getClass().getPackage().getName() + ".", ""));
+                ApiBukkit.error(t.getLocalizedMessage());
+            }
+
+            List<String> ips = new ArrayList<String>();
+            try
+            {
+                Field iplist = ServerConfigurationManager.class.getDeclaredField("banByIP");
+                iplist.setAccessible(true);
+                ips.addAll((Set)iplist.get(cserver));
+            }
+            catch (Throwable t)
+            {
+                ApiBukkit.error("Failed to get the banned IPs!");
+                ApiBukkit.error("Error: " + t.getClass().getName().replaceFirst(t.getClass().getPackage().getName() + ".", ""));
                 ApiBukkit.error(t.getLocalizedMessage());
             }
 
