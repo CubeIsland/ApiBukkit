@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A simple, tiny, nicely embeddable HTTP 1.0 server in Java
@@ -60,6 +61,8 @@ import java.util.HashMap;
  */
 public abstract class NanoHTTPD
 {
+    private final List<HTTPSession> sessions;
+
     /**
      * Override this to customize the server.
      *
@@ -145,6 +148,13 @@ public abstract class NanoHTTPD
 
     private class HttpSeverThread implements Runnable
     {
+        protected int maxSessions;
+
+        public HttpSeverThread(int maxSessions)
+        {
+            this.maxSessions = maxSessions;
+        }
+
         public void run()
         {
             try
@@ -153,6 +163,15 @@ public abstract class NanoHTTPD
                 while (true)
                 {
                     session = new HTTPSession(httpServerSocket.accept());
+                    if (sessions.size() < this.maxSessions)
+                    {
+                        session.start();
+                        sessions.add(session);
+                    }
+                    else
+                    {
+                        session.close();
+                    }
                 }
             }
             catch (IOException ioe)
@@ -220,15 +239,17 @@ public abstract class NanoHTTPD
     private Thread httpServerThread;
 
     public NanoHTTPD()
-    {}
+    {
+        this.sessions = new ArrayList<HTTPSession>();
+    }
 
     /**
      * Starts a HTTP server to given port.<p>
      * Throws an IOException if the socket is already in use
      */
-    public void start(int port) throws IOException
+    public void start(int port, int maxSessions) throws IOException
     {
-        this.httpServerThread = new Thread(new HttpSeverThread());
+        this.httpServerThread = new Thread(new HttpSeverThread(maxSessions));
         this.httpServerThread.setDaemon(true);
         this.httpServerPort = port;
         this.httpServerSocket = new ServerSocket(this.httpServerPort);
@@ -262,9 +283,29 @@ public abstract class NanoHTTPD
         public HTTPSession(Socket socket)
         {
             this.socket = socket;
+            this.thread = null;
+        }
+
+        public void start()
+        {
             this.thread = new Thread(this);
             this.thread.setDaemon(true);
             this.thread.start();
+        }
+
+        public void close()
+        {
+            try
+            {
+                this.socket.shutdownInput();
+                this.socket.shutdownOutput();
+                if (!this.socket.isClosed())
+                {
+                    this.socket.close();
+                }
+            }
+            catch (Throwable t)
+            {}
         }
 
         public void run()
@@ -428,12 +469,8 @@ public abstract class NanoHTTPD
 
                 reader.close();
                 inputStream.close();
-                this.socket.shutdownInput();
-                this.socket.shutdownOutput();
-                if (!this.socket.isClosed())
-                {
-                    this.socket.close();
-                }
+                this.close();
+                sessions.remove(this);
             }
             catch (IOException ioe)
             {

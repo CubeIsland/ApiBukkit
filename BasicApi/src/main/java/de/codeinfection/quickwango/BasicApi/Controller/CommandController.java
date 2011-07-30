@@ -7,6 +7,7 @@ import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
 import de.codeinfection.quickwango.BasicApi.ApiCommandSender;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
+import java.util.Arrays;
 import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -22,7 +23,6 @@ public class CommandController extends AbstractRequestController
     public CommandController(Plugin plugin)
     {
         super(plugin, true);
-        //this.commandSender = new ConsoleCommandSender(plugin.getServer());
         this.commandSender = new ApiCommandSender(this.plugin.getServer());
     }
 
@@ -38,7 +38,7 @@ public class CommandController extends AbstractRequestController
             String paramsParam = params.getProperty("params");
             if (paramsParam != null)
             {
-                commandLine += " " + BasicApi.implode(" ", paramsParam.split(","));
+                commandLine += " " + BasicApi.implode(" ", Arrays.asList(paramsParam.split(",")));
             }
             
             Player player = null;

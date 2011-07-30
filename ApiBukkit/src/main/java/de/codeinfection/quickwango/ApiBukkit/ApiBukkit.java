@@ -14,7 +14,7 @@ import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
 {
-    public static final Logger logger = Logger.getLogger("Minecraft");
+    protected static final Logger logger = Logger.getLogger("Minecraft");
     protected Server server;
     protected PluginManager pm;
     protected PluginDescriptionFile pdf;
@@ -24,11 +24,22 @@ public class ApiBukkit extends JavaPlugin
     protected boolean zombie = false;
     
     protected boolean initiated = false;
+    protected final String defaultPassword;
 
     // Configuration
-    protected int port = 6561;
-    protected String password = "changeMeToASuperSecurePassword";
+    protected int port;
+    protected String password;
+    protected int maxSessions;
     public static boolean debug = false;
+    public static boolean verbose = true;
+
+    public ApiBukkit()
+    {
+        this.defaultPassword = "changeMeToASuperSecurePassword";
+        this.password = this.defaultPassword;
+        this.port = 6561;
+        this.maxSessions = 30;
+    }
 
     public void onEnable()
     {
@@ -44,16 +55,20 @@ public class ApiBukkit extends JavaPlugin
         {
             this.config.setProperty("Configuration.port", this.port);
             this.config.setProperty("Configuration.password", this.password);
+            this.config.setProperty("Configuration.maxSessions", this.maxSessions);
+            this.config.setProperty("Configuration.verbose", verbose);
             this.config.setProperty("Configuration.debug", debug);
             this.config.save();
         }
 
+        verbose = this.config.getBoolean("Configuration.verbose", verbose);
         debug = this.config.getBoolean("Configuration.debug", debug);
         this.port = this.config.getInt("Configuration.port", this.port);
+        this.maxSessions = this.config.getInt("Configuration.maxSessions", this.maxSessions);
+        String cfgPassword = this.config.getString("Configuration.password", this.password);
 
         this.init();
         
-        String cfgPassword = this.config.getString("Configuration.password", this.password);
         if (!cfgPassword.equals(this.password))
         {
             this.password = cfgPassword;
@@ -73,7 +88,7 @@ public class ApiBukkit extends JavaPlugin
         try
         {
             log(String.format("Starting the web server on port %s!", this.port));
-            this.webserver.start(this.port, this.password);
+            this.webserver.start(this.port, this.password, this.maxSessions);
             log("Web server started!");
         }
         catch (Throwable t)
@@ -85,7 +100,7 @@ public class ApiBukkit extends JavaPlugin
             return;
         }
         
-        log(String.format("%s Version %s is now enabled!", this.pdf.getName(), this.pdf.getVersion()));
+        log(String.format("Version %s is now enabled!", this.pdf.getVersion()), true);
     }
 
     public void onDisable()
@@ -93,10 +108,11 @@ public class ApiBukkit extends JavaPlugin
         log("Stopping Web Server...");
         if (this.webserver != null)
         {
+            this.webserver.clearRequestControllers();
             this.webserver.stop();
         }
 
-        log(String.format("%s Version %s is now disabled!", this.pdf.getName(), this.pdf.getVersion()));
+        log(String.format("Version %s is now disabled!", this.pdf.getVersion()), true);
     }
     
     protected void init()
@@ -144,7 +160,7 @@ public class ApiBukkit extends JavaPlugin
     {
         if (this.webserver != null)
         {
-            ApiBukkit.debug(String.format("Registered %s on %s", controller.getClass().getName(), name));
+            debug(String.format("Registered %s on %s", controller.getClass().getName().replaceFirst(controller.getClass().getPackage().getName() + ".", ""), name));
             this.webserver.setRequestController(name, controller);
         }
     }
@@ -178,15 +194,23 @@ public class ApiBukkit extends JavaPlugin
         }
     }
     
-    public File apiDataFolder(Plugin plugin)
+    public File getApiDataFolder(Plugin plugin)
     {
         return new File(this.dataFolder, plugin.getDescription().getName());
         
     }
-    
+
     public static void log(String message)
     {
-        logger.log(Level.INFO, "[ApiBukkit] " + message);
+        log(message, false);
+    }
+    
+    public static void log(String message, boolean force)
+    {
+        if (force || verbose)
+        {
+            logger.log(Level.INFO, "[ApiBukkit] " + message);
+        }
     }
     
     public static void error(String message)
@@ -198,7 +222,7 @@ public class ApiBukkit extends JavaPlugin
     {
         if (debug)
         {
-            log("[DEBUG] ApiBukkit: " + message);
+            log("[DEBUG] " + message);
         }
     }
     

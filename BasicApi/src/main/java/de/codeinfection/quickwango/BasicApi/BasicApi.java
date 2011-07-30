@@ -6,8 +6,12 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import org.bukkit.util.config.Configuration;
 
 /**
  *
@@ -20,21 +24,24 @@ public class BasicApi extends JavaPlugin
     protected PluginManager pm;
     protected ApiBukkit api;
     protected PluginDescriptionFile pdf;
+    protected File apiDataFolder;
+    protected Configuration config;
     
-    public static String implode(String delim, String[] array)
+    public static String implode(String delim, Iterable<String> array)
     {
-        if (array.length == 0)
+        Iterator iter = array.iterator();
+        if (!iter.hasNext())
         {
             return "";
         }
         else
         {
             StringBuilder sb = new StringBuilder();
-            sb.append(array[0]);
-            for (int i = 1; i < array.length; i++)
+            sb.append(iter.next());
+            while (iter.hasNext())
             {
                 sb.append(delim);
-                sb.append(array[i]);
+                sb.append(iter.next());
             }
             return sb.toString();
         }
@@ -50,6 +57,17 @@ public class BasicApi extends JavaPlugin
             System.err.println("Could not hook into ApiBukkit! Staying inactive...");
             return;
         }
+
+        this.apiDataFolder = this.api.getApiDataFolder(this);
+        this.apiDataFolder.mkdirs();
+        File configFile = new File(this.apiDataFolder, "config.yml");
+        this.config = new Configuration(configFile);
+        if (!configFile.exists())
+        {
+            config.setProperty("configfiles", new ArrayList<String>());
+            config.save();
+        }
+        config.load();
         
         this.api.setRequestController("command", new CommandController(this));
         this.api.setControllerAlias("cmd", "command");
@@ -70,33 +88,15 @@ public class BasicApi extends JavaPlugin
         this.api.setRequestController("whitelist", new WhitelistController(this));
 
         this.api.setRequestController("operator", new OperatorController(this));
+
+        this.api.setRequestController("configuration", new ConfigurationController(this, this.config.getStringList("configfiles", new ArrayList<String>())));
         
-        System.out.println(this.pdf.getName() + " " + this.pdf.getVersion() + " is now enabled!");
+        ApiBukkit.log(this.pdf.getName() + " " + this.pdf.getVersion() + " is now enabled!", true);
     }
 
     public void onDisable()
     {
-        this.api.removeRequestController("command");
-        this.api.removeRequestController("cmd");
-
-        this.api.removeRequestController("serverinfos");
-
-        this.api.removeRequestController("plugin");
-        this.api.removeRequestController("pluginmanager");
-
-        this.api.removeRequestController("server");
-
-        this.api.removeRequestController("world");
-
-        this.api.removeRequestController("player");
-
-        this.api.removeRequestController("ban");
-
-        this.api.removeRequestController("whitelist");
-
-        this.api.removeRequestController("operator");
-
-        System.out.println(this.pdf.getName() + " " + this.pdf.getVersion() + " is now disabled!");
+        ApiBukkit.log(this.pdf.getName() + " " + this.pdf.getVersion() + " is now disabled!", true);
     }
 
     private void init()

@@ -37,7 +37,7 @@ public abstract class AbstractRequestController
     protected void registerAction(String name, RequestAction action)
     {
         this.actions.put(name, action);
-        ApiBukkit.debug(String.format("Registered action '%s' in '%s'", name, this.getClass().getName()));
+        ApiBukkit.debug(String.format("Registered action '%s' in '%s'", name, this.getClass().getName().replaceFirst(this.getClass().getPackage().getName() + ".", "")));
     }
     
     protected boolean setActionAlias(String alias, String action)

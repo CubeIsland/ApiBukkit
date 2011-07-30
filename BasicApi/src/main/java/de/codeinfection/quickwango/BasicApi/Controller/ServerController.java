@@ -3,7 +3,13 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import net.minecraft.server.MinecraftServer;
@@ -40,6 +46,7 @@ public class ServerController extends AbstractRequestController
         this.registerAction("stop",             new StopAction());
         this.registerAction("broadcast",        new BroadcastAction());
         this.registerAction("reload",           new ReloadAction());
+        this.registerAction("console",          new ConsoleAction());
         
         this.setActionAlias("playerlimit",      "maxplayers");
         this.setActionAlias("gc",               "garbagecollect");
@@ -201,6 +208,51 @@ public class ServerController extends AbstractRequestController
         public Object run(Properties params, Server server) throws RequestException
         {
             server.reload();
+            return null;
+        }
+    }
+
+    private class ConsoleAction extends ReloadAction
+    {
+        @Override
+        public Object run(Properties params, Server server) throws RequestException
+        {
+            try
+            {
+                long lineCount = 100L;
+                String linesParam = params.getProperty("lines");
+                if (linesParam != null)
+                try
+                {
+                    lineCount = Long.valueOf(linesParam);
+                }
+                catch (NumberFormatException e)
+                {}
+                File serverLog = new File("server.log");
+                RandomAccessFile file = new RandomAccessFile(serverLog, "r");
+
+                lineCount = Math.abs(lineCount);
+                long startPosition = file.length() - (lineCount * 100);
+                if (startPosition < 0)
+                {
+                    startPosition = 0;
+                }
+
+                String line = "";
+                List<String> lines = new ArrayList<String>();
+                file.seek(startPosition);
+                while ((line = file.readLine()) != null )
+                {
+                    lines.add(line);
+                }
+                file.close();
+
+                return lines;
+            }
+            catch (IOException e)
+            {
+                ApiBukkit.error("Could not find the server log!");
+            }
             return null;
         }
     }

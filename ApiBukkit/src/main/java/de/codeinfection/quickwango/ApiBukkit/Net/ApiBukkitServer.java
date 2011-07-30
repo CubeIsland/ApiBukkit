@@ -33,15 +33,16 @@ public class ApiBukkitServer extends NanoHTTPD
         responseFormats.put("plain", new PlainFormat());
         responseFormats.put("json", new JsonFormat());
         responseFormats.put("xml", new XMLFormat());
+        responseFormats.put("raw", new XMLFormat());
         
         this.requestControllers = new ConcurrentHashMap<String, AbstractRequestController>();
         this.requestControllers.put("validate", new ValidateController(null));
     }
 
-    public void start(int port, String password) throws IOException
+    public void start(int port, String password, int maxSessions) throws IOException
     {
         this.APIPassword = password;
-        this.start(port);
+        this.start(port, maxSessions);
     }
 
     @Override
@@ -208,6 +209,11 @@ public class ApiBukkitServer extends NanoHTTPD
     public void removeRequestController(String name)
     {
         this.requestControllers.remove(name);
+    }
+
+    public void clearRequestControllers()
+    {
+        this.requestControllers.clear();
     }
     
     protected String error(ApiError error)
