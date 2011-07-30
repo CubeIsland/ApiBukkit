@@ -264,8 +264,13 @@ public abstract class NanoHTTPD
     {
         try
         {
-            httpServerSocket.close();
-            httpServerThread.join();
+            this.httpServerSocket.close();
+            this.httpServerThread.join(500);
+            for (HTTPSession session : this.sessions)
+            {
+                session.close();
+            }
+            this.sessions.clear();
         }
         catch (Throwable t)
         {}
