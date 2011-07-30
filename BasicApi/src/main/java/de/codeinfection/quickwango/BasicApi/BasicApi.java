@@ -54,7 +54,13 @@ public class BasicApi extends JavaPlugin
         this.api = (ApiBukkit) this.pm.getPlugin("ApiBukkit");
         if (this.api == null)
         {
-            System.err.println("Could not hook into ApiBukkit! Staying inactive...");
+            ApiBukkit.error("Could not hook into ApiBukkit! Staying inactive...");
+            return;
+        }
+        if (this.api.isZombie())
+        {
+            ApiBukkit.error("ApiBukkit seems to be a zombie...");
+            ApiBukkit.error("I think it infected me.");
             return;
         }
 
