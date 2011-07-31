@@ -46,8 +46,15 @@ public class OperatorController extends AbstractRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                cserver.e(playerName);
-                return null;
+                if (!cserver.isOp(playerName))
+                {
+                    cserver.e(playerName);
+                    return null;
+                }
+                else
+                {
+                    throw new RequestException("Player already Op!", 2);
+                }
             }
             else
             {
@@ -64,8 +71,15 @@ public class OperatorController extends AbstractRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                cserver.f(playerName);
-                return null;
+                if (cserver.isOp(playerName))
+                {
+                    cserver.f(playerName);
+                    return null;
+                }
+                else
+                {
+                    throw new RequestException("Player is not a Op!", 2);
+                }
             }
             else
             {
@@ -106,7 +120,7 @@ public class OperatorController extends AbstractRequestController
             catch (Throwable t)
             {
                 ApiBukkit.error("Failed to get the ops!");
-                ApiBukkit.error("Error:");
+                ApiBukkit.error("Error: " + t.getClass().getName().replaceFirst(t.getClass().getPackage().getName() + ".", ""));
                 ApiBukkit.error(t.getLocalizedMessage());
             }
 
