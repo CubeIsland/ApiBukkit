@@ -28,7 +28,7 @@ public class PlainFormat implements IResponseFormat
             int counter = 0;
             for (Map.Entry entry : data.entrySet())
             {
-                counter++;
+                ++counter;
                 Object value = entry.getValue();
                 response += this.format(value);
                 if (counter < dataSize)
