@@ -97,7 +97,8 @@ public class PlayerController extends AbstractRequestController
                         playerLoc.getX(),
                         playerLoc.getY(),
                         playerLoc.getZ(),
-                        (double)playerLoc.getYaw()
+                        (double)playerLoc.getYaw(),  // horizontal
+                        (double)playerLoc.getPitch() // vertical
                     });
                     data.put("ip", player.getAddress().getAddress().getHostAddress());
 
