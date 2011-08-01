@@ -6,21 +6,21 @@ import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 
 public class JsonFormat implements IResponseFormat
 {
-    
     public String getMime()
     {
         return ApiBukkitServer.MIME_JSON;
     }
-    
-    @SuppressWarnings("unchecked")
+
     public String format(Object o)
     {
+        return this.format(o, true);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public String format(Object o, boolean firstLevel)
+    {
         String response = "";
-        if (o == null || o instanceof Number || o instanceof Boolean)
-        {
-            response += "[" + String.valueOf(o) + "]";
-        }
-        else if (o instanceof Map)
+        if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
             int dataSize = data.size();
@@ -31,18 +31,7 @@ public class JsonFormat implements IResponseFormat
                 counter++;
                 String name = entry.getKey().toString();
                 Object value = entry.getValue();
-                if (value == null || value instanceof Number || value instanceof Boolean)
-                {
-                    response += "\"" + name + "\":" + String.valueOf(value);
-                }
-                else if (value instanceof Iterable || value instanceof Map || value.getClass().isArray())
-                {
-                    response += "\"" + name + "\":" + this.format(value);
-                }
-                else
-                {
-                    response += "\"" + name + "\":\"" + String.valueOf(value) + "\"";
-                }
+                response += "\"" + name + "\":" + this.format(value, false);
                 if (counter < dataSize)
                 {
                     response += ",";
@@ -58,18 +47,7 @@ public class JsonFormat implements IResponseFormat
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                if (value == null || value instanceof Number || value instanceof Boolean)
-                {
-                    response += String.valueOf(value);
-                }
-                else if (value instanceof Iterable || value instanceof Map || value.getClass().isArray())
-                {
-                    response += this.format(value);
-                }
-                else
-                {
-                    response += "\"" + String.valueOf(value) + "\"";
-                }
+                response += this.format(value, false);
                 if (iter.hasNext())
                 {
                     response += ",";
@@ -84,28 +62,37 @@ public class JsonFormat implements IResponseFormat
             response += "[";
             for (int i = 0; i < data.length; i++)
             {
-                if (data[i] == null || data[i] instanceof Number || data[i] instanceof Boolean)
-                {
-                    response += String.valueOf(data[i]);
-                }
-                else if (data[i] instanceof Iterable || data[i] instanceof Map || data[i].getClass().isArray())
-                {
-                    response += this.format(data[i]);
-                }
-                else
-                {
-                    response += "\"" + String.valueOf(data[i]) + "\"";
-                }
-                if (i < end)
-                {
-                    response += ",";
-                }
+
+                response += this.format(data[i], false);
             }
             response += "]";
         }
         else
         {
-            response += "[\"" + String.valueOf(o) + "\"]";
+
+            if (o instanceof Iterable || o instanceof Map || o.getClass().isArray())
+            {
+                response += this.format(o, false);
+            }
+            else
+            {
+                if (firstLevel)
+                {
+                    response += "[";
+                }
+                if (o == null || o instanceof Number || o instanceof Boolean)
+                {
+                    response += String.valueOf(o);
+                }
+                else
+                {
+                    response += "\"" + String.valueOf(o).replaceAll("\\\"", "\\\\\"") + "\"";
+                }
+                if (firstLevel)
+                {
+                    response += "]";
+                }
+            }
         }
         
         return response;
