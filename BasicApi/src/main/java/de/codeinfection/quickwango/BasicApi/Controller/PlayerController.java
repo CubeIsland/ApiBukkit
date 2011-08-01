@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -72,6 +73,8 @@ public class PlayerController extends AbstractRequestController
     
     private class InfoAction extends RequestAction
     {
+        private final double armorPoints[] = {1.5, 3.0, 4.0, 1.5};
+
         @Override
         public Object run(Properties params, Server server) throws RequestException
         {
@@ -86,6 +89,7 @@ public class PlayerController extends AbstractRequestController
                     data.put("displayName", player.getDisplayName());
                     int health = player.getHealth();
                     data.put("health", health < 0 ? 0 : health);
+                    data.put("armor", this.getArmorPoints(player));
 
                     Location playerLoc = player.getLocation();
                     data.put("world", playerLoc.getWorld().getName());
@@ -108,6 +112,36 @@ public class PlayerController extends AbstractRequestController
             {
                 throw new RequestException("No player given!", 1);
             }
+        }
+
+        public final int getArmorPoints(Player player)
+        {
+            int currentDurability = 0;
+            int baseDurability = 0;
+            double baseArmorPoints = 0;
+            ItemStack inventory[] = player.getInventory().getArmorContents();
+            for (int i = 0; i < inventory.length; ++i)
+            {
+                if (inventory[i] == null)
+                {
+                    continue;
+                }
+                Material material = inventory[i].getType();
+                if (material == null)
+                {
+                    continue;
+                }
+                final short maxDurability = material.getMaxDurability();
+                if (maxDurability < 0)
+                {
+                    continue;
+                }
+                final short durability = inventory[i].getDurability();
+                baseDurability += maxDurability;
+                currentDurability += maxDurability - durability;
+                baseArmorPoints += armorPoints[i];
+            }
+            return (int)(2 * baseArmorPoints * currentDurability / baseDurability);
         }
     }
     
