@@ -20,7 +20,11 @@ public class JsonFormat implements IResponseFormat
     protected String format(Object o, boolean firstLevel)
     {
         String response = "";
-        if (o instanceof Map)
+        if (o == null)
+        {
+            response += (firstLevel ? "[null]" : "null");
+        }
+        else if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
             int dataSize = data.size();
@@ -83,7 +87,7 @@ public class JsonFormat implements IResponseFormat
                 {
                     response += "[";
                 }
-                if (o == null || o instanceof Number || o instanceof Boolean)
+                if (o instanceof Number || o instanceof Boolean)
                 {
                     response += String.valueOf(o);
                 }
