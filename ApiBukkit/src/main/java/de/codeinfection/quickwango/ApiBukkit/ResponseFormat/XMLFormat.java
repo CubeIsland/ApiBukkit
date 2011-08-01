@@ -6,8 +6,7 @@ import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 
 public class XMLFormat implements IResponseFormat
 {
-    private final static String XMLDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
-    private static int depth = 0;
+    protected final static String XMLDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
     
     public String getMime()
     {
@@ -16,15 +15,14 @@ public class XMLFormat implements IResponseFormat
     
     public String format(Object o)
     {
-        return this.format(o, "response");
+        return this.format(o, "response", true);
     }
     
     @SuppressWarnings("unchecked")
-    public String format(Object o, String rootNodeName)
+    public String format(Object o, String nodeName, boolean firstLevel)
     {
-        depth++;
         String response = "";
-        response += "<" + rootNodeName + ">";
+        response += "<" + nodeName + ">";
         if (o == null)
         {} // null -> do nothing
         else if (o instanceof Map)
@@ -34,7 +32,7 @@ public class XMLFormat implements IResponseFormat
             {
                 String name = entry.getKey().toString();
                 Object value = entry.getValue();
-                response += this.format(value, name);
+                response += this.format(value, name, false);
             }
         }
         else if (o instanceof Iterable)
@@ -44,7 +42,7 @@ public class XMLFormat implements IResponseFormat
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                response += this.format(value, rootNodeName);
+                response += this.format(value, nodeName, false);
             }
         }
         else if (o.getClass().isArray())
@@ -52,7 +50,7 @@ public class XMLFormat implements IResponseFormat
             Object[] data = (Object[]) o;
             for (int i = 0; i < data.length; i++)
             {
-                response += this.format(data[i], rootNodeName);
+                response += this.format(data[i], nodeName, false);
             }
         }
         else
@@ -60,27 +58,12 @@ public class XMLFormat implements IResponseFormat
             response += String.valueOf(o).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         }
         
-        response += "</" + rootNodeName + ">";
-        depth--;
-        
-        if (depth == 0)
+        response += "</" + nodeName + ">";
+        if (firstLevel)
         {
             response = XMLDeclaration + response;
         }
         
-        return response;
-    }
-
-    private static String addTabs(int indent)
-    {
-        String response = "";
-        if (indent > 0)
-        {
-            for (int k = 0; k < indent; k++)
-            {
-                response += "\t";
-            }
-        }
         return response;
     }
 }
