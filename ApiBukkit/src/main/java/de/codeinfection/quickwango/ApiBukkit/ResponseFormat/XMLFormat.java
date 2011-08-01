@@ -19,7 +19,7 @@ public class XMLFormat implements IResponseFormat
     }
     
     @SuppressWarnings("unchecked")
-    public String format(Object o, String nodeName, boolean firstLevel)
+    protected String format(Object o, String nodeName, boolean firstLevel)
     {
         String response = "";
         response += "<" + nodeName + ">";

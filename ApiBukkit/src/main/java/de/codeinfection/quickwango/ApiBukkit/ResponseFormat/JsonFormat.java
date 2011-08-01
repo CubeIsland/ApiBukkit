@@ -17,7 +17,7 @@ public class JsonFormat implements IResponseFormat
     }
     
     @SuppressWarnings("unchecked")
-    public String format(Object o, boolean firstLevel)
+    protected String format(Object o, boolean firstLevel)
     {
         String response = "";
         if (o instanceof Map)
