@@ -62,8 +62,11 @@ public class JsonFormat implements IResponseFormat
             response += "[";
             for (int i = 0; i < data.length; i++)
             {
-
                 response += this.format(data[i], false);
+                if (i < end)
+                {
+                    response += ",";
+                }
             }
             response += "]";
         }
