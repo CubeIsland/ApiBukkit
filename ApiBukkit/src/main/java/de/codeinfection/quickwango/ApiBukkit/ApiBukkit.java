@@ -105,10 +105,18 @@ public class ApiBukkit extends JavaPlugin
 
     public void onDisable()
     {
+        this.onDisable(true);
+    }
+
+    public void onDisable(boolean complete)
+    {
         log("Stopping Web Server...");
         if (this.webserver != null)
         {
-            this.webserver.clearRequestControllers();
+            if (complete)
+            {
+                this.webserver.clearRequestControllers();
+            }
             this.webserver.stop();
         }
 

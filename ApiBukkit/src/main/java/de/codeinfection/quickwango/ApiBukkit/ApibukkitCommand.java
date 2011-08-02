@@ -50,7 +50,7 @@ public class ApibukkitCommand implements CommandExecutor
             }
             else if (action.equalsIgnoreCase("reload"))
             {
-                this.plugin.onDisable();
+                this.plugin.onDisable(false);
                 this.plugin.onEnable();
             }
             else
