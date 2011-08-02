@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,8 @@ import org.bukkit.plugin.Plugin;
 public class ServerController extends AbstractRequestController
 {
     protected static Long timeStamp = null;
+
+    protected final HashMap<String, String> colorReplacements;
     
     public ServerController(Plugin plugin)
     {
@@ -50,6 +51,16 @@ public class ServerController extends AbstractRequestController
         
         this.setActionAlias("playerlimit",      "maxplayers");
         this.setActionAlias("gc",               "garbagecollect");
+
+        this.colorReplacements = new HashMap<String, String>();
+        this.colorReplacements.put("\033[0m", "&0");
+        this.colorReplacements.put("\033[31m", "&c");
+        this.colorReplacements.put("\033[32m", "&a");
+        this.colorReplacements.put("\033[33m", "&e");
+        this.colorReplacements.put("\033[34m", "&9");
+        this.colorReplacements.put("\033[35m", "&d");
+        this.colorReplacements.put("\033[36m", "&b");
+        this.colorReplacements.put("\033[37m", "&f");
     }
 
     @Override
@@ -243,6 +254,10 @@ public class ServerController extends AbstractRequestController
                 file.seek(startPosition);
                 while ((line = file.readLine()) != null )
                 {
+                    for (Map.Entry<String, String> entry : colorReplacements.entrySet())
+                    {
+                        line.replaceAll(entry.getKey(), entry.getValue());
+                    }
                     lines.add(line);
                 }
                 file.close();
