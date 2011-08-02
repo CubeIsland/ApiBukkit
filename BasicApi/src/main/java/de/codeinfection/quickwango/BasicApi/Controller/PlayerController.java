@@ -142,7 +142,7 @@ public class PlayerController extends AbstractRequestController
                 currentDurability += maxDurability - durability;
                 baseArmorPoints += armorPoints[i];
             }
-            return (int)(2 * baseArmorPoints * currentDurability / baseDurability);
+            return (int)Math.round(2 * baseArmorPoints * currentDurability / baseDurability);
         }
     }
     
