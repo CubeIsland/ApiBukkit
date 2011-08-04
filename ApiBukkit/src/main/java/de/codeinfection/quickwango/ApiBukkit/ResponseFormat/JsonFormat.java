@@ -93,7 +93,7 @@ public class JsonFormat implements IResponseFormat
                 }
                 else
                 {
-                    response += "\"" + String.valueOf(o).replaceAll("\\\"", "\\\\\"").replaceAll("\\\\", "\\\\\\\\") + "\"";
+                    response += "\"" + String.valueOf(o).replaceAll("\\\\", "\\\\\\\\").replaceAll("\\\"", "\\\\\"") + "\"";
                 }
                 if (firstLevel)
                 {
