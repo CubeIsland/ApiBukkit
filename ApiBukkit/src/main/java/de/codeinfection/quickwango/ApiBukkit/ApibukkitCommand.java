@@ -45,7 +45,7 @@ public class ApibukkitCommand implements CommandExecutor
                 }
                 else
                 {
-                    sender.sendMessage("The API is currenty in a zombi state. Check your log for errors and try to reload the plugin and/or the server.");
+                    sender.sendMessage("The API is currenty in a zombie state. Check your log for errors and try to reload the plugin and/or the server.");
                 }
             }
             else if (action.equalsIgnoreCase("reload"))
