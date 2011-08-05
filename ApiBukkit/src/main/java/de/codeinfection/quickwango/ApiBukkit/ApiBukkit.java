@@ -69,7 +69,7 @@ public class ApiBukkit extends JavaPlugin
 
         this.init();
         
-        if (!cfgPassword.equals(this.password))
+        if (!cfgPassword.equals(this.defaultPassword))
         {
             this.password = cfgPassword;
         }
