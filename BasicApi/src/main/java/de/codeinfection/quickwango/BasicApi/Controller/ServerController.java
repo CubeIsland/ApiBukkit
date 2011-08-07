@@ -267,9 +267,8 @@ public class ServerController extends AbstractRequestController
             }
             catch (IOException e)
             {
-                ApiBukkit.error("Could not find the server log!");
+                throw new RequestException("Could not find the server log!", 1);
             }
-            return null;
         }
     }
 }
