@@ -10,6 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
@@ -24,19 +26,17 @@ public class ApiBukkit extends JavaPlugin
     protected boolean zombie = false;
     
     protected boolean initiated = false;
-    protected final String defaultPassword;
 
     // Configuration
     protected int port;
-    protected String password;
+    protected String authKey;
     protected int maxSessions;
     public static boolean debug = false;
-    public static boolean verbose = true;
+    public static boolean quiet = false;
 
     public ApiBukkit()
     {
-        this.defaultPassword = "changeMeToASuperSecurePassword";
-        this.password = this.defaultPassword;
+        this.authKey = null;
         this.port = 6561;
         this.maxSessions = 30;
     }
@@ -54,47 +54,50 @@ public class ApiBukkit extends JavaPlugin
         if (this.config.getNode("Configuration") == null)
         {
             this.config.setProperty("Configuration.port", this.port);
-            this.config.setProperty("Configuration.password", this.password);
+            this.config.setProperty("Configuration.password", this.authKey);
             this.config.setProperty("Configuration.maxSessions", this.maxSessions);
-            this.config.setProperty("Configuration.verbose", verbose);
+            this.config.setProperty("Configuration.quit", quiet);
             this.config.setProperty("Configuration.debug", debug);
             this.config.save();
         }
 
-        verbose = this.config.getBoolean("Configuration.verbose", verbose);
+        quiet = this.config.getBoolean("Configuration.quit", quiet);
         debug = this.config.getBoolean("Configuration.debug", debug);
         this.port = this.config.getInt("Configuration.port", this.port);
         this.maxSessions = this.config.getInt("Configuration.maxSessions", this.maxSessions);
-        String cfgPassword = this.config.getString("Configuration.password", this.password);
+        this.authKey = this.config.getString("Configuration.authKey", this.authKey);
+        if (this.authKey == null)
+        {
+            try
+            {
+                this.authKey = this.generateAuthKey();
+            }
+            catch (NoSuchAlgorithmException e)
+            {
+                error("#################################");
+                error("Failed to generate an auth key!", e);
+                error("Staying in a zombie state...");
+                error("#################################");
+                this.zombie = true;
+                return;
+            }
+        }
 
         this.init();
-        
-        if (!cfgPassword.equals(this.defaultPassword))
-        {
-            this.password = cfgPassword;
-        }
-        else
-        {
-            error("####################################");
-            error("It is not allowed to use ApiBukkit with the default password!");
-            error("");
-            error("Staying in a zombie state...");
-            error("####################################");
-            return;
-        }
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
         try
         {
             log(String.format("Starting the web server on port %s!", this.port));
-            this.webserver.start(this.port, this.password, this.maxSessions);
+            log(String.format("Using %s as the auth key", this.authKey));
+            log(String.format("with a maximum of %s parallel sessions!", this.maxSessions));
+            this.webserver.start(this.port, this.authKey, this.maxSessions);
             log("Web server started!");
         }
         catch (Throwable t)
         {
-            error("Failed to start the web server!");
-            logException(t);
+            error("Failed to start the web server!", t);
             error("Staying in a zombie state...");
             this.zombie = true;
             return;
@@ -143,6 +146,21 @@ public class ApiBukkit extends JavaPlugin
         }
     }
 
+    protected String generateAuthKey() throws NoSuchAlgorithmException
+    {
+        MessageDigest hasher = MessageDigest.getInstance("SHA1");
+        hasher.reset();
+        byte[] byteBuffer = (this.server.getServerName() + this.server.getServerId() + System.currentTimeMillis()).getBytes();
+        hasher.update(byteBuffer);
+        byteBuffer = hasher.digest();
+        StringBuilder hash = new StringBuilder();
+        for (int i = 0; i < byteBuffer.length; ++i)
+        {
+            hash.append(Integer.toString((byteBuffer[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return hash.toString();
+    }
+
     public boolean isZombie()
     {
         return this.zombie;
@@ -155,7 +173,7 @@ public class ApiBukkit extends JavaPlugin
 
     public String getApiPassword()
     {
-        return this.password;
+        return this.authKey;
     }
     
     /**
@@ -215,7 +233,7 @@ public class ApiBukkit extends JavaPlugin
     
     public static void log(String message, boolean force)
     {
-        if (force || verbose)
+        if (!quiet || force)
         {
             logger.log(Level.INFO, "[ApiBukkit] " + message);
         }
@@ -224,6 +242,11 @@ public class ApiBukkit extends JavaPlugin
     public static void error(String message)
     {
         logger.log(Level.SEVERE, "[ApiBukkit] " + message);
+    }
+
+    public static void error(String msg, Throwable t)
+    {
+        logger.log(Level.SEVERE, "[DropLimit] " + msg, t);
     }
     
     public static void debug(String message)
