@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -73,36 +73,49 @@ public class PlayerController extends AbstractRequestController
     
     private class InfoAction extends RequestAction
     {
-        private final double baseArmorPoints[] = {1.5, 3.0, 4.0, 1.5};
+        private final double armorPoints[] = {3, 6, 8, 3};
 
         public final int getArmorPoints(Player player)
         {
-            int currentDurabilitySum = 0;
-            int maxDurabilitySum = 0;
-            double baseArmorPointsSum = 0;
-            ItemStack armorContents[] = player.getInventory().getArmorContents();
-            for (int i = 0; i < armorContents.length; ++i)
+            int currentDurability = 0;
+            int baseDurability = 0;
+            int baseArmorPoints = 0;
+            PlayerInventory inventory = player.getInventory();
+            ItemStack[] armorItems = new ItemStack[4];
+            armorItems[0] = inventory.getBoots();
+            armorItems[1] = inventory.getLeggings();
+            armorItems[2] = inventory.getChestplate();
+            armorItems[3] = inventory.getHelmet();
+            for (int i = 0; i < 4; ++i)
             {
-                if (armorContents[i] == null)
+                if(armorItems[i] == null)
                 {
                     continue;
                 }
-                Material material = armorContents[i].getType();
-                if (material == null)
+                int dur = armorItems[i].getDurability();
+                int max = armorItems[i].getType().getMaxDurability();
+                if (max <= 0)
                 {
                     continue;
                 }
-                final short maxDurability = material.getMaxDurability();
-                if (maxDurability < 0)
+                if (i == 2)
                 {
-                    continue;
+                    max = max + 1; /* Always 1 too low for chestplate */
                 }
-                final short durability = armorContents[i].getDurability();
-                maxDurabilitySum += maxDurability;
-                currentDurabilitySum += maxDurability - durability;
-                baseArmorPointsSum += baseArmorPoints[i];
+                else
+                {
+                    max = max - 3; /* Always 3 too high, versus how client calculates it */
+                }
+                baseDurability += max;
+                currentDurability += max - dur;
+                baseArmorPoints += this.armorPoints[i];
             }
-            return (int)(2 * Math.round(baseArmorPointsSum * currentDurabilitySum / maxDurabilitySum));
+            int ap = 0;
+            if (baseDurability > 0)
+            {
+                ap = ((baseArmorPoints - 1) * currentDurability) / baseDurability + 1;
+            }
+            return ap;
         }
 
         @Override
