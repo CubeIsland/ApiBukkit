@@ -20,7 +20,7 @@ public class ValidateController extends AbstractRequestController
     {
         super(plugin, true);
         
-        this.registerAction("password", new PasswordAction());
+        this.registerAction("authkey", new AuthkeyAction());
     }
     
     @Override
@@ -29,7 +29,7 @@ public class ValidateController extends AbstractRequestController
         throw new RequestException("No default action!", 1);
     }
     
-    private class PasswordAction extends RequestAction
+    private class AuthkeyAction extends RequestAction
     {
         @Override
         public Object run(Properties params, Server server) throws RequestException

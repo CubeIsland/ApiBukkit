@@ -16,7 +16,7 @@ import java.net.InetAddress;
 public class ApiBukkitServer extends NanoHTTPD
 {
     protected ApiBukkit plugin;
-    protected String APIPassword;
+    protected String authenticationKey;
     protected final static ConcurrentHashMap<String, IResponseFormat> responseFormats;
     protected final ConcurrentHashMap<String, AbstractRequestController> requestControllers;
     protected static String defaultResponseFormat = "plain";
@@ -39,9 +39,9 @@ public class ApiBukkitServer extends NanoHTTPD
         this.requestControllers.put("validate", new ValidateController(null));
     }
 
-    public void start(int port, String password, int maxSessions) throws IOException
+    public void start(int port, String authKey, int maxSessions) throws IOException
     {
-        this.APIPassword = password;
+        this.authenticationKey = authKey;
         this.start(port, maxSessions);
     }
 
@@ -83,22 +83,22 @@ public class ApiBukkitServer extends NanoHTTPD
             {
                 ApiBukkit.debug("Selecting controller '" + pathParts[0] + "'");
                 AbstractRequestController controller = this.requestControllers.get(pathParts[0]);
-                String password = params.getProperty("password", "");
-                params.remove("password");
+                String authKey = params.getProperty("authkey", "");
+                params.remove("authkey");
                 
                 RequestAction requestAction = controller.getAction(action);
                 if (requestAction != null)
                 {
-                    Boolean controllerAuthNeeded = controller.isAuthNeeded();
+                    boolean controllerAuthNeeded = controller.isAuthNeeded();
                     Boolean actionAuthNeeded = requestAction.isAuthNeeded();
                     if (actionAuthNeeded == null)
                     {
                         actionAuthNeeded = controllerAuthNeeded;
                     }
-                    if (actionAuthNeeded && !password.equals(this.APIPassword))
+                    if (actionAuthNeeded && !authKey.equals(this.authenticationKey))
                     {
-                        ApiBukkit.error("Wrong API password");
-                        return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.WRONG_API_PASSWORD));
+                        ApiBukkit.error("Wrong authentication key!");
+                        return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.AUTHENTICATION_FAILURE));
                     }
                     ApiBukkit.debug("Running action '" + action + "'");
                     response = requestAction.run(params, this.plugin.getServer());
