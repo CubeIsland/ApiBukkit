@@ -50,11 +50,29 @@ public class ApiBukkit extends JavaPlugin
             this.dataFolder.mkdirs();
         }
 
+        this.init();
+
         this.config.load();
         if (this.config.getNode("Configuration") == null)
         {
+            if (this.authKey == null)
+            {
+                try
+                {
+                    this.authKey = this.generateAuthKey();
+                }
+                catch (NoSuchAlgorithmException e)
+                {
+                    error("#################################");
+                    error("Failed to generate an auth key!", e);
+                    error("The auth key will not be persistent...");
+                    error("#################################");
+                    return;
+                }
+            }
+
             this.config.setProperty("Configuration.port", this.port);
-            this.config.setProperty("Configuration.password", this.authKey);
+            this.config.setProperty("Configuration.authKey", this.authKey);
             this.config.setProperty("Configuration.maxSessions", this.maxSessions);
             this.config.setProperty("Configuration.quit", quiet);
             this.config.setProperty("Configuration.debug", debug);
@@ -82,8 +100,6 @@ public class ApiBukkit extends JavaPlugin
                 return;
             }
         }
-
-        this.init();
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
