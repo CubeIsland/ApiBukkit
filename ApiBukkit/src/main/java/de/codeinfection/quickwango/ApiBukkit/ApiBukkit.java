@@ -74,12 +74,12 @@ public class ApiBukkit extends JavaPlugin
             this.config.setProperty("Configuration.port", this.port);
             this.config.setProperty("Configuration.authKey", this.authKey);
             this.config.setProperty("Configuration.maxSessions", this.maxSessions);
-            this.config.setProperty("Configuration.quit", quiet);
+            this.config.setProperty("Configuration.quiet", quiet);
             this.config.setProperty("Configuration.debug", debug);
             this.config.save();
         }
 
-        quiet = this.config.getBoolean("Configuration.quit", quiet);
+        quiet = this.config.getBoolean("Configuration.quiet", quiet);
         debug = this.config.getBoolean("Configuration.debug", debug);
         this.port = this.config.getInt("Configuration.port", this.port);
         this.maxSessions = this.config.getInt("Configuration.maxSessions", this.maxSessions);
