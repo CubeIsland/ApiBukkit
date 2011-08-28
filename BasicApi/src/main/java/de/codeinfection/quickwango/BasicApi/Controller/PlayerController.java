@@ -139,10 +139,19 @@ public class PlayerController extends AbstractRequestController
                     data.put("position", new Double[] {
                         playerLoc.getX(),
                         playerLoc.getY(),
-                        playerLoc.getZ(),
-                        (double)playerLoc.getYaw(),  // horizontal
-                        (double)playerLoc.getPitch() // vertical
+                        playerLoc.getZ()
                     });
+                    data.put("blockPosition", new Integer[] {
+                        playerLoc.getBlockX(),
+                        playerLoc.getBlockY(),
+                        playerLoc.getBlockZ()
+                    });
+                    HashMap<String, Object> orientation = new HashMap<String, Object>();
+                    orientation.put("yaw", playerLoc.getYaw()); // horizontal
+                    orientation.put("pitch", playerLoc.getPitch()); // vertical
+                    orientation.put("cardinalDirection", getCardinalDirection(playerLoc.getYaw()));
+                    data.put("orientation", orientation);
+
                     data.put("ip", player.getAddress().getAddress().getHostAddress());
 
                     return data;
@@ -155,6 +164,55 @@ public class PlayerController extends AbstractRequestController
             else
             {
                 throw new RequestException("No player given!", 1);
+            }
+        }
+
+        private String getCardinalDirection(float yaw)
+        {
+            yaw = (yaw + 90) % 360;
+            if (yaw < 0)
+            {
+                yaw += 360.0;
+            }
+            if (0 <= yaw && yaw < 22.5)
+            {
+                return "N";
+            }
+            else if (22.5 <= yaw && yaw < 67.5)
+            {
+                return "NE";
+            }
+            else if (67.5 <= yaw && yaw < 112.5)
+            {
+                return "E";
+            }
+            else if (112.5 <= yaw && yaw < 157.5)
+            {
+                return "SE";
+            }
+            else if (157.5 <= yaw && yaw < 202.5)
+            {
+                return "S";
+            }
+            else if (202.5 <= yaw && yaw < 247.5)
+            {
+                return "SW";
+            }
+            else if (247.5 <= yaw && yaw < 292.5)
+            {
+                return "W";
+            }
+            else if (292.5 <= yaw && yaw < 337.5)
+            {
+                return "NW";
+            }
+            else if (337.5 <= yaw && yaw < 360.0)
+            {
+                return "N";
+            }
+            else
+            {
+                return null;
             }
         }
     }
