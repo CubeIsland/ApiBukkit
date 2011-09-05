@@ -122,4 +122,9 @@ public class ApiCommandSender implements CommandSender
 
     public void setOp(boolean value)
     {}
+
+    public String getName()
+    {
+        return "ApiCommandSender";
+    }
 }
