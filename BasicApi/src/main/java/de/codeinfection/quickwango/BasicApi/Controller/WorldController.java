@@ -64,6 +64,8 @@ public class WorldController extends AbstractRequestController
                     data.put("weatherDuration", world.getWeatherDuration());
                     data.put("animals", world.getAllowAnimals());
                     data.put("monsters", world.getAllowMonsters());
+                    data.put("spawnInMemory", world.getKeepSpawnInMemory());
+                    data.put("entities", world.getEntities().size());
 
                     Location spawnLoc = world.getSpawnLocation();
                     data.put("spawnLocation", new Integer[] {
