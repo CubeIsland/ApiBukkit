@@ -3,16 +3,13 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import net.minecraft.server.ServerConfigurationManager;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -22,12 +19,9 @@ import org.bukkit.plugin.Plugin;
  */
 public class BanController extends AbstractRequestController
 {
-    protected ServerConfigurationManager cserver;
-
     public BanController(Plugin plugin)
     {
         super(plugin, true);
-        this.cserver = ((CraftServer)plugin.getServer()).getHandle();
 
         this.registerAction("add", new AddAction());
         this.registerAction("remove", new RemoveAction());
@@ -49,19 +43,26 @@ public class BanController extends AbstractRequestController
             String IP = params.getProperty("ip");
             if (playerName != null)
             {
-                cserver.a(playerName);
-                ApiBukkit.log("banned player " + playerName);
-                Player player = server.getPlayer(playerName);
-                if (player != null)
+                OfflinePlayer player = server.getOfflinePlayer(playerName);
+                if (!player.isBanned())
                 {
-                    player.kickPlayer(params.getProperty("reason", "You got banned from this server!"));
+                    player.setBanned(true);
+                    ApiBukkit.log("banned player " + playerName);
+                    if (player instanceof Player)
+                    {
+                        ((Player)player).kickPlayer(params.getProperty("reason", "You got banned from this server!"));
+                    }
+                }
+                else
+                {
+                    throw new RequestException("The given player is already banned!", 3);
                 }
             }
             else if (IP != null)
             {
                 if (IP.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"))
                 {
-                    cserver.c(IP);
+                    server.banIP(IP);
                     ApiBukkit.log("banned ip " + IP);
                 }
                 else
@@ -86,19 +87,27 @@ public class BanController extends AbstractRequestController
             String IP = params.getProperty("ip");
             if (playerName != null)
             {
-                cserver.b(playerName);
-                ApiBukkit.log("banned player " + playerName);
+                OfflinePlayer player = server.getOfflinePlayer(playerName);
+                if (player.isBanned())
+                {
+                    player.setBanned(false);
+                    ApiBukkit.log("unbanned player " + playerName);
+                }
+                else
+                {
+                    throw new RequestException("The given player is not banned!", 3);
+                }
             }
             else if (IP != null)
             {
-                if (IP.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"))
+                if (server.getIPBans().contains(IP))
                 {
-                    cserver.d(IP);
+                    server.unbanIP(IP);
                     ApiBukkit.log("unbanned ip " + IP);
                 }
                 else
                 {
-                    throw new RequestException("The given IP is invalid!", 2);
+                    throw new RequestException("The given IP is not banned!", 2);
                 }
             }
             else
@@ -114,9 +123,14 @@ public class BanController extends AbstractRequestController
         @Override
         public Object run(Properties params, Server server) throws RequestException
         {
-            Map<String, List<String>> data = new HashMap<String, List<String>>();
-            data.put("player", (List<String>)cserver.banByName);
-            data.put("ip", (List<String>)cserver.banByIP);
+            Map<String, Object> data = new HashMap<String, Object>();
+            List<String> bannedPlayers = new ArrayList<String>();
+            for (OfflinePlayer offlinePlayer : server.getBannedPlayers())
+            {
+                bannedPlayers.add(offlinePlayer.getName());
+            }
+            data.put("player", bannedPlayers);
+            data.put("ip", server.getIPBans());
             return data;
         }
     }
