@@ -102,6 +102,11 @@ public class ServerController extends AbstractRequestController
             data.put("plugins", server.getPluginManager().getPlugins().length);
             data.put("uptime", (System.currentTimeMillis() / 1000) - timeStamp);
             data.put("onlinemode", server.getOnlineMode());
+            data.put("whitelisted", server.hasWhitelist());
+            data.put("flying", server.getAllowFlight());
+            data.put("nether", server.getAllowNether());
+            data.put("spawnradius", server.getSpawnRadius());
+            data.put("viewdistance", server.getViewDistance());
             
             return data;
         }
