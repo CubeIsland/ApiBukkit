@@ -153,6 +153,7 @@ public class PlayerController extends AbstractRequestController
                     data.put("orientation", orientation);
 
                     data.put("ip", player.getAddress().getAddress().getHostAddress());
+                    data.put("operator", player.isOp());
 
                     return data;
                 }
