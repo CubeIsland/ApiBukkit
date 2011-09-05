@@ -11,11 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -190,12 +187,11 @@ public class ServerController extends AbstractRequestController
         @Override
         public Object run(Properties params, Server server) throws RequestException
         {
-            MinecraftServer mcServer = ((CraftServer)server).getHandle().server;
-            CommandSender sender = new ConsoleCommandSender(server);
-            ApiBukkit.log("save-all:");
-            server.dispatchCommand(sender, "save-all");
-            ApiBukkit.log("stop:");
-            mcServer.a();
+            for (World world : server.getWorlds())
+            {
+                world.save();
+            }
+            server.shutdown();
             return null;
         }
     }
