@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import net.minecraft.server.ServerConfigurationManager;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.Plugin;
@@ -46,9 +47,10 @@ public class OperatorController extends AbstractRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                if (!cserver.isOp(playerName))
+                OfflinePlayer player = server.getOfflinePlayer(playerName);
+                if (!player.isOp())
                 {
-                    cserver.e(playerName);
+                    player.setOp(false);
                     return null;
                 }
                 else
@@ -71,9 +73,10 @@ public class OperatorController extends AbstractRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                if (cserver.isOp(playerName))
+                OfflinePlayer player = server.getOfflinePlayer(playerName);
+                if (player.isOp())
                 {
-                    cserver.f(playerName);
+                    player.setOp(false);
                     return null;
                 }
                 else
@@ -96,7 +99,7 @@ public class OperatorController extends AbstractRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                return cserver.isOp(playerName);
+                return server.getOfflinePlayer(playerName).isOp();
             }
             else
             {
