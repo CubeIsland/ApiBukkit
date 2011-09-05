@@ -33,6 +33,7 @@ public class WorldController extends AbstractRequestController
         this.registerAction("list",         new ListAction());
         this.registerAction("players",      new PlayersAction());
         this.registerAction("spawnflags",   new SpawnflagsAction());
+        this.registerAction("save",         new SaveAction());
     }
 
     @Override
@@ -447,6 +448,33 @@ public class WorldController extends AbstractRequestController
             {
                 throw new RequestException("No world given!", 1);
             }
+        }
+    }
+
+    private class SaveAction extends RequestAction
+    {
+        @Override
+        public Object run(Properties params, Server server) throws RequestException
+        {
+            String worldName = params.getProperty("world");
+            if (worldName != null)
+            {
+                World world = server.getWorld(worldName);
+                if (world != null)
+                {
+                    world.save();
+                }
+                else
+                {
+                    throw new RequestException("Given world not found!", 2);
+                }
+            }
+            else
+            {
+                throw new RequestException("No world given!", 1);
+            }
+            
+            return null;
         }
     }
 }
