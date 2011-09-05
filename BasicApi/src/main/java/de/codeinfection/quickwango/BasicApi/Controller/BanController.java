@@ -114,37 +114,9 @@ public class BanController extends AbstractRequestController
         @Override
         public Object run(Properties params, Server server) throws RequestException
         {
-            List<String> players = new ArrayList<String>();
-            try
-            {
-                Field playerlist = ServerConfigurationManager.class.getDeclaredField("banByName");
-                playerlist.setAccessible(true);
-                players.addAll((Set)playerlist.get(cserver));
-            }
-            catch (Throwable t)
-            {
-                ApiBukkit.error("Failed to get the banned players!");
-                ApiBukkit.error("Error: " + t.getClass().getName().replaceFirst(t.getClass().getPackage().getName() + ".", ""));
-                ApiBukkit.error(t.getLocalizedMessage());
-            }
-
-            List<String> ips = new ArrayList<String>();
-            try
-            {
-                Field iplist = ServerConfigurationManager.class.getDeclaredField("banByIP");
-                iplist.setAccessible(true);
-                ips.addAll((Set)iplist.get(cserver));
-            }
-            catch (Throwable t)
-            {
-                ApiBukkit.error("Failed to get the banned IPs!");
-                ApiBukkit.error("Error: " + t.getClass().getName().replaceFirst(t.getClass().getPackage().getName() + ".", ""));
-                ApiBukkit.error(t.getLocalizedMessage());
-            }
-
             Map<String, List<String>> data = new HashMap<String, List<String>>();
-            data.put("player", players);
-            data.put("ip", ips);
+            data.put("player", (List<String>)cserver.banByName);
+            data.put("ip", (List<String>)cserver.banByIP);
             return data;
         }
     }
