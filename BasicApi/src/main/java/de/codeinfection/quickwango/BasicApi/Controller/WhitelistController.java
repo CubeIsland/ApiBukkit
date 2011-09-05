@@ -2,10 +2,10 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import java.util.ArrayList;
 import java.util.Properties;
-import net.minecraft.server.ServerConfigurationManager;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -14,12 +14,10 @@ import org.bukkit.plugin.Plugin;
  */
 public class WhitelistController extends AbstractRequestController
 {
-    protected ServerConfigurationManager cserver;
 
     public WhitelistController(Plugin plugin)
     {
         super(plugin, true);
-        this.cserver = ((CraftServer)plugin.getServer()).getHandle();
 
         this.registerAction("add", new AddAction());
         this.registerAction("remove", new RemoveAction());
@@ -41,13 +39,21 @@ public class WhitelistController extends AbstractRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                cserver.k(playerName);
-                return null;
+                OfflinePlayer player = server.getOfflinePlayer(playerName);
+                if (!player.isWhitelisted())
+                {
+                    player.setWhitelisted(true);
+                }
+                else
+                {
+                    throw new RequestException("Player already whitelisted!", 2);
+                }
             }
             else
             {
                 throw new RequestException("No player given!", 1);
             }
+            return null;
         }
     }
 
@@ -59,13 +65,21 @@ public class WhitelistController extends AbstractRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                cserver.l(playerName);
-                return null;
+                OfflinePlayer player = server.getOfflinePlayer(playerName);
+                if (player.isWhitelisted())
+                {
+                    player.setWhitelisted(false);
+                }
+                else
+                {
+                    throw new RequestException("Player not whitelisted!", 2);
+                }
             }
             else
             {
                 throw new RequestException("No player given!", 1);
             }
+            return null;
         }
     }
 
@@ -77,7 +91,7 @@ public class WhitelistController extends AbstractRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                return cserver.isWhitelisted(playerName);
+                return server.getOfflinePlayer(playerName).isWhitelisted();
             }
             else
             {
@@ -91,7 +105,12 @@ public class WhitelistController extends AbstractRequestController
         @Override
         public Object run(Properties params, Server server) throws RequestException
         {
-            return cserver.e();
+            ArrayList<String> whitelist = new ArrayList<String>();
+            for (OfflinePlayer offlinePlayer : server.getWhitelistedPlayers())
+            {
+                whitelist.add(offlinePlayer.getName());
+            }
+            return whitelist;
         }
     }
 }
