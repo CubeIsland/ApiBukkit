@@ -1,5 +1,6 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
+import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -122,6 +124,29 @@ public class WorldController extends AbstractRequestController
                         }
                     }
 
+                    ChunkGenerator generator = null;
+                    String generatorParam = params.getProperty("generator");
+                    if (generatorParam != null)
+                    {
+                        generatorParam = generatorParam.trim();
+                        if (!generatorParam.isEmpty())
+                        {
+                            String[] split = generatorParam.split(":", 2);
+                            String id = (split.length > 1) ? split[1] : null;
+                            Plugin plugin = server.getPluginManager().getPlugin(split[0]);
+
+                            if (plugin == null || !plugin.isEnabled())
+                            {
+                                ApiBukkit.error("Could not set generator for default world '" + worldName + "': Plugin '" + split[0] + "' does not exist");
+                                throw new RequestException("Failed to load generator plugin", 4);
+                            }
+                            else
+                            {
+                                generator = plugin.getDefaultWorldGenerator(worldName, id);
+                            }
+                        }
+                    }
+
                     String seed = params.getProperty("seed");
                     if (seed != null)
                     {
@@ -134,11 +159,11 @@ public class WorldController extends AbstractRequestController
                         {
                             seedValue = (long)seed.hashCode();
                         }
-                        server.createWorld(worldName, env, seedValue);
+                        server.createWorld(worldName, env, seedValue, generator);
                     }
                     else
                     {
-                        server.createWorld(worldName, env);
+                        server.createWorld(worldName, env, generator);
                     }
                 }
                 else
