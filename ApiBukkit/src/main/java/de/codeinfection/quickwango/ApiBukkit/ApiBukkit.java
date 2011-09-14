@@ -12,6 +12,8 @@ import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
@@ -31,6 +33,10 @@ public class ApiBukkit extends JavaPlugin
     protected int port;
     protected String authKey;
     protected int maxSessions;
+    public boolean whitelistEnabled = false;
+    public boolean blacklistEnabled = false;
+    public final List<String> whitelist;
+    public final List<String> blacklist;
     public static boolean debug = false;
     public static boolean quiet = false;
 
@@ -39,6 +45,10 @@ public class ApiBukkit extends JavaPlugin
         this.authKey = null;
         this.port = 6561;
         this.maxSessions = 30;
+        this.whitelistEnabled = false;
+        this.whitelist = new ArrayList<String>();
+        this.blacklistEnabled = false;
+        this.blacklist = new ArrayList<String>();
     }
 
     public void onEnable()
@@ -76,6 +86,10 @@ public class ApiBukkit extends JavaPlugin
             this.config.setProperty("Configuration.maxSessions", this.maxSessions);
             this.config.setProperty("Configuration.quiet", quiet);
             this.config.setProperty("Configuration.debug", debug);
+            this.config.setProperty("Configuration.whitelistEnabled", this.whitelistEnabled);
+            this.config.setProperty("Configuration.whitelist", this.whitelist);
+            this.config.setProperty("Configuration.blacklistEnabled", this.blacklistEnabled);
+            this.config.setProperty("Configuration.blacklist", this.blacklist);
             this.config.save();
         }
 
@@ -84,6 +98,12 @@ public class ApiBukkit extends JavaPlugin
         this.port = this.config.getInt("Configuration.port", this.port);
         this.maxSessions = this.config.getInt("Configuration.maxSessions", this.maxSessions);
         this.authKey = this.config.getString("Configuration.authKey", this.authKey);
+        this.whitelistEnabled = this.config.getBoolean("Configuration.whitelistEnabled", this.whitelistEnabled);
+        this.whitelist.clear();
+        this.whitelist.addAll(this.config.getStringList("Configuration.whitelist", this.whitelist));
+        this.blacklistEnabled = this.config.getBoolean("Configuration.blacklistEnabled", this.blacklistEnabled);
+        this.blacklist.clear();
+        this.blacklist.addAll(this.config.getStringList("Configuration.blacklist", this.blacklist));
         if (this.authKey == null)
         {
             try

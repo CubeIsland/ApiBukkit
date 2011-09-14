@@ -28,7 +28,13 @@ public class ApiBukkitServer extends NanoHTTPD
 
     public ApiBukkitServer(ApiBukkit plugin) throws IOException
     {
+        super();
         this.plugin = plugin;
+
+        this.whitelistEnabled = plugin.whitelistEnabled;
+        this.whitelist = plugin.whitelist;
+        this.blacklistEnabled = plugin.blacklistEnabled;
+        this.blacklist = plugin.blacklist;
         
         responseFormats.put("plain", new PlainFormat());
         responseFormats.put("json", new JsonFormat());

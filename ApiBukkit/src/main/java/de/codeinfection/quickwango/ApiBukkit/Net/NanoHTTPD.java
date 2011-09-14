@@ -163,7 +163,18 @@ public abstract class NanoHTTPD
                 while (true)
                 {
                     session = new HTTPSession(httpServerSocket.accept());
-                    if (sessions.size() < this.maxSessions)
+                    String IP = session.socket.getInetAddress().getHostAddress();
+                    boolean IPAllowed = true;
+                    if (whitelistEnabled)
+                    {
+                        IPAllowed = whitelist.contains(IP);
+                    }
+                    if (blacklistEnabled)
+                    {
+                        IPAllowed = !blacklist.contains(IP);
+                    }
+
+                    if (IPAllowed && sessions.size() < this.maxSessions)
                     {
                         session.start();
                         sessions.add(session);
@@ -237,9 +248,17 @@ public abstract class NanoHTTPD
     private int httpServerPort;
     private ServerSocket httpServerSocket;
     private Thread httpServerThread;
+    protected boolean whitelistEnabled;
+    protected List<String> whitelist;
+    protected boolean blacklistEnabled;
+    protected List<String> blacklist;
 
     public NanoHTTPD()
     {
+        this.whitelistEnabled = false;
+        this.whitelist = new ArrayList<String>();
+        this.blacklistEnabled = false;
+        this.blacklist = new ArrayList<String>();
         this.sessions = new ArrayList<HTTPSession>();
     }
 
