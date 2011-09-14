@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -91,32 +92,52 @@ public class WorldController extends AbstractRequestController
         }
     }
     
-    private class CreateAction extends RequestAction
+    private class CreateAction extends RequestAction implements Runnable
     {
+        protected Server server;
+        protected String worldName;
+        protected World.Environment env;
+        protected Long seed;
+        protected ChunkGenerator generator;
+
+        public CreateAction()
+        {
+            this.server = plugin.getServer();
+            ApiBukkit.log("server: " + (this.server == null ? "NULL" : "OK"));
+            this.resetVars();
+        }
+
+        private void resetVars()
+        {
+            this.worldName = null;
+            this.env = null;
+            this.seed = null;
+            this.generator = null;
+        }
+
         @Override
         public Object run(Properties params, Server server) throws RequestException
         {
-            String worldName = params.getProperty("world");
-            if (worldName != null)
+            this.worldName = params.getProperty("world");
+            if (this.worldName != null)
             {
-                World world = server.getWorld(worldName);
+                World world = server.getWorld(this.worldName);
                 if (world == null)
                 {
-                    World.Environment env = World.Environment.NORMAL;
                     String envParam = params.getProperty("environment");
                     if (envParam != null)
                     {
                         if (envParam.equalsIgnoreCase("nether"))
                         {
-                            env = World.Environment.NETHER;
+                            this.env = World.Environment.NETHER;
                         }
                         else if (envParam.equalsIgnoreCase("normal"))
                         {
-                            env = World.Environment.NORMAL;
+                            this.env = World.Environment.NORMAL;
                         }
                         else if (envParam.equalsIgnoreCase("skylands"))
                         {
-                            env = World.Environment.SKYLANDS;
+                            this.env = World.Environment.SKYLANDS;
                         }
                         else
                         {
@@ -124,7 +145,6 @@ public class WorldController extends AbstractRequestController
                         }
                     }
 
-                    ChunkGenerator generator = null;
                     String generatorParam = params.getProperty("generator");
                     if (generatorParam != null)
                     {
@@ -137,33 +157,35 @@ public class WorldController extends AbstractRequestController
 
                             if (plugin == null || !plugin.isEnabled())
                             {
-                                ApiBukkit.error("Could not set generator for default world '" + worldName + "': Plugin '" + split[0] + "' does not exist");
+                                ApiBukkit.error("Could not set generator for default world '" + this.worldName + "': Plugin '" + split[0] + "' does not exist");
                                 throw new RequestException("Failed to load generator plugin", 4);
                             }
                             else
                             {
-                                generator = plugin.getDefaultWorldGenerator(worldName, id);
+                                this.generator = plugin.getDefaultWorldGenerator(this.worldName, id);
                             }
                         }
                     }
 
-                    String seed = params.getProperty("seed");
-                    if (seed != null)
+                    String seedParam = params.getProperty("seed");
+                    if (seedParam != null)
                     {
-                        Long seedValue;
-                        if (seed.matches("/^\\d+$/"))
+                        if (seedParam.matches("/^\\d+$/"))
                         {
-                            seedValue = Long.valueOf(seed);
+                            this.seed = Long.valueOf(seedParam);
                         }
                         else
                         {
-                            seedValue = (long)seed.hashCode();
+                            this.seed = (long)seedParam.hashCode();
                         }
-                        server.createWorld(worldName, env, seedValue, generator);
                     }
                     else
                     {
-                        server.createWorld(worldName, env, generator);
+                        this.seed = (new Random()).nextLong();
+                    }
+                    if (this.server.getScheduler().scheduleSyncDelayedTask(plugin, this, 0L) < 0)
+                    {
+                        throw new RequestException("Failed to schedule creation task!", 5);
                     }
                 }
                 else
@@ -176,6 +198,12 @@ public class WorldController extends AbstractRequestController
                 throw new RequestException("No world given!", 1);
             }
             return null;
+        }
+
+        public void run()
+        {
+            this.server.createWorld(this.worldName, this.env, this.seed, this.generator);
+            this.resetVars();
         }
     }
     
