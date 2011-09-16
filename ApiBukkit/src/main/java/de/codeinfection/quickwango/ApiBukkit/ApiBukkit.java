@@ -33,8 +33,8 @@ public class ApiBukkit extends JavaPlugin
     protected int port;
     protected String authKey;
     protected int maxSessions;
-    public boolean whitelistEnabled = false;
-    public boolean blacklistEnabled = false;
+    public boolean whitelistEnabled;
+    public boolean blacklistEnabled;
     public final List<String> whitelist;
     public final List<String> blacklist;
     public static boolean debug = false;
@@ -45,6 +45,7 @@ public class ApiBukkit extends JavaPlugin
         this.authKey = null;
         this.port = 6561;
         this.maxSessions = 30;
+        
         this.whitelistEnabled = false;
         this.whitelist = new ArrayList<String>();
         this.blacklistEnabled = false;
@@ -54,72 +55,15 @@ public class ApiBukkit extends JavaPlugin
     public void onEnable()
     {
         this.dataFolder = this.getDataFolder().getAbsoluteFile();
-        this.config = new Configuration(new File(this.dataFolder, "config.yml"));
-        if (!this.dataFolder.exists())
-        {
-            this.dataFolder.mkdirs();
-        }
+        this.config = this.getConfiguration();
 
+        if (!(new File(this.dataFolder, "config.yml")).exists())
+        {
+            this.defaultConfig();
+        }
+        this.loadConfig();
+        
         this.init();
-
-        this.config.load();
-        if (this.config.getNode("Configuration") == null)
-        {
-            if (this.authKey == null)
-            {
-                try
-                {
-                    this.authKey = this.generateAuthKey();
-                }
-                catch (NoSuchAlgorithmException e)
-                {
-                    error("#################################");
-                    error("Failed to generate an auth key!", e);
-                    error("The auth key will not be persistent...");
-                    error("#################################");
-                    return;
-                }
-            }
-
-            this.config.setProperty("Configuration.port", this.port);
-            this.config.setProperty("Configuration.authKey", this.authKey);
-            this.config.setProperty("Configuration.maxSessions", this.maxSessions);
-            this.config.setProperty("Configuration.quiet", quiet);
-            this.config.setProperty("Configuration.debug", debug);
-            this.config.setProperty("Configuration.whitelistEnabled", this.whitelistEnabled);
-            this.config.setProperty("Configuration.whitelist", this.whitelist);
-            this.config.setProperty("Configuration.blacklistEnabled", this.blacklistEnabled);
-            this.config.setProperty("Configuration.blacklist", this.blacklist);
-            this.config.save();
-        }
-
-        quiet = this.config.getBoolean("Configuration.quiet", quiet);
-        debug = this.config.getBoolean("Configuration.debug", debug);
-        this.port = this.config.getInt("Configuration.port", this.port);
-        this.maxSessions = this.config.getInt("Configuration.maxSessions", this.maxSessions);
-        this.authKey = this.config.getString("Configuration.authKey", this.authKey);
-        this.whitelistEnabled = this.config.getBoolean("Configuration.whitelistEnabled", this.whitelistEnabled);
-        this.whitelist.clear();
-        this.whitelist.addAll(this.config.getStringList("Configuration.whitelist", this.whitelist));
-        this.blacklistEnabled = this.config.getBoolean("Configuration.blacklistEnabled", this.blacklistEnabled);
-        this.blacklist.clear();
-        this.blacklist.addAll(this.config.getStringList("Configuration.blacklist", this.blacklist));
-        if (this.authKey == null)
-        {
-            try
-            {
-                this.authKey = this.generateAuthKey();
-            }
-            catch (NoSuchAlgorithmException e)
-            {
-                error("#################################");
-                error("Failed to generate an auth key!", e);
-                error("Staying in a zombie state...");
-                error("#################################");
-                this.zombie = true;
-                return;
-            }
-        }
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
@@ -168,10 +112,31 @@ public class ApiBukkit extends JavaPlugin
         {
             try
             {
+                if (!this.dataFolder.exists())
+                {
+                    this.dataFolder.mkdirs();
+                }
                 this.pdf = this.getDescription();
                 this.server = this.getServer();
                 this.pm = this.server.getPluginManager();
                 this.webserver = new ApiBukkitServer(this);
+
+                if (this.authKey == null)
+                {
+                    try
+                    {
+                        this.authKey = this.generateAuthKey();
+                    }
+                    catch (NoSuchAlgorithmException e)
+                    {
+                        error("#################################");
+                        error("Failed to generate an auth key!", e);
+                        error("Staying in a zombie state...");
+                        error("#################################");
+                        this.zombie = true;
+                        return;
+                    }
+                }
 
                 this.initiated = true;
             }
@@ -180,6 +145,42 @@ public class ApiBukkit extends JavaPlugin
                 t.printStackTrace(System.err);
             }
         }
+    }
+
+    private void loadConfig()
+    {
+        this.config.load();
+        
+        quiet = this.config.getBoolean("Output.quiet", quiet);
+        debug = this.config.getBoolean("Output.debug", debug);
+        this.port = this.config.getInt("Network.port", this.port);
+        this.maxSessions = this.config.getInt("Network.maxSessions", this.maxSessions);
+        this.authKey = this.config.getString("Network.authKey", this.authKey);
+
+        this.whitelistEnabled = this.config.getBoolean("Whitelist.enabled", this.whitelistEnabled);
+        this.whitelist.clear();
+        this.whitelist.addAll(this.config.getStringList("Whitelist.IPs", this.whitelist));
+
+        this.blacklistEnabled = this.config.getBoolean("Blacklist.enabled", this.blacklistEnabled);
+        this.blacklist.clear();
+        this.blacklist.addAll(this.config.getStringList("Blacklist.IPs", this.blacklist));
+
+        this.defaultConfig();
+    }
+
+    private void defaultConfig()
+    {
+        this.config.setProperty("Network.port",             this.port);
+        this.config.setProperty("Network.authKey",          this.authKey);
+        this.config.setProperty("Network.maxSessions",      this.maxSessions);
+        this.config.setProperty("Output.quiet",             quiet);
+        this.config.setProperty("Output.debug",             debug);
+        this.config.setProperty("Whitelist.enabled",        this.whitelistEnabled);
+        this.config.setProperty("Whitelist.IPs",            this.whitelist);
+        this.config.setProperty("Blacklist.enabled",        this.blacklistEnabled);
+        this.config.setProperty("Blacklist.IPs",            this.blacklist);
+
+        this.config.save();
     }
 
     protected String generateAuthKey() throws NoSuchAlgorithmException

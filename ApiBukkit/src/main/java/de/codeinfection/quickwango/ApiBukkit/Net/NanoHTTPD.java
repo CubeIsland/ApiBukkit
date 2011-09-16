@@ -1,5 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Net;
 
+import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -146,11 +147,11 @@ public abstract class NanoHTTPD
         public Properties header = new Properties();
     }
 
-    private class HttpSeverThread implements Runnable
+    private class HttpServerThread implements Runnable
     {
         protected int maxSessions;
 
-        public HttpSeverThread(int maxSessions)
+        public HttpServerThread(int maxSessions)
         {
             this.maxSessions = maxSessions;
         }
@@ -164,14 +165,23 @@ public abstract class NanoHTTPD
                 {
                     session = new HTTPSession(httpServerSocket.accept());
                     String IP = session.socket.getInetAddress().getHostAddress();
+
+                    // default: IP is allowed
                     boolean IPAllowed = true;
-                    if (whitelistEnabled)
+                    if (plugin.whitelistEnabled && !plugin.whitelist.contains(IP))
                     {
-                        IPAllowed = whitelist.contains(IP);
+                        // whitelisting: IP rejected if not on the whitelist
+                        IPAllowed = false;
                     }
-                    if (blacklistEnabled)
+                    if (plugin.blacklistEnabled && plugin.blacklist.contains(IP))
                     {
-                        IPAllowed = !blacklist.contains(IP);
+                        // blacklisting: IP rejected when on the blacklist
+                        IPAllowed = false;
+                    }
+
+                    if (!IPAllowed)
+                    {
+                        ApiBukkit.log("IP \"" + IP + "\" rejected!");
                     }
 
                     if (IPAllowed && sessions.size() < this.maxSessions)
@@ -248,17 +258,11 @@ public abstract class NanoHTTPD
     private int httpServerPort;
     private ServerSocket httpServerSocket;
     private Thread httpServerThread;
-    protected boolean whitelistEnabled;
-    protected List<String> whitelist;
-    protected boolean blacklistEnabled;
-    protected List<String> blacklist;
+    protected final ApiBukkit plugin;
 
-    public NanoHTTPD()
+    public NanoHTTPD(ApiBukkit plugin)
     {
-        this.whitelistEnabled = false;
-        this.whitelist = new ArrayList<String>();
-        this.blacklistEnabled = false;
-        this.blacklist = new ArrayList<String>();
+        this.plugin = plugin;
         this.sessions = new ArrayList<HTTPSession>();
     }
 
@@ -268,7 +272,7 @@ public abstract class NanoHTTPD
      */
     public void start(int port, int maxSessions) throws IOException
     {
-        this.httpServerThread = new Thread(new HttpSeverThread(maxSessions));
+        this.httpServerThread = new Thread(new HttpServerThread(maxSessions));
         this.httpServerThread.setDaemon(true);
         this.httpServerPort = port;
         this.httpServerSocket = new ServerSocket(this.httpServerPort);

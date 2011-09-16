@@ -15,7 +15,6 @@ import java.net.InetAddress;
 
 public class ApiBukkitServer extends NanoHTTPD
 {
-    protected ApiBukkit plugin;
     protected String authenticationKey;
     protected final static ConcurrentHashMap<String, IResponseFormat> responseFormats;
     protected final ConcurrentHashMap<String, AbstractRequestController> requestControllers;
@@ -28,18 +27,12 @@ public class ApiBukkitServer extends NanoHTTPD
 
     public ApiBukkitServer(ApiBukkit plugin) throws IOException
     {
-        super();
-        this.plugin = plugin;
-
-        this.whitelistEnabled = plugin.whitelistEnabled;
-        this.whitelist = plugin.whitelist;
-        this.blacklistEnabled = plugin.blacklistEnabled;
-        this.blacklist = plugin.blacklist;
+        super(plugin);
         
         responseFormats.put("plain", new PlainFormat());
         responseFormats.put("json", new JsonFormat());
         responseFormats.put("xml", new XMLFormat());
-        responseFormats.put("raw", new XMLFormat());
+        responseFormats.put("raw", new RawFormat());
         
         this.requestControllers = new ConcurrentHashMap<String, AbstractRequestController>();
         this.requestControllers.put("validate", new ValidateController(null));
