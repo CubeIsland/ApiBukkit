@@ -103,7 +103,6 @@ public class WorldController extends AbstractRequestController
         public CreateAction()
         {
             this.server = plugin.getServer();
-            ApiBukkit.log("server: " + (this.server == null ? "NULL" : "OK"));
             this.resetVars();
         }
 
