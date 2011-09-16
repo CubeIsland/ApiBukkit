@@ -26,17 +26,17 @@ public class PlayerController extends AbstractRequestController
     {
         super(plugin, true);
         
-        this.registerAction("burn",             new BurnAction());
-        this.registerAction("clearinventory",   new ClearinventoryAction());
-        this.registerAction("give",             new GiveAction());
-        this.registerAction("heal",             new HealAction());
-        this.registerAction("info",             new InfoAction());
-        this.registerAction("kick",             new KickAction());
-        this.registerAction("kill",             new KillAction());
-        this.registerAction("list",             new ListAction());
-        this.registerAction("teleport",         new TeleportAction());
-        this.registerAction("tell",             new TellAction());
-        this.registerAction("displayname",      new DisplaynameAction());
+        this.setAction("burn",             new BurnAction());
+        this.setAction("clearinventory",   new ClearinventoryAction());
+        this.setAction("give",             new GiveAction());
+        this.setAction("heal",             new HealAction());
+        this.setAction("info",             new InfoAction());
+        this.setAction("kick",             new KickAction());
+        this.setAction("kill",             new KillAction());
+        this.setAction("list",             new ListAction());
+        this.setAction("teleport",         new TeleportAction());
+        this.setAction("tell",             new TellAction());
+        this.setAction("displayname",      new DisplaynameAction());
         
         this.setActionAlias("msg",              "tell");
         this.setActionAlias("clearinv",         "clearinventory");

@@ -27,16 +27,16 @@ public class WorldController extends AbstractRequestController
     {
         super(plugin, true);
         
-        this.registerAction("info",         new InfoAction());
-        this.registerAction("create",       new CreateAction());
-        this.registerAction("time",         new TimeAction());
-        this.registerAction("pvp",          new PvpAction());
-        this.registerAction("storm",        new StormAction());
-        this.registerAction("spawn",        new SpawnAction());
-        this.registerAction("list",         new ListAction());
-        this.registerAction("players",      new PlayersAction());
-        this.registerAction("spawnflags",   new SpawnflagsAction());
-        this.registerAction("save",         new SaveAction());
+        this.setAction("info",         new InfoAction());
+        this.setAction("create",       new CreateAction());
+        this.setAction("time",         new TimeAction());
+        this.setAction("pvp",          new PvpAction());
+        this.setAction("storm",        new StormAction());
+        this.setAction("spawn",        new SpawnAction());
+        this.setAction("list",         new ListAction());
+        this.setAction("players",      new PlayersAction());
+        this.setAction("spawnflags",   new SpawnflagsAction());
+        this.setAction("save",         new SaveAction());
     }
 
     @Override
@@ -205,7 +205,7 @@ public class WorldController extends AbstractRequestController
             this.resetVars();
         }
     }
-    
+
     private class TimeAction extends RequestAction
     {
         @Override

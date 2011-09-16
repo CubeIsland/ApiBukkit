@@ -23,9 +23,9 @@ public class BanController extends AbstractRequestController
     {
         super(plugin, true);
 
-        this.registerAction("add", new AddAction());
-        this.registerAction("remove", new RemoveAction());
-        this.registerAction("get", new GetAction());
+        this.setAction("add", new AddAction());
+        this.setAction("remove", new RemoveAction());
+        this.setAction("get", new GetAction());
     }
 
     @Override

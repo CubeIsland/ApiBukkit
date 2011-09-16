@@ -34,17 +34,17 @@ public class ServerController extends AbstractRequestController
             timeStamp = System.currentTimeMillis() / 1000;
         }
         
-        this.registerAction("info",             new InfoAction());
-        this.registerAction("maxplayers",       new MaxplayersAction());
-        this.registerAction("online",           new OnlineAction());
-        this.registerAction("version",          new VersionAction());
-        this.registerAction("stats",            new StatsAction());
-        this.registerAction("garbagecollect",   new GarbagecollectAction());
-        this.registerAction("kill",             new KillAction());
-        this.registerAction("stop",             new StopAction());
-        this.registerAction("broadcast",        new BroadcastAction());
-        this.registerAction("reload",           new ReloadAction());
-        this.registerAction("console",          new ConsoleAction());
+        this.setAction("info",             new InfoAction());
+        this.setAction("maxplayers",       new MaxplayersAction());
+        this.setAction("online",           new OnlineAction());
+        this.setAction("version",          new VersionAction());
+        this.setAction("stats",            new StatsAction());
+        this.setAction("garbagecollect",   new GarbagecollectAction());
+        this.setAction("kill",             new KillAction());
+        this.setAction("stop",             new StopAction());
+        this.setAction("broadcast",        new BroadcastAction());
+        this.setAction("reload",           new ReloadAction());
+        this.setAction("console",          new ConsoleAction());
         
         this.setActionAlias("playerlimit",      "maxplayers");
         this.setActionAlias("gc",               "garbagecollect");

@@ -29,10 +29,10 @@ public class ConfigurationController extends AbstractRequestController
 
         this.availableConfigs = paths;
 
-        this.registerAction("write", new WriteAction());
-        this.registerAction("read", new ReadAction());
-        this.registerAction("remove", new RemoveAction());
-        this.registerAction("exists", new ExistsAction());
+        this.setAction("write", new WriteAction());
+        this.setAction("read", new ReadAction());
+        this.setAction("remove", new RemoveAction());
+        this.setAction("exists", new ExistsAction());
     }
 
     @Override

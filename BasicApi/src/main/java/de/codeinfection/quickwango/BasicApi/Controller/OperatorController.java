@@ -28,10 +28,10 @@ public class OperatorController extends AbstractRequestController
         super(plugin, true);
         this.cserver = ((CraftServer)plugin.getServer()).getHandle();
 
-        this.registerAction("add", new AddAction());
-        this.registerAction("remove", new RemoveAction());
-        this.registerAction("is", new IsAction());
-        this.registerAction("get", new GetAction());
+        this.setAction("add", new AddAction());
+        this.setAction("remove", new RemoveAction());
+        this.setAction("is", new IsAction());
+        this.setAction("get", new GetAction());
     }
 
     @Override

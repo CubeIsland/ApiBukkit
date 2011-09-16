@@ -34,7 +34,7 @@ public abstract class AbstractRequestController
         return this.authNeeded;
     }
     
-    protected void registerAction(String name, RequestAction action)
+    public void setAction(String name, RequestAction action)
     {
         this.actions.put(name, action);
         ApiBukkit.debug(String.format("Registered action '%s' in '%s'", name, this.getClass().getName().replaceFirst(this.getClass().getPackage().getName() + ".", "")));

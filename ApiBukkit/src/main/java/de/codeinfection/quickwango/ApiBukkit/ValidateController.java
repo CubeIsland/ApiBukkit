@@ -20,7 +20,7 @@ public class ValidateController extends AbstractRequestController
     {
         super(plugin, true);
         
-        this.registerAction("authkey", new AuthkeyAction());
+        this.setAction("authkey", new AuthkeyAction());
     }
     
     @Override

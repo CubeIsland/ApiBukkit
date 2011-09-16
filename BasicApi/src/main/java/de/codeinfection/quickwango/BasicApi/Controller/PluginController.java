@@ -26,14 +26,14 @@ public class PluginController extends AbstractRequestController
     {
         super(plugin, true);
         
-        this.registerAction("list",         new ListAction());
-        //this.registerAction("load",         new LoadAction());
-        //this.registerAction("reload",       new ReloadAction());
-        this.registerAction("reloadall",    new ReloadallAction());
-        //this.registerAction("enable",       new EnableAction());
-        //this.registerAction("disable",      new DisableAction());
-        this.registerAction("info",         new InfoAction());
-        this.registerAction("available",    new AvailableAction());
+        this.setAction("list",         new ListAction());
+        //this.setAction("load",         new LoadAction());
+        //this.setAction("reload",       new ReloadAction());
+        this.setAction("reloadall",    new ReloadallAction());
+        //this.setAction("enable",       new EnableAction());
+        //this.setAction("disable",      new DisableAction());
+        this.setAction("info",         new InfoAction());
+        this.setAction("available",    new AvailableAction());
     }
 
     @Override

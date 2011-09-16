@@ -21,10 +21,10 @@ public class CompatController extends AbstractRequestController
     {
         super(plugin, false);
         
-        this.registerAction("online",           new OnlineAction());
-        this.registerAction("players-online",   new PlayersonlineAction());
-        this.registerAction("whois",            new WhoisAction());
-        this.registerAction("max-players",      new MaxplayersAction());
+        this.setAction("online",           new OnlineAction());
+        this.setAction("players-online",   new PlayersonlineAction());
+        this.setAction("whois",            new WhoisAction());
+        this.setAction("max-players",      new MaxplayersAction());
     }
     
     private class OnlineAction extends RequestAction
