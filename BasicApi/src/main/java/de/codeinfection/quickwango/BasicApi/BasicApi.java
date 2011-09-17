@@ -97,12 +97,12 @@ public class BasicApi extends JavaPlugin
 
         this.api.setRequestController("configuration", new ConfigurationController(this, this.config.getStringList("configfiles", new ArrayList<String>())));
         
-        ApiBukkit.log(this.pdf.getName() + " " + this.pdf.getVersion() + " is now enabled!", true);
+        ApiBukkit.log(this.pdf.getName() + " " + this.pdf.getVersion() + " is now enabled!", ApiBukkit.LogLevel.QUIET);
     }
 
     public void onDisable()
     {
-        ApiBukkit.log(this.pdf.getName() + " " + this.pdf.getVersion() + " is now disabled!", true);
+        ApiBukkit.log(this.pdf.getName() + " " + this.pdf.getVersion() + " is now disabled!", ApiBukkit.LogLevel.QUIET);
     }
 
     private void init()

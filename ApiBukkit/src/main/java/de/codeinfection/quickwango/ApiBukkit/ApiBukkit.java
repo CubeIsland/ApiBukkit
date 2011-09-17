@@ -13,7 +13,9 @@ import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
@@ -37,8 +39,7 @@ public class ApiBukkit extends JavaPlugin
     public boolean blacklistEnabled;
     public final List<String> whitelist;
     public final List<String> blacklist;
-    public static boolean debug = false;
-    public static boolean quiet = false;
+    public static LogLevel logLevel = LogLevel.DEFAULT;
 
     public ApiBukkit()
     {
@@ -83,7 +84,7 @@ public class ApiBukkit extends JavaPlugin
             return;
         }
         
-        log(String.format("Version %s is now enabled!", this.pdf.getVersion()), true);
+        log(String.format("Version %s is now enabled!", this.pdf.getVersion()), LogLevel.QUIET);
     }
 
     public void onDisable()
@@ -103,7 +104,7 @@ public class ApiBukkit extends JavaPlugin
             this.webserver.stop();
         }
 
-        log(String.format("Version %s is now disabled!", this.pdf.getVersion()), true);
+        log(String.format("Version %s is now disabled!", this.pdf.getVersion()), LogLevel.QUIET);
     }
     
     protected void init()
@@ -150,9 +151,16 @@ public class ApiBukkit extends JavaPlugin
     private void loadConfig()
     {
         this.config.load();
-        
-        quiet = this.config.getBoolean("Output.quiet", quiet);
-        debug = this.config.getBoolean("Output.debug", debug);
+
+        try
+        {
+            logLevel = LogLevel.getLogLevel(this.config.getString("General.logLevel", logLevel.name()));
+        }
+        catch (Exception e)
+        {
+            logLevel = LogLevel.DEFAULT;
+            logException(e);
+        }
         this.port = this.config.getInt("Network.port", this.port);
         this.maxSessions = this.config.getInt("Network.maxSessions", this.maxSessions);
         this.authKey = this.config.getString("Network.authKey", this.authKey);
@@ -170,11 +178,10 @@ public class ApiBukkit extends JavaPlugin
 
     private void defaultConfig()
     {
+        this.config.setProperty("General.logLevel",         logLevel.name());
         this.config.setProperty("Network.port",             this.port);
         this.config.setProperty("Network.authKey",          this.authKey);
         this.config.setProperty("Network.maxSessions",      this.maxSessions);
-        this.config.setProperty("Output.quiet",             quiet);
-        this.config.setProperty("Output.debug",             debug);
         this.config.setProperty("Whitelist.enabled",        this.whitelistEnabled);
         this.config.setProperty("Whitelist.IPs",            this.whitelist);
         this.config.setProperty("Blacklist.enabled",        this.blacklistEnabled);
@@ -265,39 +272,114 @@ public class ApiBukkit extends JavaPlugin
 
     public static void log(String message)
     {
-        log(message, false);
+        log(message, LogLevel.DEFAULT);
     }
     
-    public static void log(String message, boolean force)
+    public static void log(String message, Throwable t, LogLevel requiredLogLevel)
     {
-        if (!quiet || force)
+        if (requiredLogLevel.level >= logLevel.level)
         {
-            logger.log(Level.INFO, "[ApiBukkit] " + message);
+            String prefix = (requiredLogLevel.prefix == null ? "" : "[" + requiredLogLevel.prefix + "] ");
+            message = "[ApiBukkit] " + prefix + message;
+            logger.log(requiredLogLevel.logLevel, message);
         }
+    }
+    
+    public static void log(String message, LogLevel requiredLogLevel)
+    {
+        log(message, null, requiredLogLevel);
     }
     
     public static void error(String message)
     {
-        logger.log(Level.SEVERE, "[ApiBukkit] " + message);
+        log(message, LogLevel.ERROR);
     }
 
     public static void error(String msg, Throwable t)
     {
-        logger.log(Level.SEVERE, "[DropLimit] " + msg, t);
+        log(msg, t, LogLevel.ERROR);
     }
     
     public static void debug(String message)
     {
-        if (debug)
-        {
-            log("[DEBUG] " + message);
-        }
+        log(message, LogLevel.DEBUG);
     }
     
     public static void logException(Throwable t)
     {
-        System.err.println("ApiBukkit: " + t.getClass().getName());
-        System.err.println("Message: " + t.getMessage());
-        t.printStackTrace(System.err);
+        log(t.getLocalizedMessage(), t, LogLevel.ERROR);
+    }
+
+    public enum LogLevel
+    {
+        QUIET(0),
+        ERROR(1, "ERROR", Level.SEVERE),
+        DEFAULT(2),
+        INFO(3),
+        DEBUG(4, "DEBUG");
+
+        private final static Map<Integer, LogLevel> levelIdMap = new HashMap<Integer, LogLevel>();
+        private final static Map<String, LogLevel> levelNameMap = new HashMap<String, LogLevel>();
+        public final int level;
+        public final String prefix;
+        public final Level logLevel;
+
+        LogLevel(int level, String prefix, Level logLevel)
+        {
+            this.level = level;
+            this.prefix = prefix.toUpperCase();
+            this.logLevel = logLevel;
+        }
+
+        LogLevel(int level, String prefix)
+        {
+            this.level = level;
+            this.prefix = prefix.toUpperCase();
+            this.logLevel = Level.INFO;
+        }
+
+        LogLevel(int level)
+        {
+            this.level = level;
+            this.prefix = null;
+            this.logLevel = Level.INFO;
+        }
+
+        public static LogLevel getLogLevel(int level) throws Exception
+        {
+            LogLevel logLevel = levelIdMap.get(level);
+            if (logLevel == null)
+            {
+                throw new Exception("unknown LogLevel " + level);
+            }
+            return logLevel;
+        }
+
+        public static LogLevel getLogLevel(String level) throws Exception
+        {
+            level = level.trim();
+            try
+            {
+                return getLogLevel(Integer.valueOf(level));
+            }
+            catch (NumberFormatException e)
+            {}
+
+            LogLevel logLevel = levelNameMap.get(level.toUpperCase());
+            if (logLevel == null)
+            {
+                throw new Exception("unknown LogLevel " + level);
+            }
+            return logLevel;
+        }
+
+        static
+        {
+            for (LogLevel logLevel : values())
+            {
+                levelIdMap.put(logLevel.level, logLevel);
+                levelNameMap.put(logLevel.name(), logLevel);
+            }
+        }
     }
 }
