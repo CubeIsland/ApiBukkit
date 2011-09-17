@@ -9,6 +9,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.ApiResponseFormat;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -252,6 +253,76 @@ public class ApiBukkit extends JavaPlugin
      * Proxy methods
      */
 
+    /**
+     * Returns the response format with the given name, the default response format or the plain response format.
+     *
+     * @param name the name of the response format
+     * @return see description
+     */
+    public ApiResponseFormat getResponseFormat(String name)
+    {
+        if (this.webserver != null)
+        {
+            return this.webserver.getResponseFormat(name);
+        }
+        return null;
+    }
+
+    /**
+     * Adds a new response format.
+     *
+     * @param name the name of the response format
+     * @param format the response format
+     */
+    public final void addResponseFormat(String name, ApiResponseFormat format)
+    {
+        if (this.webserver != null)
+        {
+            this.webserver.addResponseFormat(name, format);
+        }
+    }
+
+    /**
+     * Removes a response format.
+     *
+     * @param name the name of the format to remove
+     */
+    public void removeResponseFormat(String name)
+    {
+        if (this.webserver != null)
+        {
+            this.webserver.removeResponseFormat(name);
+        }
+    }
+
+    /**
+     * Sets the default response format.
+     *
+     * @param format the name of a registered format
+     * @return whether or not the default response format was set
+     */
+    public boolean setDefaultResponseFormat(String format)
+    {
+        if (this.webserver != null)
+        {
+            return this.webserver.setDefaultResponseFormat(format);
+        }
+        return false;
+    }
+
+    /**
+     * Returns the default responce format.
+     *
+     * @return the default response format
+     */
+    public String getDefaultResponseFormat()
+    {
+        if (this.webserver != null)
+        {
+            return this.webserver.getDefaultResponseFormat();
+        }
+        return null;
+    }
 
     /**
      * Returns a request controller.
