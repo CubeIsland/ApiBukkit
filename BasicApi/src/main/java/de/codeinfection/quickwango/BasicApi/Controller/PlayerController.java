@@ -1,8 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class PlayerController extends AbstractRequestController
+public class PlayerController extends ApiRequestController
 {
     public PlayerController(Plugin plugin)
     {
@@ -45,12 +46,12 @@ public class PlayerController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
     
-    private class ListAction extends RequestAction
+    private class ListAction extends ApiRequestAction
     {
         public ListAction()
         {
@@ -58,7 +59,7 @@ public class PlayerController extends AbstractRequestController
         }
         
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             Player[] online = server.getOnlinePlayers();
             List<String> players = new ArrayList<String>();
@@ -71,7 +72,7 @@ public class PlayerController extends AbstractRequestController
         }
     }
     
-    private class InfoAction extends RequestAction
+    private class InfoAction extends ApiRequestAction
     {
         private final double armorPoints[] = {3, 6, 8, 3};
 
@@ -119,7 +120,7 @@ public class PlayerController extends AbstractRequestController
         }
 
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -159,12 +160,12 @@ public class PlayerController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
         }
 
@@ -218,10 +219,10 @@ public class PlayerController extends AbstractRequestController
         }
     }
     
-    private class KillAction extends RequestAction
+    private class KillAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -234,21 +235,21 @@ public class PlayerController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
     
-    private class BurnAction extends RequestAction
+    private class BurnAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -266,7 +267,7 @@ public class PlayerController extends AbstractRequestController
                         }
                         catch (NumberFormatException e)
                         {
-                            throw new RequestException("The duration must be a valid number!", 3);
+                            throw new ApiRequestException("The duration must be a valid number!", 3);
                         }
                     }
                     player.setFireTicks(seconds * 20);
@@ -274,21 +275,21 @@ public class PlayerController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
     
-    private class TeleportAction extends RequestAction
+    private class TeleportAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -303,7 +304,7 @@ public class PlayerController extends AbstractRequestController
                         world = server.getWorld(worldName);
                         if (world == null)
                         {
-                            throw new RequestException("World '" + worldName + "' not found!", 3);
+                            throw new ApiRequestException("World '" + worldName + "' not found!", 3);
                         }
                     }
                     else
@@ -348,13 +349,13 @@ public class PlayerController extends AbstractRequestController
                             catch (NumberFormatException e)
                             {
                                 ApiBukkit.debug(e.getMessage());
-                                throw new RequestException("Invalid location given!", 4);
+                                throw new ApiRequestException("Invalid location given!", 4);
                             }
                         }
                     }
                     if (targetLocation == null)
                     {
-                        throw new RequestException("Could not get any valid location!", 5);
+                        throw new ApiRequestException("Could not get any valid location!", 5);
                     }
 
                     player.teleport(targetLocation);
@@ -369,21 +370,21 @@ public class PlayerController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
     
-    private class HealAction extends RequestAction
+    private class HealAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -396,21 +397,21 @@ public class PlayerController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
     
-    private class GiveAction extends RequestAction
+    private class GiveAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -443,7 +444,7 @@ public class PlayerController extends AbstractRequestController
                         ItemStack itemStack = new ItemStack(item);
                         if (itemStack.getType() == null)
                         {
-                            throw new RequestException("The given item ID is unknown!", 4);
+                            throw new ApiRequestException("The given item ID is unknown!", 4);
                         }
                         itemStack.setAmount(amount);
                         itemStack.setDurability(data);
@@ -453,26 +454,26 @@ public class PlayerController extends AbstractRequestController
                     }
                     catch (NumberFormatException e)
                     {
-                        throw new RequestException("Invalid block ID given!", 3);
+                        throw new ApiRequestException("Invalid block ID given!", 3);
                     }
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
     
-    private class KickAction extends RequestAction
+    private class KickAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -485,21 +486,21 @@ public class PlayerController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
     
-    private class TellAction extends RequestAction
+    private class TellAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -519,26 +520,26 @@ public class PlayerController extends AbstractRequestController
                     }
                     else
                     {
-                        throw new RequestException("No message given!", 3);
+                        throw new ApiRequestException("No message given!", 3);
                     }
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
     
-    private class ClearinventoryAction extends RequestAction
+    private class ClearinventoryAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -551,21 +552,21 @@ public class PlayerController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
 
-    private class DisplaynameAction extends RequestAction
+    private class DisplaynameAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -581,17 +582,17 @@ public class PlayerController extends AbstractRequestController
                     }
                     else
                     {
-                        throw new RequestException("No display name given!", 3);
+                        throw new ApiRequestException("No display name given!", 3);
                     }
                 }
                 else
                 {
-                    throw new RequestException("Player '" + playerName + "' not found!", 2);
+                    throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }

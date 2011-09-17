@@ -1,8 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class BanController extends AbstractRequestController
+public class BanController extends ApiRequestController
 {
     public BanController(Plugin plugin)
     {
@@ -29,15 +30,15 @@ public class BanController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
 
-    private class AddAction extends RequestAction
+    private class AddAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             String IP = params.getProperty("ip");
@@ -55,7 +56,7 @@ public class BanController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("The given player is already banned!", 3);
+                    throw new ApiRequestException("The given player is already banned!", 3);
                 }
             }
             else if (IP != null)
@@ -67,21 +68,21 @@ public class BanController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("The given IP is invalid!", 2);
+                    throw new ApiRequestException("The given IP is invalid!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player or IP given!", 1);
+                throw new ApiRequestException("No player or IP given!", 1);
             }
             return null;
         }
     }
 
-    private class RemoveAction extends RequestAction
+    private class RemoveAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             String IP = params.getProperty("ip");
@@ -95,7 +96,7 @@ public class BanController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("The given player is not banned!", 3);
+                    throw new ApiRequestException("The given player is not banned!", 3);
                 }
             }
             else if (IP != null)
@@ -107,21 +108,21 @@ public class BanController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("The given IP is not banned!", 2);
+                    throw new ApiRequestException("The given IP is not banned!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player or IP given!", 1);
+                throw new ApiRequestException("No player or IP given!", 1);
             }
             return null;
         }
     }
 
-    private class GetAction extends RequestAction
+    private class GetAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             Map<String, Object> data = new HashMap<String, Object>();
             List<String> bannedPlayers = new ArrayList<String>();

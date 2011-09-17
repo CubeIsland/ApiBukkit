@@ -7,9 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
 import de.codeinfection.quickwango.ApiBukkit.Net.NanoHTTPD.Response;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController.RequestAction;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ValidateController;
 import java.net.InetAddress;
 
@@ -17,7 +17,7 @@ public class ApiBukkitServer extends NanoHTTPD
 {
     protected String authenticationKey;
     protected final static ConcurrentHashMap<String, IResponseFormat> responseFormats;
-    protected final ConcurrentHashMap<String, AbstractRequestController> requestControllers;
+    protected final ConcurrentHashMap<String, ApiRequestController> requestControllers;
     protected static String defaultResponseFormat = "plain";
 
     static
@@ -34,7 +34,7 @@ public class ApiBukkitServer extends NanoHTTPD
         responseFormats.put("xml", new XMLFormat());
         responseFormats.put("raw", new RawFormat());
         
-        this.requestControllers = new ConcurrentHashMap<String, AbstractRequestController>();
+        this.requestControllers = new ConcurrentHashMap<String, ApiRequestController>();
         this.requestControllers.put("validate", new ValidateController(null));
     }
 
@@ -81,11 +81,11 @@ public class ApiBukkitServer extends NanoHTTPD
             try
             {
                 ApiBukkit.debug("Selecting controller '" + pathParts[0] + "'");
-                AbstractRequestController controller = this.requestControllers.get(pathParts[0]);
+                ApiRequestController controller = this.requestControllers.get(pathParts[0]);
                 String authKey = params.getProperty("authkey", "");
                 params.remove("authkey");
                 
-                RequestAction requestAction = controller.getAction(action);
+                ApiRequestAction requestAction = controller.getAction(action);
                 if (requestAction != null)
                 {
                     boolean controllerAuthNeeded = controller.isAuthNeeded();
@@ -100,7 +100,7 @@ public class ApiBukkitServer extends NanoHTTPD
                         return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.AUTHENTICATION_FAILURE));
                     }
                     ApiBukkit.debug("Running action '" + action + "'");
-                    response = requestAction.run(params, this.plugin.getServer());
+                    response = requestAction.execute(params, this.plugin.getServer());
                 }
                 else
                 {
@@ -108,7 +108,7 @@ public class ApiBukkitServer extends NanoHTTPD
                     response = controller.defaultAction(action, params, this.plugin.getServer());
                 }
             }
-            catch (RequestException e)
+            catch (ApiRequestException e)
             {
                 ApiBukkit.error("ControllerException: " + e.getMessage());
                 return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, this.error(ApiError.REQUEST_EXCEPTION, e.getErrCode()));
@@ -187,7 +187,7 @@ public class ApiBukkitServer extends NanoHTTPD
         return defaultResponseFormat;
     }
     
-    public void setRequestController(String name, AbstractRequestController controller)
+    public void setRequestController(String name, ApiRequestController controller)
     {
         if (controller != null && !name.equals("validate"))
         {
@@ -230,7 +230,7 @@ public class ApiBukkitServer extends NanoHTTPD
         });
     }
     
-    public Collection<AbstractRequestController> getAllRequestControllers()
+    public Collection<ApiRequestController> getAllRequestControllers()
     {
         return this.requestControllers.values();
     }

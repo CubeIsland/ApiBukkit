@@ -3,8 +3,8 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import java.util.Properties;
 import org.bukkit.Server;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.BasicApi.ApiCommandSender;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class CommandController extends AbstractRequestController
+public class CommandController extends ApiRequestController
 {
     private ApiCommandSender commandSender;
     
@@ -27,7 +27,7 @@ public class CommandController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         List<String> response = null;
         if (action != null)
@@ -65,13 +65,13 @@ public class CommandController extends AbstractRequestController
             }
             if (!commandSuccessful)
             {
-                throw new RequestException("Command not found!", 2);
+                throw new ApiRequestException("Command not found!", 2);
             }
         }
         else
         {
             ApiBukkit.log("No command given!");
-            throw new RequestException("No command given!", 1);
+            throw new ApiRequestException("No command given!", 1);
         }
         return response;
     }

@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Request;
+package de.codeinfection.quickwango.ApiBukkit;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import java.util.HashMap;
@@ -11,17 +11,17 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public abstract class AbstractRequestController
+public abstract class ApiRequestController
 {
     protected Plugin plugin;
     private boolean authNeeded;
-    private HashMap<String, RequestAction> actions;
+    private HashMap<String, ApiRequestAction> actions;
     
-    public AbstractRequestController(Plugin plugin, boolean authNeeded)
+    public ApiRequestController(Plugin plugin, boolean authNeeded)
     {
         this.plugin = plugin;
         this.authNeeded = authNeeded;
-        this.actions = new HashMap<String, RequestAction>();
+        this.actions = new HashMap<String, ApiRequestAction>();
     }
     
     public Plugin getPlugin()
@@ -34,7 +34,7 @@ public abstract class AbstractRequestController
         return this.authNeeded;
     }
     
-    public void setAction(String name, RequestAction action)
+    public void setAction(String name, ApiRequestAction action)
     {
         this.actions.put(name, action);
         ApiBukkit.debug(String.format("Registered action '%s' in '%s'", name, this.getClass().getName().replaceFirst(this.getClass().getPackage().getName() + ".", "")));
@@ -50,37 +50,15 @@ public abstract class AbstractRequestController
         return false;
     }
     
-    public RequestAction getAction(String name)
+    public ApiRequestAction getAction(String name)
     {
         return this.actions.get(name);
     }
     
-    public Map<String, RequestAction> getActions()
+    public Map<String, ApiRequestAction> getActions()
     {
         return this.actions;
     }
     
-    abstract public Object defaultAction(String action, Properties params, Server server) throws RequestException;
-    
-    public abstract class RequestAction
-    {
-        private Boolean authNeeded;
-        
-        public RequestAction()
-        {
-            this.authNeeded = null;
-        }
-        
-        public RequestAction(boolean authNeeded)
-        {
-            this.authNeeded = authNeeded;
-        }
-        
-        public Boolean isAuthNeeded()
-        {
-            return this.authNeeded;
-        }
-        
-        public abstract Object run(Properties params, Server server) throws RequestException;
-    }
+    abstract public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException;
 }

@@ -1,7 +1,8 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class CompatController extends AbstractRequestController
+public class CompatController extends ApiRequestController
 {
     public CompatController(Plugin plugin)
     {
@@ -27,19 +28,19 @@ public class CompatController extends AbstractRequestController
         this.setAction("max-players",      new MaxplayersAction());
     }
     
-    private class OnlineAction extends RequestAction
+    private class OnlineAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             return server.getOnlinePlayers().length;
         }
     }
     
-    private class PlayersonlineAction extends RequestAction
+    private class PlayersonlineAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             Player[] players = server.getOnlinePlayers();
             List<String> data = new ArrayList<String>();
@@ -51,10 +52,10 @@ public class CompatController extends AbstractRequestController
         }
     }
     
-    private class WhoisAction extends RequestAction
+    private class WhoisAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String requestPath = params.getProperty("__REQUEST_PATH__");
             if (requestPath == null)
@@ -82,10 +83,10 @@ public class CompatController extends AbstractRequestController
         }
     }
     
-    private class MaxplayersAction extends RequestAction
+    private class MaxplayersAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             return server.getMaxPlayers();
         }
@@ -93,7 +94,7 @@ public class CompatController extends AbstractRequestController
     
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }

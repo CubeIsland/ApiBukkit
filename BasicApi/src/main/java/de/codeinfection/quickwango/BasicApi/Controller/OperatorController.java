@@ -1,8 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -19,7 +20,7 @@ import java.lang.reflect.Field;
  *
  * @author CodeInfection
  */
-public class OperatorController extends AbstractRequestController
+public class OperatorController extends ApiRequestController
 {
     protected ServerConfigurationManager cserver;
 
@@ -35,15 +36,15 @@ public class OperatorController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
 
-    private class AddAction extends RequestAction
+    private class AddAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -56,20 +57,20 @@ public class OperatorController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player already Op!", 2);
+                    throw new ApiRequestException("Player already Op!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
         }
     }
 
-    private class RemoveAction extends RequestAction
+    private class RemoveAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -82,20 +83,20 @@ public class OperatorController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player is not a Op!", 2);
+                    throw new ApiRequestException("Player is not a Op!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
         }
     }
 
-    private class IsAction extends RequestAction
+    private class IsAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -104,15 +105,15 @@ public class OperatorController extends AbstractRequestController
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
         }
     }
 
-    private class GetAction extends RequestAction
+    private class GetAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             List<String> operators = new ArrayList<String>();
             try

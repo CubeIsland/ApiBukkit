@@ -1,8 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import org.bukkit.plugin.UnknownDependencyException;
  *
  * @author CodeInfection
  */
-public class PluginController extends AbstractRequestController
+public class PluginController extends ApiRequestController
 {
     public PluginController(Plugin plugin)
     {
@@ -37,15 +38,15 @@ public class PluginController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
     
-    private class ListAction extends RequestAction
+    private class ListAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             ArrayList<String> data = new ArrayList<String>();
             Plugin[] plugins = server.getPluginManager().getPlugins();
@@ -57,24 +58,24 @@ public class PluginController extends AbstractRequestController
         }
     }
     
-    private class LoadAction extends RequestAction
+    private class LoadAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             try
             {
                 String pluginName = params.getProperty("plugin");
                 if (pluginName == null)
                 {
-                    throw new RequestException("No plugin file given!", 1);
+                    throw new ApiRequestException("No plugin file given!", 1);
                 }
                 
                 File pluginDir = (File)((CraftServer)server).getHandle().server.options.valueOf("plugins");
                 Plugin targetPlugin = server.getPluginManager().loadPlugin(new File(pluginDir, pluginName + ".jar"));
                 if (targetPlugin == null)
                 {
-                    throw new RequestException("Could not load plugin " + pluginName + "!", 2);
+                    throw new ApiRequestException("Could not load plugin " + pluginName + "!", 2);
                 }
                 server.getPluginManager().enablePlugin(targetPlugin);
                 ApiBukkit.log("loaded and enabled plugin " + pluginName);
@@ -83,36 +84,36 @@ public class PluginController extends AbstractRequestController
             catch (InvalidPluginException e)
             {
                 ApiBukkit.error("Failed to load the plugin: Invalid plugin!");
-                throw new RequestException("Could not load plugin: Invalid plugin!", 3);
+                throw new ApiRequestException("Could not load plugin: Invalid plugin!", 3);
             }
             catch (InvalidDescriptionException e)
             {
                 ApiBukkit.error("Failed to load the plugin: Invalid description!");
-                throw new RequestException("Could not load plugin: Invalid description!", 4);
+                throw new ApiRequestException("Could not load plugin: Invalid description!", 4);
             }
             catch (UnknownDependencyException e)
             {
                 ApiBukkit.error("Failed to load the plugin: Unknown dependency!");
-                throw new RequestException("Could not load plugin: Unknown dependency!", 5);
+                throw new ApiRequestException("Could not load plugin: Unknown dependency!", 5);
             }
         }
     }
     
-    private class ReloadAction extends RequestAction
+    private class ReloadAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String pluginName = params.getProperty("plugin");
             if (pluginName == null)
             {
-                throw new RequestException("No plugin name given!", 1);
+                throw new ApiRequestException("No plugin name given!", 1);
             }
 
             Plugin targetPlugin = server.getPluginManager().getPlugin(pluginName);
             if (targetPlugin == null)
             {
-                throw new RequestException("The given plugin is not loaded!", 2);
+                throw new ApiRequestException("The given plugin is not loaded!", 2);
             }
             server.getPluginManager().disablePlugin(targetPlugin);
             server.getPluginManager().enablePlugin(targetPlugin);
@@ -121,31 +122,31 @@ public class PluginController extends AbstractRequestController
         }
     }
     
-    private class ReloadallAction extends RequestAction
+    private class ReloadallAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             server.reload();
             return null;
         }
     }
     
-    private class EnableAction extends RequestAction
+    private class EnableAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String pluginName = params.getProperty("plugin");
             if (pluginName == null)
             {
-                throw new RequestException("No plugin name given!", 1);
+                throw new ApiRequestException("No plugin name given!", 1);
             }
 
             Plugin targetPlugin = server.getPluginManager().getPlugin(pluginName);
             if (targetPlugin == null)
             {
-                throw new RequestException("The given plugin is not loaded!", 2);
+                throw new ApiRequestException("The given plugin is not loaded!", 2);
             }
             server.getPluginManager().enablePlugin(targetPlugin);
             ApiBukkit.log("enabled plugin " + pluginName);
@@ -153,20 +154,20 @@ public class PluginController extends AbstractRequestController
         }
     }
     
-    private class DisableAction extends RequestAction
+    private class DisableAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String pluginName = params.getProperty("plugin");
             if (pluginName == null)
             {
-                throw new RequestException("No plugin name given!", 1);
+                throw new ApiRequestException("No plugin name given!", 1);
             }
             Plugin targetPlugin = server.getPluginManager().getPlugin(pluginName);
             if (targetPlugin == null)
             {
-                throw new RequestException("The given plugin is not loaded!", 2);
+                throw new ApiRequestException("The given plugin is not loaded!", 2);
             }
             server.getPluginManager().disablePlugin(targetPlugin);
             ApiBukkit.log("enabled plugin " + pluginName);
@@ -174,10 +175,10 @@ public class PluginController extends AbstractRequestController
         }
     }
     
-    private class InfoAction extends RequestAction
+    private class InfoAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String pluginName = params.getProperty("plugin");
             if (pluginName != null)
@@ -201,20 +202,20 @@ public class PluginController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Plugin not found!", 2);
+                    throw new ApiRequestException("Plugin not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No plugin given!", 1);
+                throw new ApiRequestException("No plugin given!", 1);
             }
         }
     }
 
-    private class AvailableAction extends RequestAction
+    private class AvailableAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String pluginName = params.getProperty("plugin");
             if (pluginName != null)
@@ -223,15 +224,15 @@ public class PluginController extends AbstractRequestController
             }
             else
             {
-                throw new RequestException("No plugin given!", 1);
+                throw new ApiRequestException("No plugin given!", 1);
             }
         }
     }
     
-    private class InstallAction extends RequestAction
+    private class InstallAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             throw new UnsupportedOperationException("Not supported yet.");
         }

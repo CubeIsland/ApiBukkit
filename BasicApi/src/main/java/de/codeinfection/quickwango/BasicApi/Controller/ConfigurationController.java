@@ -1,8 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,7 +19,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class ConfigurationController extends AbstractRequestController
+public class ConfigurationController extends ApiRequestController
 {
     protected List<String> availableConfigs;
 
@@ -36,15 +37,15 @@ public class ConfigurationController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
 
-    private class WriteAction extends RequestAction
+    private class WriteAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String fileParam = params.getProperty("file");
             String appendParam = params.getProperty("append");
@@ -76,31 +77,31 @@ public class ConfigurationController extends AbstractRequestController
                         }
                         catch (IOException e)
                         {
-                            throw new RequestException("Failed to write the data", 4);
+                            throw new ApiRequestException("Failed to write the data", 4);
                         }
                     }
                     else
                     {
-                        throw new RequestException("No data given", 3);
+                        throw new ApiRequestException("No data given", 3);
                     }
                 }
                 else
                 {
-                    throw new RequestException("Access denied for the requested file", 2);
+                    throw new ApiRequestException("Access denied for the requested file", 2);
                 }
                 return null;
             }
             else
             {
-                throw new RequestException("No file given!", 1);
+                throw new ApiRequestException("No file given!", 1);
             }
         }
     }
 
-    private class ReadAction extends RequestAction
+    private class ReadAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String fileParam = params.getProperty("file");
             if (fileParam != null)
@@ -125,7 +126,7 @@ public class ConfigurationController extends AbstractRequestController
                         }
                         catch (IOException e)
                         {
-                            throw new RequestException("Failed to read the file", 3);
+                            throw new ApiRequestException("Failed to read the file", 3);
                         }
                     }
                     else
@@ -135,20 +136,20 @@ public class ConfigurationController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Access denied for the requested file", 2);
+                    throw new ApiRequestException("Access denied for the requested file", 2);
                 }
             }
             else
             {
-                throw new RequestException("No file given!", 1);
+                throw new ApiRequestException("No file given!", 1);
             }
         }
     }
 
-    private class RemoveAction extends RequestAction
+    private class RemoveAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String fileParam = params.getProperty("file");
             if (fileParam != null)
@@ -159,21 +160,21 @@ public class ConfigurationController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Access denied for the requested file", 2);
+                    throw new ApiRequestException("Access denied for the requested file", 2);
                 }
             }
             else
             {
-                throw new RequestException("No file given!", 1);
+                throw new ApiRequestException("No file given!", 1);
             }
             return null;
         }
     }
 
-    private class ExistsAction extends RequestAction
+    private class ExistsAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String fileParam = params.getProperty("file");
             if (fileParam != null)
@@ -184,12 +185,12 @@ public class ConfigurationController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Access denied for the requested file", 2);
+                    throw new ApiRequestException("Access denied for the requested file", 2);
                 }
             }
             else
             {
-                throw new RequestException("No file given!", 1);
+                throw new ApiRequestException("No file given!", 1);
             }
         }
     }

@@ -4,8 +4,6 @@
  */
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
 import java.util.Properties;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
@@ -14,7 +12,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class ValidateController extends AbstractRequestController
+public class ValidateController extends ApiRequestController
 {
     public ValidateController(Plugin plugin)
     {
@@ -24,15 +22,15 @@ public class ValidateController extends AbstractRequestController
     }
     
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
-        throw new RequestException("No default action!", 1);
+        throw new ApiRequestException("No default action!", 1);
     }
     
-    private class AuthkeyAction extends RequestAction
+    private class AuthkeyAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             return null;
         }

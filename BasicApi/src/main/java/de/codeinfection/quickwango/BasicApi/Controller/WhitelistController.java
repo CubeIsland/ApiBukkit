@@ -1,7 +1,8 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.util.ArrayList;
 import java.util.Properties;
 import org.bukkit.OfflinePlayer;
@@ -12,7 +13,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class WhitelistController extends AbstractRequestController
+public class WhitelistController extends ApiRequestController
 {
 
     public WhitelistController(Plugin plugin)
@@ -26,15 +27,15 @@ public class WhitelistController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
 
-    private class AddAction extends RequestAction
+    private class AddAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -46,21 +47,21 @@ public class WhitelistController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player already whitelisted!", 2);
+                    throw new ApiRequestException("Player already whitelisted!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
 
-    private class RemoveAction extends RequestAction
+    private class RemoveAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -72,21 +73,21 @@ public class WhitelistController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Player not whitelisted!", 2);
+                    throw new ApiRequestException("Player not whitelisted!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
             return null;
         }
     }
 
-    private class IsAction extends RequestAction
+    private class IsAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -95,15 +96,15 @@ public class WhitelistController extends AbstractRequestController
             }
             else
             {
-                throw new RequestException("No player given!", 1);
+                throw new ApiRequestException("No player given!", 1);
             }
         }
     }
 
-    private class GetAction extends RequestAction
+    private class GetAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             ArrayList<String> whitelist = new ArrayList<String>();
             for (OfflinePlayer offlinePlayer : server.getWhitelistedPlayers())

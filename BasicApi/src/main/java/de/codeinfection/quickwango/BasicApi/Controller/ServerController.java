@@ -1,8 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -19,7 +20,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class ServerController extends AbstractRequestController
+public class ServerController extends ApiRequestController
 {
     protected static Long timeStamp = null;
 
@@ -61,12 +62,12 @@ public class ServerController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
     
-    private class MaxplayersAction extends RequestAction
+    private class MaxplayersAction extends ApiRequestAction
     {
         public MaxplayersAction()
         {
@@ -74,17 +75,17 @@ public class ServerController extends AbstractRequestController
         }
         
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             return server.getMaxPlayers();
         }
     }
     
-    private class InfoAction extends RequestAction
+    private class InfoAction extends ApiRequestAction
     {
         
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             Map<String, Object> data = new HashMap<String, Object>();
             
@@ -109,7 +110,7 @@ public class ServerController extends AbstractRequestController
         }
     }
     
-    private class OnlineAction extends RequestAction
+    private class OnlineAction extends ApiRequestAction
     {
         public OnlineAction()
         {
@@ -117,13 +118,13 @@ public class ServerController extends AbstractRequestController
         }
         
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             return server.getOnlinePlayers().length;
         }
     }
     
-    private class VersionAction extends RequestAction
+    private class VersionAction extends ApiRequestAction
     {
         public VersionAction()
         {
@@ -131,16 +132,16 @@ public class ServerController extends AbstractRequestController
         }
         
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             return server.getVersion();
         }
     }
     
-    private class StatsAction extends RequestAction
+    private class StatsAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             Map<String, Object> data = new HashMap<String, Object>();
             Runtime runtime = Runtime.getRuntime();
@@ -150,10 +151,10 @@ public class ServerController extends AbstractRequestController
         }
     }
     
-    private class GarbagecollectAction extends RequestAction
+    private class GarbagecollectAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             server.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
                 public void run() {
@@ -168,10 +169,10 @@ public class ServerController extends AbstractRequestController
         }
     }
     
-    private class KillAction extends RequestAction
+    private class KillAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             ApiBukkit.log("killing java runtime");
             System.exit(0);
@@ -179,13 +180,13 @@ public class ServerController extends AbstractRequestController
         }
     }
     
-    private class StopAction extends RequestAction
+    private class StopAction extends ApiRequestAction
     {
         /**
          * Stops the Server by dispatching the commands "save-all" and "stop"
          */
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             for (World world : server.getWorlds())
             {
@@ -196,9 +197,9 @@ public class ServerController extends AbstractRequestController
         }
     }
     
-    private class BroadcastAction extends RequestAction
+    private class BroadcastAction extends ApiRequestAction
     {
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String msg = params.getProperty("message");
             if (msg != null)
@@ -208,16 +209,16 @@ public class ServerController extends AbstractRequestController
             }
             else
             {
-                throw new RequestException("No message given!", 1);
+                throw new ApiRequestException("No message given!", 1);
             }
             return null;
         }
     }
     
-    private class ReloadAction extends RequestAction
+    private class ReloadAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             server.reload();
             return null;
@@ -227,7 +228,7 @@ public class ServerController extends AbstractRequestController
     private class ConsoleAction extends ReloadAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             try
             {
@@ -268,7 +269,7 @@ public class ServerController extends AbstractRequestController
             }
             catch (IOException e)
             {
-                throw new RequestException("Could not find the server log!", 1);
+                throw new ApiRequestException("Could not find the server log!", 1);
             }
         }
     }

@@ -1,8 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
-import de.codeinfection.quickwango.ApiBukkit.Request.RequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,7 +22,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class WorldController extends AbstractRequestController
+public class WorldController extends ApiRequestController
 {
     public WorldController(Plugin plugin)
     {
@@ -40,15 +41,15 @@ public class WorldController extends AbstractRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws RequestException
+    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
     
-    private class InfoAction extends RequestAction
+    private class InfoAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -82,17 +83,17 @@ public class WorldController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("World not found!", 1);
+                    throw new ApiRequestException("World not found!", 1);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
         }
     }
     
-    private class CreateAction extends RequestAction implements Runnable
+    private class CreateAction extends ApiRequestAction implements Runnable
     {
         protected Server server;
         protected String worldName;
@@ -115,7 +116,7 @@ public class WorldController extends AbstractRequestController
         }
 
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             this.worldName = params.getProperty("world");
             if (this.worldName != null)
@@ -135,12 +136,12 @@ public class WorldController extends AbstractRequestController
                     }
                     else
                     {
-                        throw new RequestException("No environment specified!", 3);
+                        throw new ApiRequestException("No environment specified!", 3);
                     }
                     
                     if (this.env == null)
                     {
-                        throw new RequestException("Invalid environment specified!", 4);
+                        throw new ApiRequestException("Invalid environment specified!", 4);
                     }
 
                     String generatorParam = params.getProperty("generator");
@@ -156,7 +157,7 @@ public class WorldController extends AbstractRequestController
                             if (plugin == null || !plugin.isEnabled())
                             {
                                 ApiBukkit.error("Could not set generator for default world '" + this.worldName + "': Plugin '" + split[0] + "' does not exist");
-                                throw new RequestException("Failed to load generator plugin", 5);
+                                throw new ApiRequestException("Failed to load generator plugin", 5);
                             }
                             else
                             {
@@ -183,17 +184,17 @@ public class WorldController extends AbstractRequestController
                     }
                     if (this.server.getScheduler().scheduleSyncDelayedTask(plugin, this, 0L) < 0)
                     {
-                        throw new RequestException("Failed to schedule creation task!", 6);
+                        throw new ApiRequestException("Failed to schedule creation task!", 6);
                     }
                 }
                 else
                 {
-                    throw new RequestException("World does already exist!", 2);
+                    throw new ApiRequestException("World does already exist!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
             return null;
         }
@@ -205,10 +206,10 @@ public class WorldController extends AbstractRequestController
         }
     }
 
-    private class TimeAction extends RequestAction
+    private class TimeAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -226,31 +227,31 @@ public class WorldController extends AbstractRequestController
                         }
                         catch (NumberFormatException e)
                         {
-                            throw new RequestException("Time must be a valid number!", 4);
+                            throw new ApiRequestException("Time must be a valid number!", 4);
                         }
                     }
                     else
                     {
-                        throw new RequestException("No time given!", 3);
+                        throw new ApiRequestException("No time given!", 3);
                     }
                 }
                 else
                 {
-                    throw new RequestException("World not found!", 2);
+                    throw new ApiRequestException("World not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
             return null;
         }
     }
     
-    private class PvpAction extends RequestAction
+    private class PvpAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -271,7 +272,7 @@ public class WorldController extends AbstractRequestController
                         }
                         else
                         {
-                            throw new RequestException("Invalid state given! Use on or off", 3);
+                            throw new ApiRequestException("Invalid state given! Use on or off", 3);
                         }
                     }
                     else
@@ -281,21 +282,21 @@ public class WorldController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("World not found!", 2);
+                    throw new ApiRequestException("World not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
             return null;
         }
     }
     
-    private class StormAction extends RequestAction
+    private class StormAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -316,31 +317,31 @@ public class WorldController extends AbstractRequestController
                         }
                         else
                         {
-                            throw new RequestException("Invalid state given! Use on or off", 4);
+                            throw new ApiRequestException("Invalid state given! Use on or off", 4);
                         }
                     }
                     else
                     {
-                        throw new RequestException("No state given!", 3);
+                        throw new ApiRequestException("No state given!", 3);
                     }
                 }
                 else
                 {
-                    throw new RequestException("World not found!", 2);
+                    throw new ApiRequestException("World not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
             return null;
         }
     }
     
-    private class SpawnAction extends RequestAction
+    private class SpawnAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -365,12 +366,12 @@ public class WorldController extends AbstractRequestController
                             }
                             else
                             {
-                                throw new RequestException("No valid location given!", 5);
+                                throw new ApiRequestException("No valid location given!", 5);
                             }
                         }
                         catch (NumberFormatException e)
                         {
-                            throw new RequestException("No valid location given!", 5);
+                            throw new ApiRequestException("No valid location given!", 5);
                         }
                     }
                     else if (playerName != null)
@@ -383,31 +384,31 @@ public class WorldController extends AbstractRequestController
                         }
                         else
                         {
-                            throw new RequestException("Given player not found", 4);
+                            throw new ApiRequestException("Given player not found", 4);
                         }
                     }
                     else
                     {
-                        throw new RequestException("No location given!", 3);
+                        throw new ApiRequestException("No location given!", 3);
                     }
                 }
                 else
                 {
-                    throw new RequestException("World not found!", 2);
+                    throw new ApiRequestException("World not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
             return null;
         }
     }
     
-    private class ListAction extends RequestAction
+    private class ListAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             List<World> worlds = server.getWorlds();
             List<String> data = new ArrayList<String>();
@@ -419,10 +420,10 @@ public class WorldController extends AbstractRequestController
         }
     }
 
-    private class PlayersAction extends RequestAction
+    private class PlayersAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -440,20 +441,20 @@ public class WorldController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("World " + worldName + " not found!", 2);
+                    throw new ApiRequestException("World " + worldName + " not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
         }
     }
 
-    private class SpawnflagsAction extends RequestAction
+    private class SpawnflagsAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -494,20 +495,20 @@ public class WorldController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("World " + worldName + " not found!", 2);
+                    throw new ApiRequestException("World " + worldName + " not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
         }
     }
 
-    private class SaveAction extends RequestAction
+    private class SaveAction extends ApiRequestAction
     {
         @Override
-        public Object run(Properties params, Server server) throws RequestException
+        public Object execute(Properties params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -519,12 +520,12 @@ public class WorldController extends AbstractRequestController
                 }
                 else
                 {
-                    throw new RequestException("Given world not found!", 2);
+                    throw new ApiRequestException("Given world not found!", 2);
                 }
             }
             else
             {
-                throw new RequestException("No world given!", 1);
+                throw new ApiRequestException("No world given!", 1);
             }
             
             return null;

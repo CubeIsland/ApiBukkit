@@ -9,7 +9,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
-import de.codeinfection.quickwango.ApiBukkit.Request.AbstractRequestController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -226,7 +225,7 @@ public class ApiBukkit extends JavaPlugin
      * @param name the name of the controller
      * @param controller an controller instance
      */
-    public void setRequestController(String name, AbstractRequestController controller)
+    public void setRequestController(String name, ApiRequestController controller)
     {
         if (this.webserver != null)
         {
