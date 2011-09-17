@@ -49,7 +49,7 @@ public class ApiBukkitServer extends NanoHTTPD
         params.put("__REQUEST_PATH__", uri);
         params.put("__REQUEST_METHOD__", method);
         params.put("__REMOTE_ADDR__", remoteIp.getHostAddress());
-        ApiBukkit.log(String.format("'%s' was requested by '%s'", remoteIp.getHostAddress(), uri), ApiBukkit.LogLevel.INFO);
+        ApiBukkit.log(String.format("'%s' requested '%s'", remoteIp.getHostAddress(), uri), ApiBukkit.LogLevel.INFO);
         uri = uri.substring(1);
         if (uri.length() == 0)
         {
@@ -309,7 +309,7 @@ public class ApiBukkitServer extends NanoHTTPD
         if (this.requestControllers.containsKey(controller) && !alias.equals("validate"))
         {
             this.requestControllerAliases.put(alias, controller);
-            ApiBukkit.debug(String.format("Set the controller alias '%s' for '%s'", alias, controller));
+            ApiBukkit.debug(String.format("Set the alias '%s' for the controller '%s'", alias, controller));
             return true;
         }
         return false;
