@@ -1,7 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Net;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
@@ -12,17 +11,19 @@ import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ValidateController;
 import java.net.InetAddress;
+import java.util.Map;
 
 public class ApiBukkitServer extends NanoHTTPD
 {
     protected String authenticationKey;
-    protected final static ConcurrentHashMap<String, IResponseFormat> responseFormats;
-    protected final ConcurrentHashMap<String, ApiRequestController> requestControllers;
+    protected final static ConcurrentHashMap<String, ApiResponseFormat> responseFormats;
+    protected final Map<String, ApiRequestController> requestControllers;
+    protected final Map<String, String> requestControllerAliases;
     protected static String defaultResponseFormat = "plain";
 
     static
     {
-        responseFormats = new ConcurrentHashMap<String, IResponseFormat>();
+        responseFormats = new ConcurrentHashMap<String, ApiResponseFormat>();
     }
 
     public ApiBukkitServer(ApiBukkit plugin) throws IOException
@@ -35,6 +36,7 @@ public class ApiBukkitServer extends NanoHTTPD
         responseFormats.put("raw", new RawFormat());
         
         this.requestControllers = new ConcurrentHashMap<String, ApiRequestController>();
+        this.requestControllerAliases = new ConcurrentHashMap<String, String>();
         this.requestControllers.put("validate", new ValidateController(null));
     }
 
@@ -60,14 +62,14 @@ public class ApiBukkitServer extends NanoHTTPD
         String[] pathParts = uri.split("/");
         
         String controllerName = null;
-        String action = null;
+        String actionName = null;
         if (pathParts.length >= 1)
         {
             controllerName = pathParts[0];
         }
         if (pathParts.length >= 2)
         {
-            action = pathParts[1];
+            actionName = pathParts[1];
         }
         if (pathParts.length < 1 || controllerName == null)
         {
@@ -76,20 +78,33 @@ public class ApiBukkitServer extends NanoHTTPD
         }
         
         Object response = null;
-        if (this.requestControllers.containsKey(pathParts[0]))
+        ApiRequestController controller = null;
+
+        if (this.requestControllerAliases.containsKey(controllerName))
         {
+            controller = this.requestControllers.get(this.requestControllerAliases.get(controllerName));
+        }
+        if (controller == null)
+        {
+            controller = this.requestControllers.get(controllerName);
+        }
+        if (controller != null)
+        {
+            ApiBukkit.debug("Selected controller '" + controller.getClass().getSimpleName() + "'");
             try
             {
-                ApiBukkit.debug("Selecting controller '" + pathParts[0] + "'");
-                ApiRequestController controller = this.requestControllers.get(pathParts[0]);
                 String authKey = params.getProperty("authkey", "");
                 params.remove("authkey");
                 
-                ApiRequestAction requestAction = controller.getAction(action);
-                if (requestAction != null)
+                ApiRequestAction action = controller.getActionByAlias(actionName);
+                if (action == null)
+                {
+                    action = controller.getAction(actionName);
+                }
+                if (action != null)
                 {
                     boolean controllerAuthNeeded = controller.isAuthNeeded();
-                    Boolean actionAuthNeeded = requestAction.isAuthNeeded();
+                    Boolean actionAuthNeeded = action.isAuthNeeded();
                     if (actionAuthNeeded == null)
                     {
                         actionAuthNeeded = controllerAuthNeeded;
@@ -99,13 +114,13 @@ public class ApiBukkitServer extends NanoHTTPD
                         ApiBukkit.error("Wrong authentication key!");
                         return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.AUTHENTICATION_FAILURE));
                     }
-                    ApiBukkit.debug("Running action '" + action + "'");
-                    response = requestAction.execute(params, this.plugin.getServer());
+                    ApiBukkit.debug("Running action '" + actionName + "'");
+                    response = action.execute(params, this.plugin.getServer());
                 }
                 else
                 {
                     ApiBukkit.debug("Runnung default action");
-                    response = controller.defaultAction(action, params, this.plugin.getServer());
+                    response = controller.defaultAction(actionName, params, this.plugin.getServer());
                 }
             }
             catch (ApiRequestException e)
@@ -133,7 +148,7 @@ public class ApiBukkitServer extends NanoHTTPD
         if (response != null)
         {
             String formatProperty = params.getProperty("format", defaultResponseFormat);
-            IResponseFormat responseFormat = getResponseFormat(formatProperty);
+            ApiResponseFormat responseFormat = getResponseFormat(formatProperty);
             
             ApiBukkit.debug("Responding normally: HTTP 200");
             return new Response(HTTP_OK, responseFormat.getMime(), responseFormat.format(response));
@@ -144,10 +159,36 @@ public class ApiBukkitServer extends NanoHTTPD
             return new Response(HTTP_NOCONTENT, MIME_PLAINTEXT, "");
         }
     }
-    
-    public static IResponseFormat getResponseFormat(String name)
+
+    protected String error(ApiError error)
     {
-        IResponseFormat format = null;
+        ApiResponseFormat formater = getResponseFormat("plain");
+        return formater.format(error);
+    }
+
+    protected String error(ApiError error, int errCode)
+    {
+        ApiResponseFormat formater = getResponseFormat("plain");
+        return formater.format(new Object[] {
+            error,
+            errCode
+        });
+    }
+
+
+    /*
+     * Public API
+     */
+
+    /**
+     * Returns the response format with the given name, the default response format or the plain response format.
+     *
+     * @param name the name of the response format
+     * @return see description
+     */
+    public static ApiResponseFormat getResponseFormat(String name)
+    {
+        ApiResponseFormat format = null;
         if (responseFormats.containsKey(name))
         {
             format = responseFormats.get(name);
@@ -163,17 +204,33 @@ public class ApiBukkitServer extends NanoHTTPD
         
         return format;
     }
-    
-    public static void addResponseFormat(String name, IResponseFormat format)
+
+    /**
+     * Adds a new response format.
+     *
+     * @param name the name of the response format
+     * @param format the response format
+     */
+    public static void addResponseFormat(String name, ApiResponseFormat format)
     {
         responseFormats.put(name, format);
     }
-    
+
+    /**
+     * Removes a response format.
+     *
+     * @param name the name of the format to remove
+     */
     public static void removeResponseFormat(String name)
     {
         responseFormats.remove(name);
     }
-    
+
+    /**
+     * Sets the default response format.
+     *
+     * @param format the name of a registered format
+     */
     public static void setDefaultResponseFormat(String format)
     {
         if (responseFormats.containsKey(format))
@@ -181,57 +238,132 @@ public class ApiBukkitServer extends NanoHTTPD
             defaultResponseFormat = format;
         }
     }
-    
+
+    /**
+     * Returns the default responce format.
+     *
+     * @return the default response format
+     */
     public static String getDefaultResponseFormat()
     {
         return defaultResponseFormat;
     }
-    
-    public void setRequestController(String name, ApiRequestController controller)
+
+    /**
+     * Returns a request controller.
+     *
+     * @param name the name of the request controller
+     * @return a request controller or null
+     */
+    public ApiRequestController getRequestController(String name)
+    {
+        return this.requestControllers.get(name);
+    }
+
+    /**
+     * Returns a request controller by an alias.
+     *
+     * @param alias the alias
+     * @return the controllers refered by the alias
+     */
+    public ApiRequestController getRequestControllerByAlias(String alias)
+    {
+        return this.getRequestController(this.requestControllerAliases.get(alias));
+    }
+
+    /**
+     * Returns all controllers.
+     *
+     * @return a map of all controllers
+     */
+    public Map<String, ApiRequestController> getAllRequestControllers()
+    {
+        return this.requestControllers;
+    }
+
+    /**
+     * Sets a request controller.
+     *
+     * @param name the name of hte controller
+     * @param controller the controller
+     * @return false an failure
+     */
+    public boolean setRequestController(String name, ApiRequestController controller)
     {
         if (controller != null && !name.equals("validate"))
         {
             this.requestControllers.put(name, controller);
-        }
-    }
-    
-    public boolean setControllerAlias(String alias, String controller)
-    {
-        if (!this.requestControllers.containsKey(alias) && this.requestControllers.containsKey(controller) && !alias.equals("validate"))
-        {
-            this.requestControllers.put(alias, this.requestControllers.get(controller));
+            ApiBukkit.debug(String.format("Set the controller '%s' on '%s'", controller.getClass().getSimpleName(), name));
             return true;
         }
         return false;
     }
-    
+
+    /**
+     * Sets an alias for controller.
+     *
+     * @param alias the name of the alias
+     * @param controller the name of the controller to refer
+     * @return false on failure
+     */
+    public boolean setRequestControllerAlias(String alias, String controller)
+    {
+        if (this.requestControllers.containsKey(controller) && !alias.equals("validate"))
+        {
+            this.requestControllerAliases.put(alias, controller);
+            ApiBukkit.debug(String.format("Set the controller alias '%s' for '%s'", alias, controller));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes a controller.
+     * This also removes any alias which refered to the deleted controller.
+     *
+     * @param name the name of the controller
+     */
     public void removeRequestController(String name)
     {
         this.requestControllers.remove(name);
+        // remove aliases of the deleted controllers as well
+        for (Map.Entry<String, String> entry : this.requestControllerAliases.entrySet())
+        {
+            if (entry.getValue().equals(name))
+            {
+                this.requestControllerAliases.remove(entry.getKey());
+            }
+        }
+        ApiBukkit.debug("Removed the controller '" + name + "' and all its aliases");
     }
 
+    /**
+     * Removes a controller alias.
+     *
+     * @param name the name of the alias
+     */
+    public void removeRequestControllerAlias(String name)
+    {
+        this.requestControllerAliases.remove(name);
+        ApiBukkit.debug("Removed the controller alias '" + name + "'");
+    }
+
+    /**
+     * Removes all controllers and aliases.
+     */
     public void clearRequestControllers()
     {
         this.requestControllers.clear();
+        this.requestControllerAliases.clear();
+        ApiBukkit.debug("Cleared the controllers and aliases");
     }
-    
-    protected String error(ApiError error)
+
+    /**
+     * Removes all aliases.
+     */
+    public void clearRequestControllerAliases()
     {
-        IResponseFormat formater = getResponseFormat("plain");
-        return formater.format(error);
-    }
-    
-    protected String error(ApiError error, int errCode)
-    {
-        IResponseFormat formater = getResponseFormat("plain");
-        return formater.format(new Object[] {
-            error,
-            errCode
-        });
-    }
-    
-    public Collection<ApiRequestController> getAllRequestControllers()
-    {
-        return this.requestControllers.values();
+        this.requestControllerAliases.clear();
+        ApiBukkit.debug("Cleared the aliases");
     }
 }

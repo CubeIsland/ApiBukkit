@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 
-public class JsonFormat implements IResponseFormat
+public class JsonFormat implements ApiResponseFormat
 {
     public String getMime()
     {

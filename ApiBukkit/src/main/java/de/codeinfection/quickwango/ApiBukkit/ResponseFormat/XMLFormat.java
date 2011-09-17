@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 
-public class XMLFormat implements IResponseFormat
+public class XMLFormat implements ApiResponseFormat
 {
     protected final static String XMLDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
     

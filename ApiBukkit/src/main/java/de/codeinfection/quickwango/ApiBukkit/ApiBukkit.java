@@ -20,6 +20,8 @@ import org.bukkit.plugin.Plugin;
 public class ApiBukkit extends JavaPlugin
 {
     protected static final Logger logger = Logger.getLogger("Minecraft");
+    private static ApiBukkit instance = null;
+
     protected Server server;
     protected PluginManager pm;
     protected PluginDescriptionFile pdf;
@@ -27,8 +29,6 @@ public class ApiBukkit extends JavaPlugin
     protected ApiBukkitServer webserver;
     protected Configuration config;
     protected boolean zombie = false;
-    
-    protected boolean initiated = false;
 
     // Configuration
     protected int port;
@@ -50,25 +50,52 @@ public class ApiBukkit extends JavaPlugin
         this.whitelist = new ArrayList<String>();
         this.blacklistEnabled = false;
         this.blacklist = new ArrayList<String>();
+        instance = this;
     }
 
     public void onEnable()
     {
+        this.pdf = this.getDescription();
+        this.server = this.getServer();
+        this.pm = this.server.getPluginManager();
         this.dataFolder = this.getDataFolder().getAbsoluteFile();
+        if (!this.dataFolder.exists())
+        {
+            this.dataFolder.mkdirs();
+        }
         this.config = this.getConfiguration();
+
+        if (this.authKey == null)
+        {
+            try
+            {
+                this.authKey = this.generateAuthKey();
+            }
+            catch (NoSuchAlgorithmException e)
+            {
+                error("#################################");
+                error("Failed to generate an auth key!", e);
+                error("Staying in a zombie state...");
+                error("#################################");
+                this.zombie = true;
+                return;
+            }
+        }
 
         if (!(new File(this.dataFolder, "config.yml")).exists())
         {
             this.defaultConfig();
         }
         this.loadConfig();
-        
-        this.init();
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
         try
         {
+            if (webserver == null)
+            {
+                this.webserver = new ApiBukkitServer(this);
+            }
             log(String.format("Starting the web server on port %s!", this.port));
             log(String.format("Using %s as the auth key", this.authKey));
             log(String.format("with a maximum of %s parallel sessions!", this.maxSessions));
@@ -80,6 +107,7 @@ public class ApiBukkit extends JavaPlugin
             error("Failed to start the web server!", t);
             error("Staying in a zombie state...");
             this.zombie = true;
+            this.webserver = null;
             return;
         }
         
@@ -104,47 +132,6 @@ public class ApiBukkit extends JavaPlugin
         }
 
         log(String.format("Version %s is now disabled!", this.pdf.getVersion()), LogLevel.QUIET);
-    }
-    
-    protected void init()
-    {
-        if (!this.initiated)
-        {
-            try
-            {
-                if (!this.dataFolder.exists())
-                {
-                    this.dataFolder.mkdirs();
-                }
-                this.pdf = this.getDescription();
-                this.server = this.getServer();
-                this.pm = this.server.getPluginManager();
-                this.webserver = new ApiBukkitServer(this);
-
-                if (this.authKey == null)
-                {
-                    try
-                    {
-                        this.authKey = this.generateAuthKey();
-                    }
-                    catch (NoSuchAlgorithmException e)
-                    {
-                        error("#################################");
-                        error("Failed to generate an auth key!", e);
-                        error("Staying in a zombie state...");
-                        error("#################################");
-                        this.zombie = true;
-                        return;
-                    }
-                }
-
-                this.initiated = true;
-            }
-            catch (Throwable t)
-            {
-                t.printStackTrace(System.err);
-            }
-        }
     }
 
     private void loadConfig()
@@ -204,54 +191,148 @@ public class ApiBukkit extends JavaPlugin
         return hash.toString();
     }
 
+
+    /*
+     * Public API
+     */
+
+    /**
+     * Returns the instance of ApiBukkit.
+     *
+     * @return the instance of ApiBukkit or null
+     */
+    public static ApiBukkit getInstance()
+    {
+        return instance;
+    }
+
+    /**
+     * Returns whether the ApiBukkit is a zombie or not
+     *
+     * @return the state of ApiBukkit
+     */
     public boolean isZombie()
     {
         return this.zombie;
     }
 
+    /**
+     * Returns the port the API server has bound to.
+     *
+     * @return the API port
+     */
     public int getApiPort()
     {
         return this.port;
     }
 
-    public String getApiPassword()
+    /**
+     * Returns the authkey.
+     *
+     * @return the authkey
+     */
+    public String getApiAuthKey()
     {
         return this.authKey;
     }
-    
+
     /**
-     * Sets an RequestController for the given name
-     * 
-     * @param name the name of the controller
-     * @param controller an controller instance
+     * Returns the API data folder for the given plugin
+     *
+     * @param plugin the plugin
+     * @return a File object of the folder
      */
-    public void setRequestController(String name, ApiRequestController controller)
+    public File getApiDataFolder(Plugin plugin)
+    {
+        return new File(this.dataFolder, plugin.getDescription().getName());
+    }
+
+
+    /*
+     * Proxy methods
+     */
+
+
+    /**
+     * Returns a request controller.
+     *
+     * @param name the name of the request controller
+     * @return a request controller or null
+     */
+    public ApiRequestController getRequestController(String name)
     {
         if (this.webserver != null)
         {
-            debug(String.format("Registered %s on %s", controller.getClass().getName().replaceFirst(controller.getClass().getPackage().getName() + ".", ""), name));
-            this.webserver.setRequestController(name, controller);
+            return this.webserver.getRequestController(name);
         }
+        return null;
     }
-    
+
     /**
-     * Sets an alias for a controller
-     * 
-     * @param alias the alias name
-     * @param controller the original name (may be a alias as well)
+     * Returns a request controller by an alias.
+     *
+     * @param alias the alias
+     * @return the controllers refered by the alias
      */
-    public void setControllerAlias(String alias, String controller)
+    public ApiRequestController getRequestControllerByAlias(String alias)
     {
         if (this.webserver != null)
         {
-            ApiBukkit.debug(String.format("Set alias '%s' for '%s'", alias, controller));
-            this.webserver.setControllerAlias(alias, controller);
+            return this.webserver.getRequestControllerByAlias(alias);
         }
+        return null;
     }
-    
+
     /**
-     * Removes the RequestController for the given name
-     * 
+     * Returns all controllers.
+     *
+     * @return a map of all controllers
+     */
+    public Map<String, ApiRequestController> getAllRequestControllers()
+    {
+        if (this.webserver != null)
+        {
+            return this.webserver.getAllRequestControllers();
+        }
+        return null;
+    }
+
+    /**
+     * Sets a request controller.
+     *
+     * @param name the name of hte controller
+     * @param controller the controller
+     * @return false an failure
+     */
+    public boolean setRequestController(String name, ApiRequestController controller)
+    {
+        if (this.webserver != null)
+        {
+            return this.webserver.setRequestController(name, controller);
+        }
+        return false;
+    }
+
+    /**
+     * Sets an alias for controller.
+     *
+     * @param alias the name of the alias
+     * @param controller the name of the controller to refer
+     * @return false on failure
+     */
+    public boolean setRequestControllerAlias(String alias, String controller)
+    {
+        if (this.webserver != null)
+        {
+            return this.webserver.setRequestControllerAlias(alias, controller);
+        }
+        return false;
+    }
+
+    /**
+     * Removes a controller.
+     * This also removes any alias which refered to the deleted controller.
+     *
      * @param name the name of the controller
      */
     public void removeRequestController(String name)
@@ -259,19 +340,55 @@ public class ApiBukkit extends JavaPlugin
         if (this.webserver != null)
         {
             this.webserver.removeRequestController(name);
-            ApiBukkit.debug("Removed " + name);
         }
     }
-    
-    public File getApiDataFolder(Plugin plugin)
+
+    /**
+     * Removes a controller alias.
+     *
+     * @param name the name of the alias
+     */
+    public void removeRequestControllerAlias(String alias)
     {
-        return new File(this.dataFolder, plugin.getDescription().getName());
-        
+        if (this.webserver != null)
+        {
+            this.webserver.removeRequestControllerAlias(alias);
+        }
     }
 
+    /**
+     * Removes all controllers and aliases.
+     */
+    public void clearRequestControllers()
+    {
+        if (this.webserver != null)
+        {
+            this.webserver.clearRequestControllers();
+        }
+    }
+
+    /**
+     * Removes all aliases.
+     */
+    public void clearRequestControllerAliases()
+    {
+        if (this.webserver != null)
+        {
+            this.webserver.clearRequestControllerAliases();
+        }
+    }
+
+    /*
+     * Logging
+     */
     public static void log(String message)
     {
         log(message, LogLevel.DEFAULT);
+    }
+
+    public static void log(String message, LogLevel requiredLogLevel)
+    {
+        log(message, null, requiredLogLevel);
     }
     
     public static void log(String message, Throwable t, LogLevel requiredLogLevel)
@@ -282,11 +399,6 @@ public class ApiBukkit extends JavaPlugin
             message = "[ApiBukkit] " + prefix + message;
             logger.log(requiredLogLevel.logLevel, message);
         }
-    }
-    
-    public static void log(String message, LogLevel requiredLogLevel)
-    {
-        log(message, null, requiredLogLevel);
     }
     
     public static void error(String message)

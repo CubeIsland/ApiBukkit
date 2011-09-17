@@ -6,7 +6,7 @@ import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
  *
  * @author CodeInfection
  */
-public class RawFormat implements IResponseFormat
+public class RawFormat implements ApiResponseFormat
 {
     public String getMime()
     {

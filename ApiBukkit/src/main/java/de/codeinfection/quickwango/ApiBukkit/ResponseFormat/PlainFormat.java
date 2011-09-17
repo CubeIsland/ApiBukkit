@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 
-public class PlainFormat implements IResponseFormat
+public class PlainFormat implements ApiResponseFormat
 {
     
     

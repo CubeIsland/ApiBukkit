@@ -37,6 +37,5 @@
     <modules>
         <module>ApiBukkit</module>
         <module>BasicApi</module>
-        <module>DynmapApi</module>
     </modules>
 </project>

@@ -76,12 +76,12 @@ public class BasicApi extends JavaPlugin
         config.load();
         
         this.api.setRequestController("command", new CommandController(this));
-        this.api.setControllerAlias("cmd", "command");
+        this.api.setRequestControllerAlias("cmd", "command");
         
         this.api.setRequestController("serverinfos", new CompatController(this));
         
         this.api.setRequestController("plugin", new PluginController(this));
-        this.api.setControllerAlias("pluginmanager", "plugin");
+        this.api.setRequestControllerAlias("pluginmanager", "plugin");
         
         this.api.setRequestController("server", new ServerController(this));
         
