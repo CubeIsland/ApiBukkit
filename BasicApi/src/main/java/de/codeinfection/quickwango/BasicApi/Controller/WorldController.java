@@ -126,22 +126,21 @@ public class WorldController extends AbstractRequestController
                     String envParam = params.getProperty("environment");
                     if (envParam != null)
                     {
-                        if (envParam.equalsIgnoreCase("nether"))
+                        try
                         {
-                            this.env = World.Environment.NETHER;
+                            this.env = World.Environment.getEnvironment(Integer.valueOf(envParam));
                         }
-                        else if (envParam.equalsIgnoreCase("normal"))
-                        {
-                            this.env = World.Environment.NORMAL;
-                        }
-                        else if (envParam.equalsIgnoreCase("skylands"))
-                        {
-                            this.env = World.Environment.SKYLANDS;
-                        }
-                        else
-                        {
-                            throw new RequestException("Invalid environment specified!", 3);
-                        }
+                        catch (NumberFormatException e)
+                        {}
+                    }
+                    else
+                    {
+                        throw new RequestException("No environment specified!", 3);
+                    }
+                    
+                    if (this.env == null)
+                    {
+                        throw new RequestException("Invalid environment specified!", 4);
                     }
 
                     String generatorParam = params.getProperty("generator");
@@ -157,7 +156,7 @@ public class WorldController extends AbstractRequestController
                             if (plugin == null || !plugin.isEnabled())
                             {
                                 ApiBukkit.error("Could not set generator for default world '" + this.worldName + "': Plugin '" + split[0] + "' does not exist");
-                                throw new RequestException("Failed to load generator plugin", 4);
+                                throw new RequestException("Failed to load generator plugin", 5);
                             }
                             else
                             {
@@ -184,7 +183,7 @@ public class WorldController extends AbstractRequestController
                     }
                     if (this.server.getScheduler().scheduleSyncDelayedTask(plugin, this, 0L) < 0)
                     {
-                        throw new RequestException("Failed to schedule creation task!", 5);
+                        throw new RequestException("Failed to schedule creation task!", 6);
                     }
                 }
                 else
