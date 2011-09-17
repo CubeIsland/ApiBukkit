@@ -16,24 +16,21 @@ import java.util.Map;
 public class ApiBukkitServer extends NanoHTTPD
 {
     protected String authenticationKey;
-    protected final static ConcurrentHashMap<String, ApiResponseFormat> responseFormats;
+    protected final ConcurrentHashMap<String, ApiResponseFormat> responseFormats;
     protected final Map<String, ApiRequestController> requestControllers;
     protected final Map<String, String> requestControllerAliases;
-    protected static String defaultResponseFormat = "plain";
-
-    static
-    {
-        responseFormats = new ConcurrentHashMap<String, ApiResponseFormat>();
-    }
+    protected String defaultResponseFormat = "plain";
 
     public ApiBukkitServer(ApiBukkit plugin) throws IOException
     {
         super(plugin);
+
+        this.responseFormats = new ConcurrentHashMap<String, ApiResponseFormat>();
         
-        responseFormats.put("plain", new PlainFormat());
-        responseFormats.put("json", new JsonFormat());
-        responseFormats.put("xml", new XMLFormat());
-        responseFormats.put("raw", new RawFormat());
+        this.addResponseFormat("plain", new PlainFormat());
+        this.addResponseFormat("json", new JsonFormat());
+        this.addResponseFormat("xml", new XMLFormat());
+        this.addResponseFormat("raw", new RawFormat());
         
         this.requestControllers = new ConcurrentHashMap<String, ApiRequestController>();
         this.requestControllerAliases = new ConcurrentHashMap<String, String>();
@@ -52,7 +49,7 @@ public class ApiBukkitServer extends NanoHTTPD
         params.put("__REQUEST_PATH__", uri);
         params.put("__REQUEST_METHOD__", method);
         params.put("__REMOTE_ADDR__", remoteIp.getHostAddress());
-        ApiBukkit.log(uri + " was requested by " + remoteIp.getHostAddress() + "...");
+        ApiBukkit.log(String.format("'%s' was requested by '%s'", remoteIp.getHostAddress(), uri), ApiBukkit.LogLevel.INFO);
         uri = uri.substring(1);
         if (uri.length() == 0)
         {
@@ -148,7 +145,7 @@ public class ApiBukkitServer extends NanoHTTPD
         if (response != null)
         {
             String formatProperty = params.getProperty("format", defaultResponseFormat);
-            ApiResponseFormat responseFormat = getResponseFormat(formatProperty);
+            ApiResponseFormat responseFormat = this.getResponseFormat(formatProperty);
             
             ApiBukkit.debug("Responding normally: HTTP 200");
             return new Response(HTTP_OK, responseFormat.getMime(), responseFormat.format(response));
@@ -162,13 +159,13 @@ public class ApiBukkitServer extends NanoHTTPD
 
     protected String error(ApiError error)
     {
-        ApiResponseFormat formater = getResponseFormat("plain");
+        ApiResponseFormat formater = this.getResponseFormat("plain");
         return formater.format(error);
     }
 
     protected String error(ApiError error, int errCode)
     {
-        ApiResponseFormat formater = getResponseFormat("plain");
+        ApiResponseFormat formater = this.getResponseFormat("plain");
         return formater.format(new Object[] {
             error,
             errCode
@@ -186,23 +183,18 @@ public class ApiBukkitServer extends NanoHTTPD
      * @param name the name of the response format
      * @return see description
      */
-    public static ApiResponseFormat getResponseFormat(String name)
+    public ApiResponseFormat getResponseFormat(String name)
     {
-        ApiResponseFormat format = null;
-        if (responseFormats.containsKey(name))
+        if (this.responseFormats.containsKey(name))
         {
-            format = responseFormats.get(name);
+            return this.responseFormats.get(name);
         }
-        else if (responseFormats.containsKey(defaultResponseFormat))
+        if (this.responseFormats.containsKey(this.defaultResponseFormat))
         {
-            format = responseFormats.get(defaultResponseFormat);
-        }
-        else
-        {
-            format = responseFormats.get("plain");
+            return this.responseFormats.get(this.defaultResponseFormat);
         }
         
-        return format;
+        return this.responseFormats.get("plain");
     }
 
     /**
@@ -211,9 +203,10 @@ public class ApiBukkitServer extends NanoHTTPD
      * @param name the name of the response format
      * @param format the response format
      */
-    public static void addResponseFormat(String name, ApiResponseFormat format)
+    public final void addResponseFormat(String name, ApiResponseFormat format)
     {
-        responseFormats.put(name, format);
+        this.responseFormats.put(name, format);
+        ApiBukkit.debug(String.format("Response format '%s' (%s) was added", name, format.getClass().getSimpleName()));
     }
 
     /**
@@ -221,22 +214,27 @@ public class ApiBukkitServer extends NanoHTTPD
      *
      * @param name the name of the format to remove
      */
-    public static void removeResponseFormat(String name)
+    public void removeResponseFormat(String name)
     {
-        responseFormats.remove(name);
+        this.responseFormats.remove(name);
+        ApiBukkit.debug(String.format("Response format '%s' was removed", name));
     }
 
     /**
      * Sets the default response format.
      *
      * @param format the name of a registered format
+     * @return whether or not the default response format was set
      */
-    public static void setDefaultResponseFormat(String format)
+    public boolean setDefaultResponseFormat(String format)
     {
-        if (responseFormats.containsKey(format))
+        if (this.responseFormats.containsKey(format))
         {
-            defaultResponseFormat = format;
+            this.defaultResponseFormat = format;
+            ApiBukkit.debug(String.format("Response format '%s' was set as default", format));
+            return true;
         }
+        return false;
     }
 
     /**
@@ -244,9 +242,9 @@ public class ApiBukkitServer extends NanoHTTPD
      *
      * @return the default response format
      */
-    public static String getDefaultResponseFormat()
+    public String getDefaultResponseFormat()
     {
-        return defaultResponseFormat;
+        return this.defaultResponseFormat;
     }
 
     /**
