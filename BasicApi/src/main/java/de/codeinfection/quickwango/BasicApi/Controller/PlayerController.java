@@ -155,6 +155,7 @@ public class PlayerController extends ApiRequestController
 
                     data.put("ip", player.getAddress().getAddress().getHostAddress());
                     data.put("operator", player.isOp());
+                    data.put("gamemode", player.getGameMode().getValue());
 
                     return data;
                 }
