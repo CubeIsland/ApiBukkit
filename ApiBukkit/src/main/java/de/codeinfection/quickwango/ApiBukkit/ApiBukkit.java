@@ -89,6 +89,8 @@ public class ApiBukkit extends JavaPlugin
         }
         this.loadConfig();
 
+        ApiBukkit.log("Log level is: " + this.logLevel.name(), LogLevel.INFO);
+
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
         try
@@ -464,7 +466,7 @@ public class ApiBukkit extends JavaPlugin
     
     public static void log(String message, Throwable t, LogLevel requiredLogLevel)
     {
-        if (requiredLogLevel.level >= logLevel.level)
+        if (requiredLogLevel.level <= logLevel.level)
         {
             String prefix = (requiredLogLevel.prefix == null ? "" : "[" + requiredLogLevel.prefix + "] ");
             message = "[ApiBukkit] " + prefix + message;
@@ -489,7 +491,8 @@ public class ApiBukkit extends JavaPlugin
     
     public static void logException(Throwable t)
     {
-        log(t.getLocalizedMessage(), t, LogLevel.ERROR);
+        error(t.getLocalizedMessage(), t);
+        t.printStackTrace(System.err);
     }
 
     public enum LogLevel
