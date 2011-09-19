@@ -105,6 +105,7 @@ public class ServerController extends ApiRequestController
             data.put("nether", server.getAllowNether());
             data.put("spawnradius", server.getSpawnRadius());
             data.put("viewdistance", server.getViewDistance());
+            data.put("defaultgamemode", server.getDefaultGameMode().getValue());
             
             return data;
         }
