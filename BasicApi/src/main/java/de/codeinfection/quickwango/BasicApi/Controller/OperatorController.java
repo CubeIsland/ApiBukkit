@@ -52,8 +52,7 @@ public class OperatorController extends ApiRequestController
                 OfflinePlayer player = server.getOfflinePlayer(playerName);
                 if (!player.isOp())
                 {
-                    player.setOp(false);
-                    return null;
+                    player.setOp(true);
                 }
                 else
                 {
@@ -64,6 +63,7 @@ public class OperatorController extends ApiRequestController
             {
                 throw new ApiRequestException("No player given!", 1);
             }
+            return null;
         }
     }
 
@@ -79,7 +79,6 @@ public class OperatorController extends ApiRequestController
                 if (player.isOp())
                 {
                     player.setOp(false);
-                    return null;
                 }
                 else
                 {
@@ -90,6 +89,7 @@ public class OperatorController extends ApiRequestController
             {
                 throw new ApiRequestException("No player given!", 1);
             }
+            return null;
         }
     }
 
