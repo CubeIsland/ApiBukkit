@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ApiBukkit - Basics</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <style>
+            .indent {
+                margin-left: 20px;
+            }
+            .color1 {
+                color: red;
+            }
+            .color2 {
+                color: orange;
+            }
+            .color3 {
+                color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>ApiBukkit</h1>
+        <h4 style="margin-top:-30px;padding-left:33px">A Bukkit Plugin which provides a generic way to make web APIs</h4>
+
+        <div class="indent">
+            <h2>Generel</h2>
+            <p>
+                To add a Web-API your plugin you simply have to add a new request controller with some actions.<br>
+                These will be registered to specific names to be able to call them via the URL.<br>
+                For example:
+                <p class="indent">
+                    You have a plugin called MyJobsAndRanks which privides jobs and ranks to the players and you want to an Web-API to retrieve<br>
+                    the players' job and rank.<br>
+                    So you could create a request controller called "MyJobsAndRanksController" which you register<br>
+                    under the name "<span class="color1">myjobsandranks</span>". This controller could private two actions: "<span class="color2">job</span>" and "<span class="color2">rank</span>".
+                </p>
+                The URLs are build like this: <code>http://&lt;yourhost&gt;:&lt;port&gt;/<span class="color1">&lt;controller&gt;</span>/<span class="color2">&lt;action&gt;</span></code><br>
+                For the above example the URL would look like this:<br>
+                <code>http://&lt;yourhost&gt;:&lt;port&gt;/<span class="color1">myjobsandranks</span>/<span class="color2">job</span></code><br>
+                and<br>
+                <code>http://&lt;yourhost&gt;:&lt;port&gt;/<span class="color1">myjobsandranks</span>/<span class="color2">rank</span></code><br>
+            </p>
+
+            <h2>Request</h2>
+            <p>
+                ApiBukkit uses a modified version of the NanoHTTPD embedded web server, which is pretty lightweight<br>
+                So the supported request methods are <em>GET</em> and <em>POST</em> without <em>Connection: keep-alive</em> support.<br>
+                The simplest request would look like this:
+                <p class="indent">
+                    <code>GET /myjobsandranks/rank HTTP/1.0</code>
+                </p>
+                For parameters the querystring or the POST data can by used.<br>
+                So our example API should take a playername as a parameter:
+                <p class="indent">
+                    <code>http://&lt;yourhost&gt;:&lt;port&gt;/<span class="color1">myjobsandranks</span>/<span class="color2">rank</span>?<span class="color3">playername=Player</span></code>
+                </p>
+                Most of the parameters give information to the specific APIs, but there are two basic parameters: <em>authkey</em> and <em>format</em>.<br>
+                The <em>authkey</em> parameter is used to authenticate the client. If the requested action requires authentication this parameter <strong>must</strong> be given<br>
+                or the request will fail.<br>
+                The format parameter specifies the format of the response
+            </p>
+
+            <h2>Response</h2>
+            <p>
+                <p>
+
+                </p>
+
+                <h3>Response formats</h3>
+                <p>
+
+                </p>
+
+                <h3>Error responses</h3>
+                <p>
+                    
+                </p>
+            </p>
+            
+        </div>
+    </body>
+</html>
