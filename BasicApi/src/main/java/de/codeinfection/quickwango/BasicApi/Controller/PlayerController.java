@@ -28,17 +28,18 @@ public class PlayerController extends ApiRequestController
     {
         super(plugin, true);
         
-        this.setAction("burn",             new BurnAction());
-        this.setAction("clearinventory",   new ClearinventoryAction());
-        this.setAction("give",             new GiveAction());
-        this.setAction("heal",             new HealAction());
-        this.setAction("info",             new InfoAction());
-        this.setAction("kick",             new KickAction());
-        this.setAction("kill",             new KillAction());
-        this.setAction("list",             new ListAction());
-        this.setAction("teleport",         new TeleportAction());
-        this.setAction("tell",             new TellAction());
-        this.setAction("displayname",      new DisplaynameAction());
+        this.setAction("burn",              new BurnAction());
+        this.setAction("clearinventory",    new ClearinventoryAction());
+        this.setAction("give",              new GiveAction());
+        this.setAction("heal",              new HealAction());
+        this.setAction("info",              new InfoAction());
+        this.setAction("kick",              new KickAction());
+        this.setAction("kill",              new KillAction());
+        this.setAction("list",              new ListAction());
+        this.setAction("teleport",          new TeleportAction());
+        this.setAction("tell",              new TellAction());
+        this.setAction("displayname",       new DisplaynameAction());
+        this.setAction("inventory",         new InventoryAction());
         
         this.setActionAlias("msg",              "tell");
         this.setActionAlias("clearinv",         "clearinventory");
@@ -624,6 +625,36 @@ public class PlayerController extends ApiRequestController
                 throw new ApiRequestException("No player given!", 1);
             }
             return null;
+        }
+    }
+    
+    private class InventoryAction extends ApiRequestAction
+    {
+        @Override
+        public Object execute(Properties params, Server server) throws ApiRequestException
+        {
+            String playerParam = params.getProperty("player");
+            if (playerParam != null)
+            {
+                Player player = server.getPlayer(playerParam);
+                if (player != null)
+                {
+                    PlayerInventory inventory = player.getInventory();
+                    Map<String, Object> data = new HashMap<String, Object>();
+                    data.put("contents", inventory.getContents());
+                    data.put("armor", inventory.getArmorContents());
+                    data.put("helditemslot", inventory.getHeldItemSlot());
+                    return data;
+                }
+                else
+                {
+                    throw new ApiRequestException("Given player not found!", 2);
+                }
+            }
+            else
+            {
+                throw new ApiRequestException("No player given!", 1);
+            }
         }
     }
 }
