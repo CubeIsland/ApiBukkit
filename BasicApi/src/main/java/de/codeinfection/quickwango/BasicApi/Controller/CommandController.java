@@ -45,7 +45,7 @@ public class CommandController extends ApiRequestController
             String senderParam = params.getProperty("sender");
             if (senderParam != null)
             {
-                player = server.getPlayer(senderParam);
+                player = server.getPlayerExact(senderParam);
             }
             
             ApiBukkit.debug("Commandline: " + commandLine);

@@ -67,7 +67,7 @@ public class CompatController extends ApiRequestController
             {
                 return null;
             }
-            Player player = server.getPlayer(pathParts[2]);
+            Player player = server.getPlayerExact(pathParts[2]);
             if (player == null)
             {
                 return null;

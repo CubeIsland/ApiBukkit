@@ -127,7 +127,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     Map<String, Object> data = new HashMap<String, Object>();
@@ -235,7 +235,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     player.setHealth(0);
@@ -262,7 +262,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     int seconds = 5;
@@ -302,7 +302,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     World world = null;
@@ -325,7 +325,7 @@ public class PlayerController extends ApiRequestController
                     String targetPlayerName = params.getProperty("targetplayer");
                     if (targetPlayerName != null)
                     {
-                        Player targetPlayer = server.getPlayer(targetPlayerName);
+                        Player targetPlayer = server.getPlayerExact(targetPlayerName);
                         if (targetPlayer != null)
                         {
                             targetLocation = targetPlayer.getLocation();
@@ -397,7 +397,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     player.setHealth(20);
@@ -424,7 +424,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     String itemidParam = params.getProperty("itemid");
@@ -508,7 +508,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     player.kickPlayer(params.getProperty("reason"));
@@ -535,7 +535,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     String msg = params.getProperty("message");
@@ -574,7 +574,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     player.getInventory().clear();
@@ -601,7 +601,7 @@ public class PlayerController extends ApiRequestController
             String playerName = params.getProperty("player");
             if (playerName != null)
             {
-                Player player = server.getPlayer(playerName);
+                Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     String newDisplayName = params.getProperty("displayname");
@@ -636,7 +636,7 @@ public class PlayerController extends ApiRequestController
             String playerParam = params.getProperty("player");
             if (playerParam != null)
             {
-                Player player = server.getPlayer(playerParam);
+                Player player = server.getPlayerExact(playerParam);
                 if (player != null)
                 {
                     PlayerInventory inventory = player.getInventory();

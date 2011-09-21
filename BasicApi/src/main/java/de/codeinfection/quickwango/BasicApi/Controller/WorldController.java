@@ -376,7 +376,7 @@ public class WorldController extends ApiRequestController
                     }
                     else if (playerName != null)
                     {
-                        Player player = server.getPlayer(playerName);
+                        Player player = server.getPlayerExact(playerName);
                         if (player != null)
                         {
                             Location playerLocation = player.getLocation();
