@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -420,42 +421,64 @@ public class PlayerController extends ApiRequestController
                 Player player = server.getPlayer(playerName);
                 if (player != null)
                 {
-                    String itemID = params.getProperty("itemid");
-                    if (itemID == null)
+                    String itemidParam = params.getProperty("itemid");
+                    if (itemidParam != null)
                     {
-                        System.out.println("No block ID given!");
-                    }
-                    try
-                    {
-                        int item = Integer.valueOf(itemID);
-                        String blockData = params.getProperty("data");
-                        short data = 0;
-                        if (blockData != null)
+                        int item = 0;
+                        try
                         {
-                            data = Short.valueOf(blockData);
+                            item = Integer.valueOf(itemidParam);
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            throw new ApiRequestException("Invalid item ID '" + itemidParam + "' given!", 4);
+                        }
+                        short data = 0;
+                        String dataParam = params.getProperty("data");
+                        if (dataParam != null)
+                        {
+                            try
+                            {
+                                data = Short.valueOf(dataParam);
+                            }
+                            catch (NumberFormatException e)
+                            {
+                                throw new ApiRequestException("Invalid block data '" + dataParam + "'", 5);
+                            }
                         }
 
-                        String amountParam = params.getProperty("amount");
                         int amount = 1;
+                        String amountParam = params.getProperty("amount");
                         if (amountParam != null)
                         {
-                            amount = Integer.valueOf(amountParam);
+                            try
+                            {
+                                amount = Integer.valueOf(amountParam);
+                            }
+                            catch (NumberFormatException e)
+                            {
+                                throw new ApiRequestException("Invalid amount '" + amountParam + "'", 6);
+                            }
                         }
 
-                        ItemStack itemStack = new ItemStack(item);
-                        if (itemStack.getType() == null)
+                        Material itemMaterial = Material.getMaterial(item);
+                        if (itemMaterial != null)
                         {
-                            throw new ApiRequestException("The given item ID is unknown!", 4);
-                        }
-                        itemStack.setAmount(amount);
-                        itemStack.setDurability(data);
+                            ItemStack itemStack = new ItemStack(itemMaterial);
+                            itemStack.setAmount(amount);
+                            itemStack.setDurability(data);
 
-                        player.getInventory().addItem(itemStack);
-                        ApiBukkit.log("gave player " + playerName + " " + amount + " of block " + item + ":" + data);
+                            player.getInventory().addItem(itemStack);
+                            ApiBukkit.log("gave player " + player.getName() + " " + amount + " of block " + item + ":" + data);
+                        }
+                        else
+                        {
+                            throw new ApiRequestException("The given item ID is unknown!", 7);
+                        }
                     }
-                    catch (NumberFormatException e)
+                    else
                     {
-                        throw new ApiRequestException("Invalid block ID given!", 3);
+                        throw new ApiRequestException("No block ID given!", 3);
                     }
                 }
                 else
