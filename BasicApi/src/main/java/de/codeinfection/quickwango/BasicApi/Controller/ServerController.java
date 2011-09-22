@@ -23,8 +23,6 @@ import org.bukkit.plugin.Plugin;
 public class ServerController extends ApiRequestController
 {
     protected static Long timeStamp = null;
-
-    protected final HashMap<String, String> colorReplacements;
     
     public ServerController(Plugin plugin)
     {
@@ -49,16 +47,6 @@ public class ServerController extends ApiRequestController
         
         this.setActionAlias("playerlimit",      "maxplayers");
         this.setActionAlias("gc",               "garbagecollect");
-
-        this.colorReplacements = new HashMap<String, String>();
-        this.colorReplacements.put("\033\\[0m", "&0");
-        this.colorReplacements.put("\033\\[31m", "&c");
-        this.colorReplacements.put("\033\\[32m", "&a");
-        this.colorReplacements.put("\033\\[33m", "&e");
-        this.colorReplacements.put("\033\\[34m", "&9");
-        this.colorReplacements.put("\033\\[35m", "&d");
-        this.colorReplacements.put("\033\\[36m", "&b");
-        this.colorReplacements.put("\033\\[37m", "&f");
     }
 
     @Override
@@ -228,6 +216,21 @@ public class ServerController extends ApiRequestController
 
     private class ConsoleAction extends ReloadAction
     {
+        private final HashMap<String, String> colorReplacements;
+
+        public ConsoleAction()
+        {
+            this.colorReplacements = new HashMap<String, String>();
+            this.colorReplacements.put("\033[0m", "&0");
+            this.colorReplacements.put("\033[31m", "&c");
+            this.colorReplacements.put("\033[32m", "&a");
+            this.colorReplacements.put("\033[33m", "&e");
+            this.colorReplacements.put("\033[34m", "&9");
+            this.colorReplacements.put("\033[35m", "&d");
+            this.colorReplacements.put("\033[36m", "&b");
+            this.colorReplacements.put("\033[37m", "&f");
+        }
+
         @Override
         public Object execute(Properties params, Server server) throws ApiRequestException
         {
@@ -258,7 +261,7 @@ public class ServerController extends ApiRequestController
                 file.readLine(); // ignore first line
                 while ((line = file.readLine()) != null)
                 {
-                    for (Map.Entry<String, String> entry : colorReplacements.entrySet())
+                    for (Map.Entry<String, String> entry : this.colorReplacements.entrySet())
                     {
                         line.replaceAll(entry.getKey(), entry.getValue());
                     }
