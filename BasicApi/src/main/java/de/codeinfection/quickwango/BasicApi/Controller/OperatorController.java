@@ -116,19 +116,10 @@ public class OperatorController extends ApiRequestController
         public Object execute(Properties params, Server server) throws ApiRequestException
         {
             List<String> operators = new ArrayList<String>();
-            try
+            for (OfflinePlayer operator : server.getOperators())
             {
-                Field oplist = ServerConfigurationManager.class.getDeclaredField("h");
-                oplist.setAccessible(true);
-                operators.addAll((Set)oplist.get(cserver));
+                operators.add(operator.getName());
             }
-            catch (Throwable t)
-            {
-                ApiBukkit.error("Failed to get the ops!");
-                ApiBukkit.error("Error: " + t.getClass().getName().replaceFirst(t.getClass().getPackage().getName() + ".", ""));
-                ApiBukkit.error(t.getLocalizedMessage());
-            }
-
             return operators;
         }
     }
