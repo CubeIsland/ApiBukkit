@@ -10,21 +10,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 
-import org.bukkit.craftbukkit.CraftServer;
-import net.minecraft.server.ServerConfigurationManager;
-
 /**
  *
  * @author CodeInfection
  */
 public class OperatorController extends ApiRequestController
 {
-    protected ServerConfigurationManager cserver;
 
     public OperatorController(Plugin plugin)
     {
         super(plugin, true);
-        this.cserver = ((CraftServer)plugin.getServer()).getHandle();
 
         this.setAction("add", new AddAction());
         this.setAction("remove", new RemoveAction());
