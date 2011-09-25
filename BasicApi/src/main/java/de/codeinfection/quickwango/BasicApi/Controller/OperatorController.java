@@ -1,20 +1,17 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 
 import org.bukkit.craftbukkit.CraftServer;
 import net.minecraft.server.ServerConfigurationManager;
-import java.lang.reflect.Field;
 
 /**
  *
