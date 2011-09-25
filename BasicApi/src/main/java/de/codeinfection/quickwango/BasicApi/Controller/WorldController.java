@@ -231,6 +231,7 @@ public class WorldController extends ApiRequestController
             catch (Throwable t)
             {
                 ApiBukkit.logException(t);
+                this.exception = t;
             }
             synchronized (this.executionThread)
             {
