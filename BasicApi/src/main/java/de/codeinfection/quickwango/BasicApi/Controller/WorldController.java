@@ -14,6 +14,7 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
@@ -100,6 +101,9 @@ public class WorldController extends ApiRequestController
         protected World.Environment env;
         protected Long seed;
         protected ChunkGenerator generator;
+        protected Throwable exception;
+
+        private Thread executionThread;
 
         public CreateAction()
         {
@@ -118,6 +122,7 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Properties params, Server server) throws ApiRequestException
         {
+            this.executionThread = Thread.currentThread();
             this.worldName = params.getProperty("world");
             if (this.worldName != null)
             {
@@ -186,6 +191,23 @@ public class WorldController extends ApiRequestController
                     {
                         throw new ApiRequestException("Failed to schedule creation task!", 6);
                     }
+                    try
+                    {
+                        synchronized (this.executionThread)
+                        {
+                            this.executionThread.wait();
+                        }
+                    }
+                    catch (InterruptedException e)
+                    {
+                        ApiBukkit.error("World generation was interupted!", e);
+                    }
+                    if (this.exception != null)
+                    {
+                        ApiBukkit.logException(this.exception);
+                        this.exception = null;
+                        throw new ApiRequestException("World generation failed due to an unknown error!", 7);
+                    }
                 }
                 else
                 {
@@ -201,7 +223,19 @@ public class WorldController extends ApiRequestController
 
         public void run()
         {
-            this.server.createWorld(this.worldName, this.env, this.seed, this.generator);
+            try
+            {
+                WorldCreator creator = new WorldCreator(this.worldName);
+                creator.environment(this.env).seed(this.seed).generator(this.generator).createWorld();
+            }
+            catch (Throwable t)
+            {
+                ApiBukkit.logException(t);
+            }
+            synchronized (this.executionThread)
+            {
+                this.executionThread.notify();
+            }
             this.resetVars();
         }
     }
