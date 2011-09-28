@@ -639,10 +639,40 @@ public class PlayerController extends ApiRequestController
                 Player player = server.getPlayerExact(playerParam);
                 if (player != null)
                 {
+                    List<List<Number>> contents = new ArrayList<List<Number>>();
+                    List<List<Number>> armor = new ArrayList<List<Number>>();
                     PlayerInventory inventory = player.getInventory();
+                    for (ItemStack itemStack : inventory.getContents())
+                    {
+                        if (itemStack == null)
+                        {
+                            contents.add(null);
+                        }
+                        else
+                        {
+                            List<Number> item = new ArrayList<Number>();
+                            item.add(itemStack.getTypeId());
+                            item.add(itemStack.getDurability());
+                            contents.add(item);
+                        }
+                    }
+                    for (ItemStack itemStack : inventory.getArmorContents())
+                    {
+                        if (itemStack == null)
+                        {
+                            armor.add(null);
+                        }
+                        else
+                        {
+                            List<Number> item = new ArrayList<Number>();
+                            item.add(itemStack.getTypeId());
+                            item.add(itemStack.getDurability());
+                            armor.add(item);
+                        }
+                    }
                     Map<String, Object> data = new HashMap<String, Object>();
-                    data.put("contents", inventory.getContents());
-                    data.put("armor", inventory.getArmorContents());
+                    data.put("contents", contents);
+                    data.put("armor", armor);
                     data.put("helditemslot", inventory.getHeldItemSlot());
                     return data;
                 }
