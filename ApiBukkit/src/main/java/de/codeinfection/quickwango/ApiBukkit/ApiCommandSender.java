@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.BasicApi;
+package de.codeinfection.quickwango.ApiBukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class ApiCommandSender implements CommandSender
     @Override
     public void sendMessage(String message)
     {
-        System.out.println(message);
+        ApiBukkit.log(message);
         if (active)
         {
             this.messages.add(message.replaceAll("\u00A7([a-f0-9])", "&$1"));

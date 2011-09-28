@@ -5,7 +5,7 @@ import java.util.Properties;
 import org.bukkit.Server;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
-import de.codeinfection.quickwango.BasicApi.ApiCommandSender;
+import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Arrays;
 import java.util.List;
