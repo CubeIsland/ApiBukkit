@@ -53,6 +53,7 @@ public class ApiBukkitServer extends NanoHTTPD
         String useragent = header.getProperty("apibukkit-useragent");
         if (useragent != null)
         {
+            params.put("__REQUEST_USERAGENT__", useragent);
             ApiBukkit.log("Useragent: " + useragent, ApiBukkit.LogLevel.INFO);
         }
         uri = uri.substring(1);
