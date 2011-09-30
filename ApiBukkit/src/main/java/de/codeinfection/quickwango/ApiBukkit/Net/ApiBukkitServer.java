@@ -50,6 +50,11 @@ public class ApiBukkitServer extends NanoHTTPD
         params.put("__REQUEST_METHOD__", method);
         params.put("__REMOTE_ADDR__", remoteIp.getHostAddress());
         ApiBukkit.log(String.format("'%s' requested '%s'", remoteIp.getHostAddress(), uri), ApiBukkit.LogLevel.INFO);
+        String useragent = header.getProperty("apibukkit-useragent");
+        if (useragent != null)
+        {
+            ApiBukkit.log("Useragent: " + useragent, ApiBukkit.LogLevel.INFO);
+        }
         uri = uri.substring(1);
         if (uri.length() == 0)
         {
