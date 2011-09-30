@@ -1,9 +1,10 @@
 name: ApiBukkit
 main: de.codeinfection.quickwango.ApiBukkit.ApiBukkit
 version: "${project.version}"
+description: "Provides an API to mak Web APIs."
 authors:
-  - Phillip Schichtel
-website: http://code-infection.de
+  - Quick_Wango
+website: http://mc-portal.de
 commands:
   apibukkit:
     usage: /<command> [action]
