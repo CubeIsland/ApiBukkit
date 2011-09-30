@@ -126,12 +126,12 @@ public class ConfigurationController extends ApiRequestController
                         }
                         catch (IOException e)
                         {
-                            throw new ApiRequestException("Failed to read the file", 3);
+                            throw new ApiRequestException("Failed to read the file", 4);
                         }
                     }
                     else
                     {
-                        return "";
+                        throw new ApiRequestException("File not found!", 3);
                     }
                 }
                 else
