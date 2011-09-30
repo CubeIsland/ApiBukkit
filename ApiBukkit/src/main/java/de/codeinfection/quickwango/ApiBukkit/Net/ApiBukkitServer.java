@@ -11,6 +11,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ValidateController;
 import java.net.InetAddress;
+import java.util.List;
 import java.util.Map;
 
 public class ApiBukkitServer extends NanoHTTPD
@@ -103,6 +104,15 @@ public class ApiBukkitServer extends NanoHTTPD
                 if (action == null)
                 {
                     action = controller.getAction(actionName);
+                }
+                if (this.plugin.disabledActions.containsKey(controllerName))
+                {
+                    List<String> disabledActions = this.plugin.disabledActions.get(controllerName);
+                    if (disabledActions.contains(actionName) || disabledActions.contains("*"))
+                    {
+                        ApiBukkit.error("Requested action is disabled!");
+                        return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, this.error(ApiError.ACTION_DISABLED));
+                    }
                 }
                 if (action != null)
                 {

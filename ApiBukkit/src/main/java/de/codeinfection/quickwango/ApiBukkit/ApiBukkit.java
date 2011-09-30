@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.config.ConfigurationNode;
 
 public class ApiBukkit extends JavaPlugin
 {
@@ -40,6 +41,7 @@ public class ApiBukkit extends JavaPlugin
     public final List<String> whitelist;
     public final List<String> blacklist;
     public static LogLevel logLevel = LogLevel.DEFAULT;
+    public final Map<String, List<String>> disabledActions;
 
     public ApiBukkit()
     {
@@ -51,6 +53,7 @@ public class ApiBukkit extends JavaPlugin
         this.whitelist = new ArrayList<String>();
         this.blacklistEnabled = false;
         this.blacklist = new ArrayList<String>();
+        this.disabledActions = new HashMap<String, List<String>>();
         instance = this;
     }
 
@@ -89,7 +92,7 @@ public class ApiBukkit extends JavaPlugin
         }
         this.loadConfig();
 
-        ApiBukkit.log("Log level is: " + this.logLevel.name(), LogLevel.INFO);
+        ApiBukkit.log("Log level is: " + logLevel.name(), LogLevel.INFO);
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
@@ -162,6 +165,25 @@ public class ApiBukkit extends JavaPlugin
         this.blacklist.clear();
         this.blacklist.addAll(this.config.getStringList("Blacklist.IPs", this.blacklist));
 
+        this.disabledActions.clear();
+        ConfigurationNode disabledActionsNode = this.config.getNode("DisabledActions");
+        if (disabledActionsNode != null)
+        {
+            Map<String, Object> nodes = disabledActionsNode.getAll();
+            if (nodes != null)
+            {
+                Object value = null;
+                for (Map.Entry<String, Object> node : nodes.entrySet())
+                {
+                    value = node.getValue();
+                    if (value instanceof List)
+                    {
+                        this.disabledActions.put(node.getKey(), (List<String>)value);
+                    }
+                }
+            }
+        }
+
         this.defaultConfig();
     }
 
@@ -175,6 +197,7 @@ public class ApiBukkit extends JavaPlugin
         this.config.setProperty("Whitelist.IPs",            this.whitelist);
         this.config.setProperty("Blacklist.enabled",        this.blacklistEnabled);
         this.config.setProperty("Blacklist.IPs",            this.blacklist);
+        this.config.setProperty("DisabledActions",          this.disabledActions);
 
         this.config.save();
     }

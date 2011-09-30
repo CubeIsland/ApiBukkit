@@ -11,7 +11,8 @@ public enum ApiError
     AUTHENTICATION_FAILURE(2),
     REQUEST_EXCEPTION(3),
     ACTION_NOT_IMPLEMENTED(4),
-    CONTROLLER_NOT_FOUND(5);
+    CONTROLLER_NOT_FOUND(5),
+    ACTION_DISABLED(6);
     
     
     protected int errorCode;
