@@ -201,13 +201,17 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public ApiResponseFormat getResponseFormat(String name)
     {
-        if (this.responseFormats.containsKey(name))
+        if (name != null)
         {
-            return this.responseFormats.get(name);
-        }
-        if (this.responseFormats.containsKey(this.defaultResponseFormat))
-        {
-            return this.responseFormats.get(this.defaultResponseFormat);
+            name = name.toLowerCase();
+            if (this.responseFormats.containsKey(name))
+            {
+                return this.responseFormats.get(name);
+            }
+            if (this.responseFormats.containsKey(this.defaultResponseFormat))
+            {
+                return this.responseFormats.get(this.defaultResponseFormat);
+            }
         }
         
         return this.responseFormats.get("plain");
@@ -221,8 +225,12 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public final void addResponseFormat(String name, ApiResponseFormat format)
     {
-        this.responseFormats.put(name, format);
-        ApiBukkit.debug(String.format("Response format '%s' (%s) was added", name, format.getClass().getSimpleName()));
+        if (name != null && format != null)
+        {
+            name = name.toLowerCase();
+            this.responseFormats.put(name, format);
+            ApiBukkit.debug(String.format("Response format '%s' (%s) was added", name, format.getClass().getSimpleName()));
+        }
     }
 
     /**
@@ -232,8 +240,12 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public void removeResponseFormat(String name)
     {
-        this.responseFormats.remove(name);
-        ApiBukkit.debug(String.format("Response format '%s' was removed", name));
+        if (name != null)
+        {
+            name = name.toLowerCase();
+            this.responseFormats.remove(name);
+            ApiBukkit.debug(String.format("Response format '%s' was removed", name));
+        }
     }
 
     /**
@@ -244,11 +256,15 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public boolean setDefaultResponseFormat(String format)
     {
-        if (this.responseFormats.containsKey(format))
+        if (format != null)
         {
-            this.defaultResponseFormat = format;
-            ApiBukkit.debug(String.format("Response format '%s' was set as default", format));
-            return true;
+            format = format.toLowerCase();
+            if (this.responseFormats.containsKey(format))
+            {
+                this.defaultResponseFormat = format;
+                ApiBukkit.debug(String.format("Response format '%s' was set as default", format));
+                return true;
+            }
         }
         return false;
     }
@@ -271,7 +287,11 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public ApiRequestController getRequestController(String name)
     {
-        return this.requestControllers.get(name);
+        if (name != null)
+        {
+            return this.requestControllers.get(name.toLowerCase());
+        }
+        return null;
     }
 
     /**
@@ -282,7 +302,11 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public ApiRequestController getRequestControllerByAlias(String alias)
     {
-        return this.getRequestController(this.requestControllerAliases.get(alias));
+        if (alias != null)
+        {
+            return this.getRequestController(this.requestControllerAliases.get(alias.toLowerCase()));
+        }
+        return null;
     }
 
     /**
@@ -304,11 +328,15 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public boolean setRequestController(String name, ApiRequestController controller)
     {
-        if (controller != null && !name.equals("validate"))
+        if (controller != null)
         {
-            this.requestControllers.put(name, controller);
-            ApiBukkit.debug(String.format("Set the controller '%s' on '%s'", controller.getClass().getSimpleName(), name));
-            return true;
+            name = name.toLowerCase();
+            if (!name.equals("validate"))
+            {
+                this.requestControllers.put(name, controller);
+                ApiBukkit.debug(String.format("Set the controller '%s' on '%s'", controller.getClass().getSimpleName(), name));
+                return true;
+            }
         }
         return false;
     }
@@ -322,11 +350,16 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public boolean setRequestControllerAlias(String alias, String controller)
     {
-        if (this.requestControllers.containsKey(controller) && !alias.equals("validate"))
+        if (alias != null && controller != null)
         {
-            this.requestControllerAliases.put(alias, controller);
-            ApiBukkit.debug(String.format("Set the alias '%s' for the controller '%s'", alias, controller));
-            return true;
+            alias = alias.toLowerCase();
+            controller = controller.toLowerCase();
+            if (this.requestControllers.containsKey(controller) && !alias.equals("validate"))
+            {
+                this.requestControllerAliases.put(alias, controller);
+                ApiBukkit.debug(String.format("Set the alias '%s' for the controller '%s'", alias, controller));
+                return true;
+            }
         }
         return false;
     }
@@ -339,16 +372,20 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public void removeRequestController(String name)
     {
-        this.requestControllers.remove(name);
-        // remove aliases of the deleted controllers as well
-        for (Map.Entry<String, String> entry : this.requestControllerAliases.entrySet())
+        if (name != null)
         {
-            if (entry.getValue().equals(name))
+            name = name.toLowerCase();
+            this.requestControllers.remove(name);
+            // remove aliases of the deleted controllers as well
+            for (Map.Entry<String, String> entry : this.requestControllerAliases.entrySet())
             {
-                this.requestControllerAliases.remove(entry.getKey());
+                if (entry.getValue().equals(name))
+                {
+                    this.requestControllerAliases.remove(entry.getKey());
+                }
             }
+            ApiBukkit.debug("Removed the controller '" + name + "' and all its aliases");
         }
-        ApiBukkit.debug("Removed the controller '" + name + "' and all its aliases");
     }
 
     /**
@@ -358,8 +395,12 @@ public class ApiBukkitServer extends NanoHTTPD
      */
     public void removeRequestControllerAlias(String name)
     {
-        this.requestControllerAliases.remove(name);
-        ApiBukkit.debug("Removed the controller alias '" + name + "'");
+        if (name != null)
+        {
+            name = name.toLowerCase();
+            this.requestControllerAliases.remove(name);
+            ApiBukkit.debug("Removed the controller alias '" + name + "'");
+        }
     }
 
     /**

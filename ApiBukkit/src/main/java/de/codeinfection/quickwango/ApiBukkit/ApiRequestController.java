@@ -59,8 +59,12 @@ public abstract class ApiRequestController
      */
     public void setAction(String name, ApiRequestAction action)
     {
-        this.actions.put(name, action);
-        ApiBukkit.debug(String.format("Registered action '%s' in '%s'", name, this.getClass().getSimpleName()));
+        if (name != null && action != null)
+        {
+            name = name.toLowerCase();
+            this.actions.put(name, action);
+            ApiBukkit.debug(String.format("Registered action '%s' in '%s'", name, this.getClass().getSimpleName()));
+        }
     }
 
     /**
@@ -72,10 +76,13 @@ public abstract class ApiRequestController
      */
     public boolean setActionAlias(String alias, String action)
     {
-        if (this.actions.containsKey(action))
+        if (alias != null && action != null)
         {
-            this.actionAliases.put(alias, action);
-            return true;
+            if (this.actions.containsKey(action))
+            {
+                this.actionAliases.put(alias.toLowerCase(), action.toLowerCase());
+                return true;
+            }
         }
         return false;
     }
@@ -88,7 +95,11 @@ public abstract class ApiRequestController
      */
     public ApiRequestAction getAction(String name)
     {
-        return this.actions.get(name);
+        if (name != null)
+        {
+            return this.actions.get(name.toLowerCase());
+        }
+        return null;
     }
 
     /**
@@ -99,7 +110,11 @@ public abstract class ApiRequestController
      */
     public ApiRequestAction getActionByAlias(String alias)
     {
-        return this.getAction(this.actionAliases.get(alias));
+        if (alias != null)
+        {
+            return this.getAction(this.actionAliases.get(alias.toLowerCase()));
+        }
+        return null;
     }
 
     /**
