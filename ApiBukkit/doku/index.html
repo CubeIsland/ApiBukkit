@@ -57,26 +57,63 @@
                 Most of the parameters give information to the specific APIs, but there are two basic parameters: <em>authkey</em> and <em>format</em>.<br>
                 The <em>authkey</em> parameter is used to authenticate the client. If the requested action requires authentication this parameter <strong>must</strong> be given<br>
                 or the request will fail.<br>
-                The format parameter specifies the format of the response
+                The format parameter specifies the format of the response.
+                
+                <h4>Request Headers</h4>
+                <p>
+                    The server also supports HTTP headers.
+                    This is the list of known headers:
+                    <ul>
+                        <li>apibukkit-useragent: just like the normal useragent, </li>
+                    </ul>
+                </p>
+                
+                <h4>Special parameters</h4>
+                <p>
+                    The server provides some special params to the request actions with a name like "__NAME__".
+                    These params might not be avaiable, so the should be null-checked.
+                    This is the list of the special params.
+                    <ul>
+                        <li>__REQUEST_PATH__ - contains the requested path</li>
+                        <li>__REQUEST_METHOD__ - constains the request method</li>
+                        <li>__REMOTE_ADDR__ - contains the client's IP</li>
+                        <li>__USERAGENT__ - contains the value of the apibukkit-useragent value</li>
+                    </ul>
+                </p>
             </p>
 
             <h2>Response</h2>
             <p>
                 <p>
-
+                    The API supports 4 formats by default, but adding new formats is as simple as setting a request controller.
                 </p>
 
                 <h3>Response formats</h3>
                 <p>
-
+                    The defaul formats are these:<br>
+                    <ul>
+                        <li>raw - good to return simple text</li>
+                        <li>plain - a comma delimited list for simple values</li>
+                        <li>xml - good for lists and maps of simple types</li>
+                        <li>json - the format of choice</li>
+                    </ul>
                 </p>
 
                 <h3>Error responses</h3>
                 <p>
-                    
+                    If there occurres an error while processing the request, the server respones with<br>
+                    a suitable HTTP status code and one of these error codes plain formatted as the content:
+                    <ul>
+                        <li>-1 - Unknown error (HTTP 500)</li>
+                        <li>1 - Invalid path (HTTP 400)</li>
+                        <li>2 - Wrong Authkey (HTTP 401)</li>
+                        <li>3 - Request exception (HTTP 400)</li>
+                        <li>4 - Not implemented (HTTP 501)</li>
+                        <li>5 - Controller not found (HTTP 404)</li>
+                        <li>6 - Action is disabled (HTTP 403)</li>
+                    </ul>
                 </p>
             </p>
-            
         </div>
     </body>
 </html>
