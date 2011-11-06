@@ -6,17 +6,13 @@ import org.bukkit.Server;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.ApiResponseFormat;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.config.ConfigurationNode;
 
 public class ApiBukkit extends JavaPlugin
 {
@@ -28,31 +24,12 @@ public class ApiBukkit extends JavaPlugin
     protected PluginDescriptionFile pdf;
     protected File dataFolder;
     protected ApiBukkitServer webserver;
-    protected Configuration config;
+    protected ApiConfiguration config;
     protected boolean zombie = false;
-
-    // Configuration
-    protected int port;
-    protected String authKey;
-    protected int maxSessions;
-    public boolean whitelistEnabled;
-    public boolean blacklistEnabled;
-    public final List<String> whitelist;
-    public final List<String> blacklist;
-    public static ApiLogLevel logLevel = ApiLogLevel.DEFAULT;
-    public final Map<String, List<String>> disabledActions;
+    protected static ApiLogLevel logLevel = ApiLogLevel.DEFAULT;
 
     public ApiBukkit()
     {
-        this.authKey = null;
-        this.port = 6561;
-        this.maxSessions = 30;
-        
-        this.whitelistEnabled = false;
-        this.whitelist = new ArrayList<String>();
-        this.blacklistEnabled = false;
-        this.blacklist = new ArrayList<String>();
-        this.disabledActions = new HashMap<String, List<String>>();
         instance = this;
     }
 
@@ -66,32 +43,30 @@ public class ApiBukkit extends JavaPlugin
         {
             this.dataFolder.mkdirs();
         }
-        this.config = this.getConfiguration();
 
-        if (this.authKey == null)
+        Configuration configFile = this.getConfig();
+
+        try
         {
-            try
-            {
-                this.authKey = this.generateAuthKey();
-            }
-            catch (NoSuchAlgorithmException e)
-            {
-                error("#################################");
-                error("Failed to generate an auth key!", e);
-                error("Staying in a zombie state...");
-                error("#################################");
-                this.zombie = true;
-                return;
-            }
+            configFile.addDefault("Network.authKey", this.generateAuthKey());
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            error("#################################");
+            error("Failed to generate an auth key!", e);
+            error("Staying in a zombie state...");
+            error("#################################");
+            this.zombie = true;
+            return;
         }
 
-        if (!(new File(this.dataFolder, "config.yml")).exists())
-        {
-            this.defaultConfig();
-        }
-        this.loadConfig();
+        this.config = new ApiConfiguration(configFile);
 
-        ApiBukkit.log("Log level is: " + logLevel.name(), ApiLogLevel.INFO);
+        logLevel = this.config.logLevel;
+
+        this.saveConfig();
+
+        ApiBukkit.log("Log level is: " + this.config.logLevel.name(), ApiLogLevel.INFO);
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
@@ -101,10 +76,10 @@ public class ApiBukkit extends JavaPlugin
             {
                 this.webserver = new ApiBukkitServer(this);
             }
-            log(String.format("Starting the web server on port %s!", this.port));
-            log(String.format("Using %s as the auth key", this.authKey));
-            log(String.format("with a maximum of %s parallel sessions!", this.maxSessions));
-            this.webserver.start(this.port, this.authKey, this.maxSessions);
+            log(String.format("Starting the web server on port %s!", this.config.port));
+            log(String.format("Using %s as the auth key", this.config.authKey));
+            log(String.format("with a maximum of %s parallel sessions!", this.config.maxSessions));
+            this.webserver.start(this.config.port, this.config.authKey, this.config.maxSessions);
             log("Web server started!");
         }
         catch (Throwable t)
@@ -137,68 +112,6 @@ public class ApiBukkit extends JavaPlugin
         }
 
         log(String.format("Version %s is now disabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
-    }
-
-    private void loadConfig()
-    {
-        this.config.load();
-
-        try
-        {
-            logLevel = ApiLogLevel.getLogLevel(this.config.getString("General.logLevel", logLevel.name()));
-        }
-        catch (Exception e)
-        {
-            logLevel = ApiLogLevel.DEFAULT;
-            logException(e);
-        }
-        this.port = this.config.getInt("Network.port", this.port);
-        this.maxSessions = this.config.getInt("Network.maxSessions", this.maxSessions);
-        this.authKey = this.config.getString("Network.authKey", this.authKey);
-
-        this.whitelistEnabled = this.config.getBoolean("Whitelist.enabled", this.whitelistEnabled);
-        this.whitelist.clear();
-        this.whitelist.addAll(this.config.getStringList("Whitelist.IPs", this.whitelist));
-
-        this.blacklistEnabled = this.config.getBoolean("Blacklist.enabled", this.blacklistEnabled);
-        this.blacklist.clear();
-        this.blacklist.addAll(this.config.getStringList("Blacklist.IPs", this.blacklist));
-
-        this.disabledActions.clear();
-        ConfigurationNode disabledActionsNode = this.config.getNode("DisabledActions");
-        if (disabledActionsNode != null)
-        {
-            Map<String, Object> nodes = disabledActionsNode.getAll();
-            if (nodes != null)
-            {
-                Object value = null;
-                for (Map.Entry<String, Object> node : nodes.entrySet())
-                {
-                    value = node.getValue();
-                    if (value instanceof List)
-                    {
-                        this.disabledActions.put(node.getKey(), (List<String>)value);
-                    }
-                }
-            }
-        }
-
-        this.defaultConfig();
-    }
-
-    private void defaultConfig()
-    {
-        this.config.setProperty("General.logLevel",         logLevel.name());
-        this.config.setProperty("Network.port",             this.port);
-        this.config.setProperty("Network.authKey",          this.authKey);
-        this.config.setProperty("Network.maxSessions",      this.maxSessions);
-        this.config.setProperty("Whitelist.enabled",        this.whitelistEnabled);
-        this.config.setProperty("Whitelist.IPs",            this.whitelist);
-        this.config.setProperty("Blacklist.enabled",        this.blacklistEnabled);
-        this.config.setProperty("Blacklist.IPs",            this.blacklist);
-        this.config.setProperty("DisabledActions",          this.disabledActions);
-
-        this.config.save();
     }
 
     protected String generateAuthKey() throws NoSuchAlgorithmException
@@ -239,37 +152,6 @@ public class ApiBukkit extends JavaPlugin
     public boolean isZombie()
     {
         return this.zombie;
-    }
-
-    /**
-     * Returns the port the API server has bound to.
-     *
-     * @return the API port
-     */
-    public int getApiPort()
-    {
-        return this.port;
-    }
-
-    /**
-     * Returns the authkey.
-     *
-     * @return the authkey
-     */
-    public String getApiAuthKey()
-    {
-        return this.authKey;
-    }
-
-    /**
-     * Returns the API data folder for the given plugin
-     *
-     * @param plugin the plugin
-     * @return a File object of the folder
-     */
-    public File getApiDataFolder(Plugin plugin)
-    {
-        return new File(this.dataFolder, plugin.getDescription().getName());
     }
 
 

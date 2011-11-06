@@ -1,0 +1,13 @@
+General:
+    logLevel: DEFAULT
+Network:
+    port: 6561
+    authKey: ''
+    maxSessions: 30
+DisabledActions: {}
+Blacklist:
+    enabled: false
+    IPs: []
+Whitelist:
+    enabled: false
+    IPs: []
