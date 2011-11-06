@@ -8,6 +8,7 @@ import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -24,12 +25,12 @@ import org.bukkit.plugin.Plugin;
  */
 public class ChatController extends ApiRequestController
 {
-    private Queue<String> chatLog;
+    private Queue<String[]> chatLog;
 
     public ChatController(Plugin plugin)
     {
         super(plugin, true);
-        this.chatLog = new ConcurrentLinkedQueue<String>();
+        this.chatLog = new ConcurrentLinkedQueue<String[]>();
 
         this.plugin.getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListener(), Priority.Monitor, this.plugin);
 
@@ -81,6 +82,12 @@ public class ChatController extends ApiRequestController
         {
             BasicApi.log(message);
         }
+
+        @Override
+        public Location getLocation()
+        {
+            return this.world.getSpawnLocation();
+        }
     }
 
     private class ChatListener extends PlayerListener
@@ -88,11 +95,16 @@ public class ChatController extends ApiRequestController
         @Override
         public void onPlayerChat(PlayerChatEvent event)
         {
+            if (event.isCancelled())
+            {
+                return;
+            }
             if (chatLog.size() + 1 >= 100)
             {
                 chatLog.poll();
             }
-            chatLog.add(event.getMessage());
+            //chatLog.add(new String[] {event.getPlayer().getName(), event.getMessage().replaceAll("\u00A7([a-f0-9])", "&$1")});
+            chatLog.add(new String[] {event.getPlayer().getName(), event.getMessage()});
         }
     }
     
