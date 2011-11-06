@@ -6,11 +6,14 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
+import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.util.config.Configuration;
 
 /**
@@ -19,6 +22,7 @@ import org.bukkit.util.config.Configuration;
  */
 public class BasicApi extends JavaPlugin
 {
+    protected static final Logger logger = Logger.getLogger("Minecraft");
     protected static boolean initiated = false;
     protected Server server;
     protected PluginManager pm;
@@ -26,6 +30,8 @@ public class BasicApi extends JavaPlugin
     protected PluginDescriptionFile pdf;
     protected File apiDataFolder;
     protected Configuration config;
+
+    public static boolean debugMode = false;
     
     public static String implode(String delim, Iterable<String> array)
     {
@@ -51,7 +57,7 @@ public class BasicApi extends JavaPlugin
     {
         this.init();
         
-        this.api = (ApiBukkit) this.pm.getPlugin("ApiBukkit");
+        this.api = (ApiBukkit)this.pm.getPlugin("ApiBukkit");
         if (this.api == null)
         {
             ApiBukkit.error("Could not hook into ApiBukkit! Staying inactive...");
@@ -63,6 +69,8 @@ public class BasicApi extends JavaPlugin
             ApiBukkit.error("I think it infected me.");
             return;
         }
+
+        debugMode = (this.api.logLevel.level >= ApiLogLevel.DEBUG.level);
 
         this.apiDataFolder = this.api.getApiDataFolder(this);
         this.apiDataFolder.mkdirs();
@@ -97,12 +105,12 @@ public class BasicApi extends JavaPlugin
 
         this.api.setRequestController("configuration", new ConfigurationController(this, this.config.getStringList("configfiles", new ArrayList<String>())));
         
-        ApiBukkit.log(this.pdf.getName() + " " + this.pdf.getVersion() + " is now enabled!", ApiBukkit.LogLevel.QUIET);
+        log("Version " + this.pdf.getVersion() + " enabled!");
     }
 
     public void onDisable()
     {
-        ApiBukkit.log(this.pdf.getName() + " " + this.pdf.getVersion() + " is now disabled!", ApiBukkit.LogLevel.QUIET);
+        log("Version " + this.pdf.getVersion() + " disabled!");
     }
 
     private void init()
@@ -140,6 +148,39 @@ public class BasicApi extends JavaPlugin
         catch (Exception e)
         {
             return false;
+        }
+    }
+
+    public static void log(Level logLevel, String msg, Throwable t)
+    {
+        logger.log(logLevel, "[BasicApi] " + msg, t);
+    }
+
+    public static void log(Level logLevel, String msg)
+    {
+        log(logLevel, msg, null);
+    }
+
+    public static void log(String msg)
+    {
+        log(Level.INFO, msg);
+    }
+
+    public static void error(String msg)
+    {
+        log(Level.SEVERE, msg);
+    }
+
+    public static void error(String msg, Throwable t)
+    {
+        log(Level.SEVERE, msg, t);
+    }
+
+    public static void debug(String msg)
+    {
+        if (debugMode)
+        {
+            log("[debug] " + msg);
         }
     }
 }

@@ -2,7 +2,6 @@ package de.codeinfection.quickwango.ApiBukkit;
 
 import java.io.File;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -40,7 +39,7 @@ public class ApiBukkit extends JavaPlugin
     public boolean blacklistEnabled;
     public final List<String> whitelist;
     public final List<String> blacklist;
-    public static LogLevel logLevel = LogLevel.DEFAULT;
+    public static ApiLogLevel logLevel = ApiLogLevel.DEFAULT;
     public final Map<String, List<String>> disabledActions;
 
     public ApiBukkit()
@@ -92,7 +91,7 @@ public class ApiBukkit extends JavaPlugin
         }
         this.loadConfig();
 
-        ApiBukkit.log("Log level is: " + logLevel.name(), LogLevel.INFO);
+        ApiBukkit.log("Log level is: " + logLevel.name(), ApiLogLevel.INFO);
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
         
@@ -117,7 +116,7 @@ public class ApiBukkit extends JavaPlugin
             return;
         }
         
-        log(String.format("Version %s is now enabled!", this.pdf.getVersion()), LogLevel.QUIET);
+        log(String.format("Version %s is now enabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
     }
 
     public void onDisable()
@@ -137,7 +136,7 @@ public class ApiBukkit extends JavaPlugin
             this.webserver.stop();
         }
 
-        log(String.format("Version %s is now disabled!", this.pdf.getVersion()), LogLevel.QUIET);
+        log(String.format("Version %s is now disabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
     }
 
     private void loadConfig()
@@ -146,11 +145,11 @@ public class ApiBukkit extends JavaPlugin
 
         try
         {
-            logLevel = LogLevel.getLogLevel(this.config.getString("General.logLevel", logLevel.name()));
+            logLevel = ApiLogLevel.getLogLevel(this.config.getString("General.logLevel", logLevel.name()));
         }
         catch (Exception e)
         {
-            logLevel = LogLevel.DEFAULT;
+            logLevel = ApiLogLevel.DEFAULT;
             logException(e);
         }
         this.port = this.config.getInt("Network.port", this.port);
@@ -479,15 +478,15 @@ public class ApiBukkit extends JavaPlugin
      */
     public static void log(String message)
     {
-        log(message, LogLevel.DEFAULT);
+        log(message, ApiLogLevel.DEFAULT);
     }
 
-    public static void log(String message, LogLevel requiredLogLevel)
+    public static void log(String message, ApiLogLevel requiredLogLevel)
     {
         log(message, null, requiredLogLevel);
     }
     
-    public static void log(String message, Throwable t, LogLevel requiredLogLevel)
+    public static void log(String message, Throwable t, ApiLogLevel requiredLogLevel)
     {
         if (requiredLogLevel.level <= logLevel.level)
         {
@@ -499,95 +498,22 @@ public class ApiBukkit extends JavaPlugin
     
     public static void error(String message)
     {
-        log(message, LogLevel.ERROR);
+        log(message, ApiLogLevel.ERROR);
     }
 
     public static void error(String msg, Throwable t)
     {
-        log(msg, t, LogLevel.ERROR);
+        log(msg, t, ApiLogLevel.ERROR);
     }
     
     public static void debug(String message)
     {
-        log(message, LogLevel.DEBUG);
+        log(message, ApiLogLevel.DEBUG);
     }
     
     public static void logException(Throwable t)
     {
         error(t.getLocalizedMessage(), t);
         t.printStackTrace(System.err);
-    }
-
-    public enum LogLevel
-    {
-        QUIET(0),
-        ERROR(1, "ERROR", Level.SEVERE),
-        DEFAULT(2),
-        INFO(3),
-        DEBUG(4, "DEBUG");
-
-        private final static Map<Integer, LogLevel> levelIdMap = new HashMap<Integer, LogLevel>();
-        private final static Map<String, LogLevel> levelNameMap = new HashMap<String, LogLevel>();
-        public final int level;
-        public final String prefix;
-        public final Level logLevel;
-
-        LogLevel(int level, String prefix, Level logLevel)
-        {
-            this.level = level;
-            this.prefix = prefix.toUpperCase();
-            this.logLevel = logLevel;
-        }
-
-        LogLevel(int level, String prefix)
-        {
-            this.level = level;
-            this.prefix = prefix.toUpperCase();
-            this.logLevel = Level.INFO;
-        }
-
-        LogLevel(int level)
-        {
-            this.level = level;
-            this.prefix = null;
-            this.logLevel = Level.INFO;
-        }
-
-        public static LogLevel getLogLevel(int level) throws Exception
-        {
-            LogLevel logLevel = levelIdMap.get(level);
-            if (logLevel == null)
-            {
-                throw new Exception("unknown LogLevel " + level);
-            }
-            return logLevel;
-        }
-
-        public static LogLevel getLogLevel(String level) throws Exception
-        {
-            level = level.trim();
-            try
-            {
-                return getLogLevel(Integer.valueOf(level));
-            }
-            catch (NumberFormatException e)
-            {}
-
-            LogLevel logLevel = levelNameMap.get(level.toUpperCase());
-            if (logLevel == null)
-            {
-                throw new Exception("unknown LogLevel " + level);
-            }
-            return logLevel;
-        }
-
-        static
-        {
-            for (LogLevel logLevel : values())
-            {
-                levelIdMap.put(logLevel.level, logLevel);
-                levelNameMap.put(logLevel.name(), logLevel);
-            }
-        }
     }
 }

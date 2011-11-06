@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
+import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
 import de.codeinfection.quickwango.ApiBukkit.Net.NanoHTTPD.Response;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
@@ -50,12 +51,12 @@ public class ApiBukkitServer extends NanoHTTPD
         params.put("__REQUEST_PATH__", uri);
         params.put("__REQUEST_METHOD__", method);
         params.put("__REMOTE_ADDR__", remoteIp.getHostAddress());
-        ApiBukkit.log(String.format("'%s' requested '%s'", remoteIp.getHostAddress(), uri), ApiBukkit.LogLevel.INFO);
+        ApiBukkit.log(String.format("'%s' requested '%s'", remoteIp.getHostAddress(), uri), ApiLogLevel.INFO);
         String useragent = header.getProperty("apibukkit-useragent");
         if (useragent != null)
         {
             params.put("__REQUEST_USERAGENT__", useragent);
-            ApiBukkit.log("Useragent: " + useragent, ApiBukkit.LogLevel.INFO);
+            ApiBukkit.log("Useragent: " + useragent, ApiLogLevel.INFO);
         }
         uri = uri.substring(1);
         if (uri.length() == 0)

@@ -71,6 +71,7 @@ public class WorldController extends ApiRequestController
                     data.put("monsters", world.getAllowMonsters());
                     data.put("spawnInMemory", world.getKeepSpawnInMemory());
                     data.put("entities", world.getEntities().size());
+                    data.put("difficulty", world.getDifficulty().getValue());
 
                     Location spawnLoc = world.getSpawnLocation();
                     data.put("spawnLocation", new Integer[] {
