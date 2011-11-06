@@ -26,9 +26,9 @@ public class ChatController extends ApiRequestController
 {
     private Queue<String> chatLog;
 
-    public ChatController(Plugin plugin, boolean authNeeded)
+    public ChatController(Plugin plugin)
     {
-        super(plugin, authNeeded);
+        super(plugin, true);
         this.chatLog = new ConcurrentLinkedQueue<String>();
 
         this.plugin.getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListener(), Priority.Monitor, this.plugin);

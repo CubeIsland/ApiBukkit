@@ -104,6 +104,8 @@ public class BasicApi extends JavaPlugin
         this.api.setRequestController("operator", new OperatorController(this));
 
         this.api.setRequestController("configuration", new ConfigurationController(this, this.config.getStringList("configfiles", new ArrayList<String>())));
+
+        this.api.setRequestController("chat", new ChatController(this));
         
         log("Version " + this.pdf.getVersion() + " enabled!");
     }
