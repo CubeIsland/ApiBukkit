@@ -38,7 +38,7 @@ import org.bukkit.util.Vector;
  *
  * @author CodeInfection
  */
-public class ApiPlayer implements Player
+public abstract class ApiPlayer implements Player
 {
     private final String name;
     private String displayName;
