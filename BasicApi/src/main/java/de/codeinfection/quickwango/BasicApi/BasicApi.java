@@ -10,6 +10,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,9 +31,17 @@ public class BasicApi extends JavaPlugin
     protected BasicApiConfiguration config;
 
     public static boolean debugMode = false;
-    
-    public static String implode(String delim, Iterable<String> array)
+
+    public static String implode(String delim, Object[] array)
     {
+        return implode(delim, Arrays.asList(array));
+    }
+    public static String implode(String delim, Iterable<? extends Object> array)
+    {
+        if (array == null)
+        {
+            return "null";
+        }
         Iterator iter = array.iterator();
         if (!iter.hasNext())
         {
@@ -45,7 +54,7 @@ public class BasicApi extends JavaPlugin
             while (iter.hasNext())
             {
                 sb.append(delim);
-                sb.append(iter.next());
+                sb.append(iter.next().toString());
             }
             return sb.toString();
         }
