@@ -40,8 +40,8 @@ public class ApibukkitCommand implements CommandExecutor
             {
                 if (!this.plugin.isZombie())
                 {
-                    sender.sendMessage("API Port: " + this.plugin.getApiPort());
-                    sender.sendMessage("API Password: " + this.plugin.getApiAuthKey());
+                    sender.sendMessage("API Port: " + this.plugin.getApiConfig().port);
+                    sender.sendMessage("API Password: " + this.plugin.getApiConfig().authKey);
                 }
                 else
                 {

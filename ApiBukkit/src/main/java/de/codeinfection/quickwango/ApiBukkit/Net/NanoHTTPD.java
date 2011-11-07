@@ -1,6 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.Net;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
+import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -168,12 +169,12 @@ public abstract class NanoHTTPD
 
                     // default: IP is allowed
                     boolean IPAllowed = true;
-                    if (plugin.whitelistEnabled && !plugin.whitelist.contains(IP))
+                    if (config.whitelistEnabled && !config.whitelist.contains(IP))
                     {
                         // whitelisting: IP rejected if not on the whitelist
                         IPAllowed = false;
                     }
-                    if (plugin.blacklistEnabled && plugin.blacklist.contains(IP))
+                    if (config.blacklistEnabled && config.blacklist.contains(IP))
                     {
                         // blacklisting: IP rejected when on the blacklist
                         IPAllowed = false;
@@ -258,11 +259,11 @@ public abstract class NanoHTTPD
     private int httpServerPort;
     private ServerSocket httpServerSocket;
     private Thread httpServerThread;
-    protected final ApiBukkit plugin;
+    protected final ApiConfiguration config;
 
-    public NanoHTTPD(ApiBukkit plugin)
+    public NanoHTTPD(ApiConfiguration config)
     {
-        this.plugin = plugin;
+        this.config = config;
         this.sessions = new ArrayList<HTTPSession>();
     }
 

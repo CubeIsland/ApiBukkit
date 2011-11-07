@@ -12,21 +12,20 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.plugin.Plugin;
 
 public class ApiBukkit extends JavaPlugin
 {
     protected static final Logger logger = Logger.getLogger("Minecraft");
     private static ApiBukkit instance = null;
 
-    protected Server server;
-    protected PluginManager pm;
-    protected PluginDescriptionFile pdf;
-    protected File dataFolder;
-    protected ApiBukkitServer webserver;
-    protected ApiConfiguration config;
-    protected boolean zombie = false;
-    protected static ApiLogLevel logLevel = ApiLogLevel.DEFAULT;
+    private Server server;
+    private PluginManager pm;
+    private PluginDescriptionFile pdf;
+    private File dataFolder;
+    private ApiBukkitServer webserver;
+    private ApiConfiguration config;
+    private boolean zombie = false;
+    private static ApiLogLevel logLevel = ApiLogLevel.DEFAULT;
 
     public ApiBukkit()
     {
@@ -74,7 +73,7 @@ public class ApiBukkit extends JavaPlugin
         {
             if (webserver == null)
             {
-                this.webserver = new ApiBukkitServer(this);
+                this.webserver = new ApiBukkitServer(this.config);
             }
             log(String.format("Starting the web server on port %s!", this.config.port));
             log(String.format("Using %s as the auth key", this.config.authKey));
@@ -142,6 +141,11 @@ public class ApiBukkit extends JavaPlugin
     public static ApiBukkit getInstance()
     {
         return instance;
+    }
+
+    public ApiConfiguration getApiConfig()
+    {
+        return this.config;
     }
 
     /**

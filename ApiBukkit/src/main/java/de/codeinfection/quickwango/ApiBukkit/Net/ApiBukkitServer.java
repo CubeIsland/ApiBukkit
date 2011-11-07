@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
+import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
 import de.codeinfection.quickwango.ApiBukkit.Net.NanoHTTPD.Response;
@@ -14,6 +15,7 @@ import de.codeinfection.quickwango.ApiBukkit.ValidateController;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.Bukkit;
 
 public class ApiBukkitServer extends NanoHTTPD
 {
@@ -23,9 +25,9 @@ public class ApiBukkitServer extends NanoHTTPD
     protected final Map<String, String> requestControllerAliases;
     protected String defaultResponseFormat = "plain";
 
-    public ApiBukkitServer(ApiBukkit plugin) throws IOException
+    public ApiBukkitServer(ApiConfiguration config) throws IOException
     {
-        super(plugin);
+        super(config);
 
         this.responseFormats = new ConcurrentHashMap<String, ApiResponseFormat>();
         
@@ -106,9 +108,9 @@ public class ApiBukkitServer extends NanoHTTPD
                 {
                     action = controller.getAction(actionName);
                 }
-                if (this.plugin.disabledActions.containsKey(controllerName))
+                if (this.config.disabledActions.containsKey(controllerName))
                 {
-                    List<String> disabledActions = this.plugin.disabledActions.get(controllerName);
+                    List<String> disabledActions = this.config.disabledActions.get(controllerName);
                     if (disabledActions.contains(actionName) || disabledActions.contains("*"))
                     {
                         ApiBukkit.error("Requested action is disabled!");
@@ -129,12 +131,12 @@ public class ApiBukkitServer extends NanoHTTPD
                         return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.AUTHENTICATION_FAILURE));
                     }
                     ApiBukkit.debug("Running action '" + actionName + "'");
-                    response = action.execute(params, this.plugin.getServer());
+                    response = action.execute(params, Bukkit.getServer());
                 }
                 else
                 {
                     ApiBukkit.debug("Runnung default action");
-                    response = controller.defaultAction(actionName, params, this.plugin.getServer());
+                    response = controller.defaultAction(actionName, params, Bukkit.getServer());
                 }
             }
             catch (ApiRequestException e)
