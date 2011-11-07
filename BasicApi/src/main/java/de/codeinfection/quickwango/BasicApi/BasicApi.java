@@ -10,11 +10,10 @@ import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 
 /**
  *
@@ -23,13 +22,12 @@ import org.bukkit.util.config.Configuration;
 public class BasicApi extends JavaPlugin
 {
     protected static final Logger logger = Logger.getLogger("Minecraft");
-    protected static boolean initiated = false;
     protected Server server;
     protected PluginManager pm;
     protected ApiBukkit api;
     protected PluginDescriptionFile pdf;
-    protected File apiDataFolder;
-    protected Configuration config;
+    protected File dataFolder;
+    protected BasicApiConfiguration config;
 
     public static boolean debugMode = false;
     
@@ -55,7 +53,14 @@ public class BasicApi extends JavaPlugin
 
     public void onEnable()
     {
-        this.init();
+        this.server = this.getServer();
+        this.pm = this.server.getPluginManager();
+        this.pdf = this.getDescription();
+        this.dataFolder = this.getDataFolder();
+        if (!this.dataFolder.exists())
+        {
+            this.dataFolder.mkdirs();
+        }
         
         this.api = (ApiBukkit)this.pm.getPlugin("ApiBukkit");
         if (this.api == null)
@@ -70,18 +75,12 @@ public class BasicApi extends JavaPlugin
             return;
         }
 
-        debugMode = (this.api.logLevel.level >= ApiLogLevel.DEBUG.level);
+        debugMode = (this.api.getApiConfig().logLevel.level >= ApiLogLevel.DEBUG.level);
 
-        this.apiDataFolder = this.api.getApiDataFolder(this);
-        this.apiDataFolder.mkdirs();
-        File configFile = new File(this.apiDataFolder, "config.yml");
-        this.config = new Configuration(configFile);
-        if (!configFile.exists())
-        {
-            config.setProperty("configfiles", new ArrayList<String>());
-            config.save();
-        }
-        config.load();
+        Configuration configFile = this.getConfig();
+
+        this.config = new BasicApiConfiguration(configFile);
+        this.saveConfig();
         
         this.api.setRequestController("command", new CommandController(this));
         this.api.setRequestControllerAlias("cmd", "command");
@@ -103,7 +102,7 @@ public class BasicApi extends JavaPlugin
 
         this.api.setRequestController("operator", new OperatorController(this));
 
-        this.api.setRequestController("configuration", new ConfigurationController(this, this.config.getStringList("configfiles", new ArrayList<String>())));
+        this.api.setRequestController("configuration", new ConfigurationController(this, this.config.configFiles));
 
         this.api.setRequestController("chat", new ChatController(this));
         
@@ -115,16 +114,9 @@ public class BasicApi extends JavaPlugin
         log("Version " + this.pdf.getVersion() + " disabled!");
     }
 
-    private void init()
+    public BasicApiConfiguration getBasicApiConfig()
     {
-        if (!initiated)
-        {
-            this.server = this.getServer();
-            this.pm = this.server.getPluginManager();
-            this.pdf = this.getDescription();
-            
-            initiated = true;
-        }
+        return this.config;
     }
 
     public static boolean classMethodExists(String methodName, Class classObj)

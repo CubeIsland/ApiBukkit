@@ -5,6 +5,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
+import de.codeinfection.quickwango.BasicApi.BasicApiConfiguration;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -17,7 +18,6 @@ import org.bukkit.event.Event.Type;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -26,10 +26,14 @@ import org.bukkit.plugin.Plugin;
 public class ChatController extends ApiRequestController
 {
     private Queue<String[]> chatLog;
+    private BasicApiConfiguration config;
+    private String chatFormat;
 
-    public ChatController(Plugin plugin)
+    public ChatController(BasicApi plugin)
     {
         super(plugin, true);
+        this.config = plugin.getBasicApiConfig();
+        this.chatFormat = this.config.chatFormat.replaceAll("\\{NAME\\}", "%1$s").replaceAll("\\{MESSAGE\\}", "%2$s");
         this.chatLog = new ConcurrentLinkedQueue<String[]>();
 
         this.plugin.getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListener(), Priority.Monitor, this.plugin);
@@ -136,10 +140,9 @@ public class ChatController extends ApiRequestController
                         throw new ApiRequestException("Chat was cancelled!", 3);
                     }
 
-                    String message = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
                     for (Player player : event.getRecipients())
                     {
-                        player.sendMessage(message);
+                        player.sendMessage(String.format(chatFormat, event.getPlayer().getDisplayName(), event.getMessage()));
                     }
                 }
                 else
