@@ -15,6 +15,6 @@ public class BasicApiConfiguration
     public BasicApiConfiguration(Configuration config)
     {
         this.configFiles = (List<String>)config.getList("configfiles");
-        this.chatFormat = config.getString("chatformat");
+        this.chatFormat = config.getString("chatformat").replaceAll("\\{NAME\\}", "%1\\$s").replaceAll("\\{MESSAGE\\}", "%2\\$s");
     }
 }

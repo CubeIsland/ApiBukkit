@@ -27,13 +27,11 @@ public class ChatController extends ApiRequestController
 {
     private Queue<String[]> chatLog;
     private BasicApiConfiguration config;
-    private String chatFormat;
 
     public ChatController(BasicApi plugin)
     {
         super(plugin, true);
         this.config = plugin.getBasicApiConfig();
-        this.chatFormat = this.config.chatFormat.replaceAll("\\{NAME\\}", "%1$s").replaceAll("\\{MESSAGE\\}", "%2$s");
         this.chatLog = new ConcurrentLinkedQueue<String[]>();
 
         this.plugin.getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListener(), Priority.Monitor, this.plugin);
@@ -142,7 +140,7 @@ public class ChatController extends ApiRequestController
 
                     for (Player player : event.getRecipients())
                     {
-                        player.sendMessage(String.format(chatFormat, event.getPlayer().getDisplayName(), event.getMessage()));
+                        player.sendMessage(String.format(config.chatFormat, event.getPlayer().getDisplayName(), event.getMessage()));
                     }
                 }
                 else

@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,7 +26,7 @@ public class ConfigurationController extends ApiRequestController
     public ConfigurationController(Plugin plugin, List<String> paths)
     {
         super(plugin, true);
-        ApiBukkit.debug("Got " + paths.size() + " config paths...");
+        BasicApi.debug("Got " + paths.size() + " config paths...");
 
         this.availableConfigs = paths;
 
