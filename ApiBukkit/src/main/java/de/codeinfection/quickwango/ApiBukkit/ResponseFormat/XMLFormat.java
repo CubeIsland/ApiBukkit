@@ -1,5 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 
+import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
 import java.util.Iterator;
 import java.util.Map;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
@@ -25,6 +26,10 @@ public class XMLFormat implements ApiResponseFormat
         response += "<" + nodeName + ">";
         if (o == null)
         {} // null -> do nothing
+        else if (o instanceof ApiSerializable)
+        {
+            response += this.format(((ApiSerializable)o).serialize());
+        }
         else if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
