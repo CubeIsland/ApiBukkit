@@ -24,7 +24,7 @@ public class ValidateController extends ApiRequestController
     @Override
     public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
     {
-        throw new ApiRequestException("No default action!", 1);
+        return this.getActions().keySet();
     }
     
     private class AuthkeyAction extends ApiRequestAction
