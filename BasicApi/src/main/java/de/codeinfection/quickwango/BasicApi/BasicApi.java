@@ -1,5 +1,6 @@
 package de.codeinfection.quickwango.BasicApi;
 
+import de.codeinfection.quickwango.BasicApi.Controller.Chat.ChatController;
 import de.codeinfection.quickwango.BasicApi.Controller.*;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginDescriptionFile;
