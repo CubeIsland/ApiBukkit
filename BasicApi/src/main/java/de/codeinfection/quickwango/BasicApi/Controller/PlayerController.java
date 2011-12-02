@@ -4,11 +4,11 @@ import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -48,7 +48,7 @@ public class PlayerController extends ApiRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
@@ -61,7 +61,7 @@ public class PlayerController extends ApiRequestController
         }
         
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             Player[] online = server.getOnlinePlayers();
             List<String> players = new ArrayList<String>();
@@ -122,7 +122,7 @@ public class PlayerController extends ApiRequestController
         }
 
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -230,7 +230,7 @@ public class PlayerController extends ApiRequestController
     private class KillAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -257,7 +257,7 @@ public class PlayerController extends ApiRequestController
     private class BurnAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -297,7 +297,7 @@ public class PlayerController extends ApiRequestController
     private class TeleportAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -392,7 +392,7 @@ public class PlayerController extends ApiRequestController
     private class HealAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -419,7 +419,7 @@ public class PlayerController extends ApiRequestController
     private class GiveAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -503,7 +503,7 @@ public class PlayerController extends ApiRequestController
     private class KickAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -530,7 +530,7 @@ public class PlayerController extends ApiRequestController
     private class TellAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -569,7 +569,7 @@ public class PlayerController extends ApiRequestController
     private class ClearinventoryAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -596,7 +596,7 @@ public class PlayerController extends ApiRequestController
     private class DisplaynameAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             if (playerName != null)
@@ -631,7 +631,7 @@ public class PlayerController extends ApiRequestController
     private class InventoryAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerParam = params.getProperty("player");
             if (playerParam != null)

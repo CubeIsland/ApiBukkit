@@ -1,11 +1,11 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import java.util.Properties;
 import org.bukkit.Server;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +27,7 @@ public class CommandController extends ApiRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         List<String> response = null;
         if (action != null)

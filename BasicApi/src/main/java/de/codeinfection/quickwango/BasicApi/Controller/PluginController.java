@@ -3,10 +3,10 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -28,7 +28,7 @@ public class PluginController extends ApiRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
@@ -36,7 +36,7 @@ public class PluginController extends ApiRequestController
     private class ListAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             ArrayList<String> data = new ArrayList<String>();
             Plugin[] plugins = server.getPluginManager().getPlugins();
@@ -51,7 +51,7 @@ public class PluginController extends ApiRequestController
     private class ReloadallAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             server.reload();
             return null;
@@ -61,7 +61,7 @@ public class PluginController extends ApiRequestController
     private class InfoAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String pluginName = params.getProperty("plugin");
             if (pluginName != null)
@@ -98,7 +98,7 @@ public class PluginController extends ApiRequestController
     private class AvailableAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String pluginName = params.getProperty("plugin");
             if (pluginName != null)
@@ -115,7 +115,7 @@ public class PluginController extends ApiRequestController
     private class InstallAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             throw new UnsupportedOperationException("Not supported yet.");
         }

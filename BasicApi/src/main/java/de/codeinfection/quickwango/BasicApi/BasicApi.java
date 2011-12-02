@@ -75,19 +75,20 @@ public class BasicApi extends JavaPlugin
         this.api = (ApiBukkit)this.pm.getPlugin("ApiBukkit");
         if (this.api == null)
         {
-            ApiBukkit.error("Could not hook into ApiBukkit! Staying inactive...");
+            error("Could not hook into ApiBukkit! Staying inactive...");
             return;
         }
         if (this.api.isZombie())
         {
-            ApiBukkit.error("ApiBukkit seems to be a zombie...");
-            ApiBukkit.error("I think it infected me.");
+            error("ApiBukkit seems to be a zombie...");
+            error("I think it infected me.");
             return;
         }
 
         debugMode = (this.api.getApiConfig().logLevel.level >= ApiLogLevel.DEBUG.level);
 
         Configuration configFile = this.getConfig();
+        configFile.options().copyDefaults(true);
 
         this.config = new BasicApiConfiguration(configFile);
         this.saveConfig();

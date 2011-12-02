@@ -1,23 +1,21 @@
 package de.codeinfection.quickwango.ApiBukkit.Net;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
-import de.codeinfection.quickwango.ApiBukkit.Net.NanoHTTPD.Response;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
-import de.codeinfection.quickwango.ApiBukkit.ValidateController;
+import de.codeinfection.quickwango.ApiBukkit.ApibukkitController;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
 
-public class ApiBukkitServer extends NanoHTTPD
+public class ApiBukkitServer extends WebServer
 {
     protected String authenticationKey;
     protected final ConcurrentHashMap<String, ApiResponseFormat> responseFormats;
@@ -38,7 +36,7 @@ public class ApiBukkitServer extends NanoHTTPD
         
         this.requestControllers = new ConcurrentHashMap<String, ApiRequestController>();
         this.requestControllerAliases = new ConcurrentHashMap<String, String>();
-        this.requestControllers.put("validate", new ValidateController(null));
+        this.requestControllers.put("apibukkit", new ApibukkitController(null));
     }
 
     public void start(int port, String authKey, int maxSessions) throws IOException
@@ -48,13 +46,13 @@ public class ApiBukkitServer extends NanoHTTPD
     }
 
     @Override
-    public Response serve(String uri, InetAddress remoteIp, String method, Properties header, Properties params, Properties files)
+    public Response serve(String uri, InetAddress remoteIp, String method, Map<String, String> header, Parameters params)
     {
         params.put("__REQUEST_PATH__", uri);
         params.put("__REQUEST_METHOD__", method);
         params.put("__REMOTE_ADDR__", remoteIp.getHostAddress());
         ApiBukkit.log(String.format("'%s' requested '%s'", remoteIp.getHostAddress(), uri), ApiLogLevel.INFO);
-        String useragent = header.getProperty("apibukkit-useragent");
+        String useragent = header.get("apibukkit-useragent");
         if (useragent != null)
         {
             params.put("__REQUEST_USERAGENT__", useragent);
@@ -64,7 +62,7 @@ public class ApiBukkitServer extends NanoHTTPD
         if (uri.length() == 0)
         {
             ApiBukkit.error("Invalid path requested!");
-            return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, this.error(ApiError.INVALID_PATH));
+            return new Response(Status.BADREQUEST, MimeType.PLAIN, this.error(ApiError.INVALID_PATH));
         }
         String[] pathParts = uri.split("/");
         
@@ -81,7 +79,7 @@ public class ApiBukkitServer extends NanoHTTPD
         if (pathParts.length < 1 || controllerName == null)
         {
             ApiBukkit.error("Invalid path requested!");
-            return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, this.error(ApiError.INVALID_PATH));
+            return new Response(Status.BADREQUEST, MimeType.PLAIN, this.error(ApiError.INVALID_PATH));
         }
         
         Object response = null;
@@ -100,7 +98,7 @@ public class ApiBukkitServer extends NanoHTTPD
             ApiBukkit.debug("Selected controller '" + controller.getClass().getSimpleName() + "'");
             try
             {
-                String authKey = params.getProperty("authkey", "");
+                String authKey = params.getString("authkey");
                 params.remove("authkey");
                 
                 ApiRequestAction action = controller.getActionByAlias(actionName);
@@ -114,7 +112,7 @@ public class ApiBukkitServer extends NanoHTTPD
                     if (disabledActions.contains(actionName) || disabledActions.contains("*"))
                     {
                         ApiBukkit.error("Requested action is disabled!");
-                        return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT, this.error(ApiError.ACTION_DISABLED));
+                        return new Response(Status.FORBIDDEN, MimeType.PLAIN, this.error(ApiError.ACTION_DISABLED));
                     }
                 }
                 if (action != null)
@@ -125,10 +123,10 @@ public class ApiBukkitServer extends NanoHTTPD
                     {
                         actionAuthNeeded = controllerAuthNeeded;
                     }
-                    if (actionAuthNeeded && !authKey.equals(this.authenticationKey))
+                    if (actionAuthNeeded && !this.authenticationKey.equals(authKey))
                     {
                         ApiBukkit.error("Wrong authentication key!");
-                        return new Response(HTTP_UNAUTHORIZED, MIME_PLAINTEXT, this.error(ApiError.AUTHENTICATION_FAILURE));
+                        return new Response(Status.UNAUTHORIZED, MimeType.PLAIN, this.error(ApiError.AUTHENTICATION_FAILURE));
                     }
                     ApiBukkit.debug("Running action '" + actionName + "'");
                     response = action.execute(params, Bukkit.getServer());
@@ -142,23 +140,23 @@ public class ApiBukkitServer extends NanoHTTPD
             catch (ApiRequestException e)
             {
                 ApiBukkit.error("ControllerException: " + e.getMessage());
-                return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT, this.error(ApiError.REQUEST_EXCEPTION, e.getErrCode()));
+                return new Response(Status.BADREQUEST, MimeType.PLAIN, this.error(ApiError.REQUEST_EXCEPTION, e.getErrCode()));
             }
             catch (UnsupportedOperationException e)
             {
                 ApiBukkit.error("action not implemented");
-                return new Response(HTTP_NOTIMPLEMENTED, MIME_PLAINTEXT, this.error(ApiError.ACTION_NOT_IMPLEMENTED));
+                return new Response(Status.NOTIMPLEMENTED, MimeType.PLAIN, this.error(ApiError.ACTION_NOT_IMPLEMENTED));
             }
             catch (Throwable t)
             {
                 ApiBukkit.logException(t);
-                return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, this.error(ApiError.UNKNONW_ERROR));
+                return new Response(Status.INTERNALERROR, MimeType.PLAIN, this.error(ApiError.UNKNONW_ERROR));
             }
         }
         else
         {
             ApiBukkit.error("Controller not found!");
-            return new Response(HTTP_NOTFOUND, MIME_PLAINTEXT, this.error(ApiError.CONTROLLER_NOT_FOUND));
+            return new Response(Status.NOTFOUND, MimeType.PLAIN, this.error(ApiError.CONTROLLER_NOT_FOUND));
         }
         
         if (response != null)
@@ -167,12 +165,12 @@ public class ApiBukkitServer extends NanoHTTPD
             ApiResponseFormat responseFormat = this.getResponseFormat(formatProperty);
             
             ApiBukkit.debug("Responding normally: HTTP 200");
-            return new Response(HTTP_OK, responseFormat.getMime(), responseFormat.format(response));
+            return new Response(Status.OK, responseFormat.getMime(), responseFormat.format(response));
         }
         else
         {
             ApiBukkit.debug("Responding without content: HTTP 204");
-            return new Response(HTTP_NOCONTENT, MIME_PLAINTEXT, "");
+            return new Response(Status.NOCONTENT, MimeType.PLAIN, "");
         }
     }
 

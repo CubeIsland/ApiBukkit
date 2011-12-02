@@ -44,6 +44,7 @@ public class ApiBukkit extends JavaPlugin
         }
 
         Configuration configFile = this.getConfig();
+        configFile.options().copyDefaults(true);
 
         try
         {

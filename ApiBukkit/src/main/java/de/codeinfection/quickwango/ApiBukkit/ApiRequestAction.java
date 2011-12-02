@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import java.util.Properties;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import org.bukkit.Server;
 
 /**
@@ -42,10 +42,9 @@ public abstract class ApiRequestAction
     /**
      * This method handles the request.
      *
-     * @param params the request parameters
      * @param server a org.bukkit.Server instance
      * @return the response
      * @throws ApiRequestException
      */
-    public abstract Object execute(Properties params, Server server) throws ApiRequestException;
+    public abstract Object execute(Parameters params, Server server) throws ApiRequestException;
 }

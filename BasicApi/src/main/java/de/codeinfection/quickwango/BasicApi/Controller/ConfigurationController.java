@@ -3,6 +3,7 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,7 +12,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 
@@ -37,7 +37,7 @@ public class ConfigurationController extends ApiRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
@@ -45,7 +45,7 @@ public class ConfigurationController extends ApiRequestController
     private class WriteAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String fileParam = params.getProperty("file");
             String appendParam = params.getProperty("append");
@@ -101,7 +101,7 @@ public class ConfigurationController extends ApiRequestController
     private class ReadAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String fileParam = params.getProperty("file");
             if (fileParam != null)
@@ -149,7 +149,7 @@ public class ConfigurationController extends ApiRequestController
     private class RemoveAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String fileParam = params.getProperty("file");
             if (fileParam != null)
@@ -174,7 +174,7 @@ public class ConfigurationController extends ApiRequestController
     private class ExistsAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String fileParam = params.getProperty("file");
             if (fileParam != null)

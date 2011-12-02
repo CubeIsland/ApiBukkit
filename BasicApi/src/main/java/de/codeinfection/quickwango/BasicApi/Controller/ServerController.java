@@ -4,6 +4,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -11,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
@@ -50,7 +50,7 @@ public class ServerController extends ApiRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
@@ -63,7 +63,7 @@ public class ServerController extends ApiRequestController
         }
         
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             return server.getMaxPlayers();
         }
@@ -73,7 +73,7 @@ public class ServerController extends ApiRequestController
     {
         
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             Map<String, Object> data = new HashMap<String, Object>();
             
@@ -107,7 +107,7 @@ public class ServerController extends ApiRequestController
         }
         
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             return server.getOnlinePlayers().length;
         }
@@ -121,7 +121,7 @@ public class ServerController extends ApiRequestController
         }
         
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             return server.getVersion();
         }
@@ -130,7 +130,7 @@ public class ServerController extends ApiRequestController
     private class StatsAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             Map<String, Object> data = new HashMap<String, Object>();
             Runtime runtime = Runtime.getRuntime();
@@ -143,7 +143,7 @@ public class ServerController extends ApiRequestController
     private class GarbagecollectAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             server.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
                 public void run() {
@@ -161,7 +161,7 @@ public class ServerController extends ApiRequestController
     private class KillAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             ApiBukkit.log("killing java runtime");
             System.exit(0);
@@ -175,7 +175,7 @@ public class ServerController extends ApiRequestController
          * Stops the Server by dispatching the commands "save-all" and "stop"
          */
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             for (World world : server.getWorlds())
             {
@@ -188,7 +188,7 @@ public class ServerController extends ApiRequestController
     
     private class BroadcastAction extends ApiRequestAction
     {
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String msg = params.getProperty("message");
             if (msg != null)
@@ -207,7 +207,7 @@ public class ServerController extends ApiRequestController
     private class ReloadAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             server.reload();
             return null;
@@ -232,7 +232,7 @@ public class ServerController extends ApiRequestController
         }
 
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             try
             {

@@ -4,11 +4,11 @@ import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class BanController extends ApiRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
@@ -38,7 +38,7 @@ public class BanController extends ApiRequestController
     private class AddAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             String IP = params.getProperty("ip");
@@ -82,7 +82,7 @@ public class BanController extends ApiRequestController
     private class RemoveAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playerName = params.getProperty("player");
             String IP = params.getProperty("ip");
@@ -122,7 +122,7 @@ public class BanController extends ApiRequestController
     private class GetAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             Map<String, Object> data = new HashMap<String, Object>();
             List<String> bannedPlayers = new ArrayList<String>();

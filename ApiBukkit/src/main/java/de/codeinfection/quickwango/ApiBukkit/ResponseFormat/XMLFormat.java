@@ -3,15 +3,15 @@ package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
 import java.util.Iterator;
 import java.util.Map;
-import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.Net.MimeType;
 
 public class XMLFormat implements ApiResponseFormat
 {
     protected final static String XMLDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
     
-    public String getMime()
+    public MimeType getMime()
     {
-        return ApiBukkitServer.MIME_XML;
+        return MimeType.XML;
     }
     
     public String format(Object o)

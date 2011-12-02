@@ -3,15 +3,15 @@ package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
 import java.util.Iterator;
 import java.util.Map;
-import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.Net.MimeType;
 
 public class PlainFormat implements ApiResponseFormat
 {
     
     
-    public String getMime()
+    public MimeType getMime()
     {
-        return ApiBukkitServer.MIME_PLAINTEXT;
+        return MimeType.PLAIN;
     }
     
     @SuppressWarnings("unchecked")

@@ -3,13 +3,13 @@ package de.codeinfection.quickwango.BasicApi.Controller.Chat;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import de.codeinfection.quickwango.BasicApi.BasicApiConfiguration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.zip.CRC32;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public class ChatController extends ApiRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
@@ -54,7 +54,7 @@ public class ChatController extends ApiRequestController
     private class GetAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String sessionParam = params.getProperty("session");
             try
@@ -80,7 +80,7 @@ public class ChatController extends ApiRequestController
     private class PublicAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String nameParam = params.getProperty("name");
             if (nameParam != null)
@@ -117,7 +117,7 @@ public class ChatController extends ApiRequestController
     private class PrivateAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String targetParam = params.getProperty("target");
             if (targetParam != null)
@@ -160,7 +160,7 @@ public class ChatController extends ApiRequestController
     private class PostAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String sessionParam = params.getProperty("session");
             try
@@ -202,7 +202,7 @@ public class ChatController extends ApiRequestController
 
     private class ParticipantsAction extends ApiRequestAction
     {
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String sessionParam = params.getProperty("session");
             try
@@ -235,7 +235,7 @@ public class ChatController extends ApiRequestController
         private final CRC32 crc = new CRC32();
         
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String playersParam = params.getProperty("players");
             if (playersParam != null)
@@ -253,9 +253,8 @@ public class ChatController extends ApiRequestController
 
                 if (players.size() > 0)
                 {
-                    ChatSession session = new ChatSession(players);
-                    session.init((BasicApi)plugin);
-                    this.crc.update((new Long(System.currentTimeMillis())).byteValue());
+                    ChatSession session = new ChatSession(config, players);
+                    this.crc.update((byte)System.currentTimeMillis());
                     long sessionID = this.crc.getValue();
                     chatSessions.put(sessionID, session);
 

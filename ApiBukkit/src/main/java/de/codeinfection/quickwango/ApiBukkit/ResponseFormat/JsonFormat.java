@@ -3,13 +3,13 @@ package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
 import java.util.Iterator;
 import java.util.Map;
-import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.Net.MimeType;
 
 public class JsonFormat implements ApiResponseFormat
 {
-    public String getMime()
+    public MimeType getMime()
     {
-        return ApiBukkitServer.MIME_JSON;
+        return MimeType.JSON;
     }
 
     public String format(Object o)

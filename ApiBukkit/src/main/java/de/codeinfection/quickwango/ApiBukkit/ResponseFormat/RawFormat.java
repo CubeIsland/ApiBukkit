@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 
-import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.Net.MimeType;
 
 /**
  *
@@ -8,9 +8,9 @@ import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
  */
 public class RawFormat implements ApiResponseFormat
 {
-    public String getMime()
+    public MimeType getMime()
     {
-        return ApiBukkitServer.MIME_PLAINTEXT;
+        return MimeType.PLAIN;
     }
 
     public String format(Object o)

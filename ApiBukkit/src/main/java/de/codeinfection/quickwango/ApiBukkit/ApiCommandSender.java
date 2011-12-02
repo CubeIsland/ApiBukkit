@@ -40,7 +40,11 @@ public class ApiCommandSender implements CommandSender
         }
     }
 
-    @Override
+    public String getName()
+    {
+        return "ApiCommandSender";
+    }
+
     public void sendMessage(String message)
     {
         ApiBukkit.log(message);
@@ -122,9 +126,4 @@ public class ApiCommandSender implements CommandSender
 
     public void setOp(boolean value)
     {}
-
-    public String getName()
-    {
-        return "ApiCommandSender";
-    }
 }

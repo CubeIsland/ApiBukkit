@@ -4,12 +4,12 @@ import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -42,7 +42,7 @@ public class WorldController extends ApiRequestController
     }
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }
@@ -50,7 +50,7 @@ public class WorldController extends ApiRequestController
     private class InfoAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -121,7 +121,7 @@ public class WorldController extends ApiRequestController
         }
 
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             this.executionThread = Thread.currentThread();
             this.worldName = params.getProperty("world");
@@ -154,7 +154,7 @@ public class WorldController extends ApiRequestController
                     if (generatorParam != null)
                     {
                         generatorParam = generatorParam.trim();
-                        if (!generatorParam.isEmpty())
+                        if (generatorParam.length() > 0)
                         {
                             String[] split = generatorParam.split(":", 2);
                             String id = (split.length > 1) ? split[1] : null;
@@ -245,7 +245,7 @@ public class WorldController extends ApiRequestController
     private class TimeAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -287,7 +287,7 @@ public class WorldController extends ApiRequestController
     private class PvpAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -332,7 +332,7 @@ public class WorldController extends ApiRequestController
     private class StormAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -377,7 +377,7 @@ public class WorldController extends ApiRequestController
     private class SpawnAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -444,7 +444,7 @@ public class WorldController extends ApiRequestController
     private class ListAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             List<World> worlds = server.getWorlds();
             List<String> data = new ArrayList<String>();
@@ -459,7 +459,7 @@ public class WorldController extends ApiRequestController
     private class PlayersAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -490,7 +490,7 @@ public class WorldController extends ApiRequestController
     private class SpawnflagsAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)
@@ -544,7 +544,7 @@ public class WorldController extends ApiRequestController
     private class SaveAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String worldName = params.getProperty("world");
             if (worldName != null)

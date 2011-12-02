@@ -1,5 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 
+import de.codeinfection.quickwango.ApiBukkit.Net.MimeType;
+
 /**
  *
  * @author CodeInfection
@@ -7,5 +9,5 @@ package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 public interface ApiResponseFormat
 {
     public String format(Object o);
-    public String getMime();
+    public MimeType getMime();
 }

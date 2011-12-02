@@ -3,11 +3,11 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -31,7 +31,7 @@ public class CompatController extends ApiRequestController
     private class OnlineAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             return server.getOnlinePlayers().length;
         }
@@ -40,7 +40,7 @@ public class CompatController extends ApiRequestController
     private class PlayersonlineAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             Player[] players = server.getOnlinePlayers();
             List<String> data = new ArrayList<String>();
@@ -55,7 +55,7 @@ public class CompatController extends ApiRequestController
     private class WhoisAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             String requestPath = params.getProperty("__REQUEST_PATH__");
             if (requestPath == null)
@@ -86,7 +86,7 @@ public class CompatController extends ApiRequestController
     private class MaxplayersAction extends ApiRequestAction
     {
         @Override
-        public Object execute(Properties params, Server server) throws ApiRequestException
+        public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             return server.getMaxPlayers();
         }
@@ -94,7 +94,7 @@ public class CompatController extends ApiRequestController
     
 
     @Override
-    public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
     {
         return this.getActions().keySet();
     }

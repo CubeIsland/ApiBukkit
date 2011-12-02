@@ -1,8 +1,8 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 
@@ -131,10 +131,9 @@ public abstract class ApiRequestController
      * This method will be called if the requested actions was not found.
      *
      * @param action the name of the action which was requested
-     * @param params the parameters of the request
      * @param server a org.bukkit.Server instance
      * @return the response as an Object
      * @throws ApiRequestException
      */
-    abstract public Object defaultAction(String action, Properties params, Server server) throws ApiRequestException;
+    abstract public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException;
 }
