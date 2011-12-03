@@ -455,7 +455,7 @@ public abstract class WebServer
                     if (lastCloseBracketPosition == indicesString.length() - 1)
                     {
                         key = urlDecode(key.substring(0, firstOpenBracketPosition));
-                        String delimitedIndices = indicesString.substring(1, lastCloseBracketPosition - 1);
+                        String delimitedIndices = indicesString.substring(1, lastCloseBracketPosition);
 
                         ArrayList<String> path = new ArrayList<String>();
                         StringTokenizer tokenizer = new StringTokenizer(delimitedIndices, "][");
@@ -466,7 +466,7 @@ public abstract class WebServer
                             path.add(urlDecode(tokenizer.nextToken()));
                         }
 
-                        params.putList(path.toString(), value);
+                        params.putDeep(path, value);
 
                         return;
                     }
