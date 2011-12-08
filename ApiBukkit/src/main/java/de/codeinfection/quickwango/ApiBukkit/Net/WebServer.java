@@ -446,37 +446,45 @@ public abstract class WebServer
             {
                 String key = keyValuePair.substring(0, delimPosition);
                 String value = urlDecode(keyValuePair.substring(delimPosition + 1));
-
-                int firstOpenBracketPosition = key.indexOf("[");
-                if (firstOpenBracketPosition > -1)
-                {
-                    String indicesString = key.substring(firstOpenBracketPosition);
-                    int lastCloseBracketPosition = indicesString.lastIndexOf("]");
-                    if (lastCloseBracketPosition == indicesString.length() - 1)
-                    {
-                        key = urlDecode(key.substring(0, firstOpenBracketPosition));
-                        String delimitedIndices = indicesString.substring(1, lastCloseBracketPosition);
-
-                        ArrayList<String> path = new ArrayList<String>();
-                        StringTokenizer tokenizer = new StringTokenizer(delimitedIndices, "][");
-
-                        path.add(key);
-                        while (tokenizer.hasMoreTokens())
-                        {
-                            path.add(urlDecode(tokenizer.nextToken()));
-                        }
-
-                        params.putDeep(path, value);
-
-                        return;
-                    }
-                }
-                params.putList(urlDecode(key), urlDecode(value));
+                
+                params.put(this.parseKey(key), value);
             }
             else
             {
-                params.putList(urlDecode(keyValuePair), null);
+                List<String> path = this.parseKey(keyValuePair);
+                if (!params.containsKey(path))
+                {
+                    params.put(path, null);
+                }
             }
+        }
+
+        private List<String> parseKey(String key)
+        {
+            List<String> path = new ArrayList<String>();
+            int firstOpenBracketPosition = key.indexOf("[");
+            if (firstOpenBracketPosition > -1)
+            {
+                String indicesString = key.substring(firstOpenBracketPosition);
+                int lastCloseBracketPosition = indicesString.lastIndexOf("]");
+                if (lastCloseBracketPosition == indicesString.length() - 1)
+                {
+                    key = urlDecode(key.substring(0, firstOpenBracketPosition));
+                    String delimitedIndices = indicesString.substring(1, lastCloseBracketPosition);
+                    
+                    StringTokenizer tokenizer = new StringTokenizer(delimitedIndices, "][");
+
+                    path.add(key);
+                    while (tokenizer.hasMoreTokens())
+                    {
+                        path.add(urlDecode(tokenizer.nextToken()));
+                    }
+                    return path;
+                }
+            }
+
+            path.add(urlDecode(key));
+            return path;
         }
 
         /**

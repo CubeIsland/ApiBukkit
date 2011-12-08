@@ -112,21 +112,47 @@ public class Parameters extends HashMap<String, Object>
         }
     }
 
-    public void putDeep(List<String> path, Object value)
+    public Object get(List<String> path)
     {
-        this.putDeep(path.toArray(new String[0]), value);
-    }
-
-    public void putDeep(String[] path, Object value)
-    {
-        int keyCount = path.length - 1;
+        int keyCount = path.size() - 1;
 
         String key = null;
         Parameters node = this;
         Object tmpNode = null;
         for (int i = 0; i < keyCount; ++i)
         {
-            key = path[i];
+            key = path.get(i);
+            tmpNode = node.get(key);
+            if (tmpNode != null)
+            {
+                if (tmpNode instanceof Parameters)
+                {
+                    node = (Parameters)tmpNode;
+                }
+                else
+                {
+                    throw new IllegalArgumentException("The given path cannot be mapped!");
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        return node.get(path.get(keyCount));
+    }
+
+    public void put(List<String> path, Object value)
+    {
+        int keyCount = path.size() - 1;
+
+        String key = null;
+        Parameters node = this;
+        Object tmpNode = null;
+        for (int i = 0; i < keyCount; ++i)
+        {
+            key = path.get(i);
             tmpNode = node.get(key);
             if (tmpNode != null)
             {
@@ -147,6 +173,37 @@ public class Parameters extends HashMap<String, Object>
             }
         }
 
-        node.putList(path[keyCount], value);
+        node.putList(path.get(keyCount), value);
+    }
+
+    public boolean containsKey(List<String> path)
+    {
+        int keyCount = path.size() - 1;
+
+        String key = null;
+        Parameters node = this;
+        Object tmpNode = null;
+        for (int i = 0; i < keyCount; ++i)
+        {
+            key = path.get(i);
+            tmpNode = node.get(key);
+            if (tmpNode != null)
+            {
+                if (tmpNode instanceof Parameters)
+                {
+                    node = (Parameters)tmpNode;
+                }
+                else
+                {
+                    throw new IllegalArgumentException("The given path cannot be mapped!");
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return node.containsKey(path.get(keyCount));
     }
 }
