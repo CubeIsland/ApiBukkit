@@ -332,7 +332,7 @@ public class ApiBukkitServer extends WebServer
         if (controller != null)
         {
             name = name.toLowerCase();
-            if (!name.equals("validate"))
+            if (!name.equals("apibukkit"))
             {
                 this.requestControllers.put(name, controller);
                 ApiBukkit.debug(String.format("Set the controller '%s' on '%s'", controller.getClass().getSimpleName(), name));
@@ -355,7 +355,7 @@ public class ApiBukkitServer extends WebServer
         {
             alias = alias.toLowerCase();
             controller = controller.toLowerCase();
-            if (this.requestControllers.containsKey(controller) && !alias.equals("validate"))
+            if (this.requestControllers.containsKey(controller) && !alias.equals("apibukkit"))
             {
                 this.requestControllerAliases.put(alias, controller);
                 ApiBukkit.debug(String.format("Set the alias '%s' for the controller '%s'", alias, controller));
