@@ -59,19 +59,27 @@ public class WorldController extends ApiRequestController
                 if (world != null)
                 {
                     Map<String, Object> data = new HashMap<String, Object>();
-                    data.put("name", world.getName());
-                    data.put("time", world.getTime());
-                    data.put("fullTime", world.getFullTime());
-                    data.put("seed", world.getSeed());
-                    data.put("pvp", world.getPVP());
-                    data.put("environment", world.getEnvironment().toString());
-                    data.put("thunderDuration", world.getThunderDuration());
-                    data.put("weatherDuration", world.getWeatherDuration());
-                    data.put("animals", world.getAllowAnimals());
-                    data.put("monsters", world.getAllowMonsters());
-                    data.put("spawnInMemory", world.getKeepSpawnInMemory());
-                    data.put("entities", world.getEntities().size());
-                    data.put("difficulty", world.getDifficulty().getValue());
+                    data.put("name",                world.getName());
+                    data.put("time",                world.getTime());
+                    data.put("fullTime",            world.getFullTime());
+                    data.put("seed",                world.getSeed());
+                    data.put("pvp",                 world.getPVP());
+                    data.put("environment",         world.getEnvironment().getId());
+                    data.put("thunderDuration",     world.getThunderDuration());
+                    data.put("weatherDuration",     world.getWeatherDuration());
+                    data.put("allowAnimals",        world.getAllowAnimals());
+                    data.put("allowMonsters",       world.getAllowMonsters());
+                    data.put("keepSpawnInMemory",   world.getKeepSpawnInMemory());
+                    data.put("entities",            world.getEntities().size());
+                    data.put("livingEntities",      world.getLivingEntities().size());
+                    data.put("difficulty",          world.getDifficulty().getValue());
+                    data.put("loadedChunks",        world.getLoadedChunks().length);
+                    data.put("players",             world.getPlayers().size());
+                    data.put("players",             world.getPlayers().size());
+                    data.put("maxHeight",           world.getMaxHeight());
+                    data.put("seaLevel",            world.getSeaLevel());
+                    data.put("seaLevel",            world.getSeaLevel());
+                    data.put("worldFolder",         world.getWorldFolder().toString());
 
                     Location spawnLoc = world.getSpawnLocation();
                     data.put("spawnLocation", new Integer[] {

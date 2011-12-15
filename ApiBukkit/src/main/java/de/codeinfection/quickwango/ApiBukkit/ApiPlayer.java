@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
@@ -594,6 +595,42 @@ public abstract class ApiPlayer implements Player
     }
 
     public void sendMessage(String string) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void giveExp(int amount) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public float getExp() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setExp(float exp) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Player getKiller() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean teleport(Location location, TeleportCause cause) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean teleport(Entity destination, TeleportCause cause) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public long getFirstPlayed() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public long getLastPlayed() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean hasPlayedBefore() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

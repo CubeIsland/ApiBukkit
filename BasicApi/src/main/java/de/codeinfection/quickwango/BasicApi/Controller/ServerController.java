@@ -37,13 +37,13 @@ public class ServerController extends ApiRequestController
         this.setAction("maxplayers",       new MaxplayersAction());
         this.setAction("online",           new OnlineAction());
         this.setAction("version",          new VersionAction());
-        this.setAction("stats",            new StatsAction());
         this.setAction("garbagecollect",   new GarbagecollectAction());
         this.setAction("kill",             new KillAction());
         this.setAction("stop",             new StopAction());
         this.setAction("broadcast",        new BroadcastAction());
         this.setAction("reload",           new ReloadAction());
         this.setAction("console",          new ConsoleAction());
+        this.setAction("offlineplayers",   new OfflinePlayersAction());
         
         this.setActionAlias("playerlimit",      "maxplayers");
         this.setActionAlias("gc",               "garbagecollect");
@@ -75,25 +75,34 @@ public class ServerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
+            Runtime runtime = Runtime.getRuntime();
             Map<String, Object> data = new HashMap<String, Object>();
             
-            data.put("id", server.getServerId());
-            data.put("name", server.getServerName());
-            data.put("ip", server.getIp());
-            data.put("port", server.getPort());
-            data.put("players", server.getOnlinePlayers().length);
-            data.put("maxplayers", server.getMaxPlayers());
-            data.put("worlds", server.getWorlds().size());
-            data.put("version", server.getVersion());
-            data.put("plugins", server.getPluginManager().getPlugins().length);
-            data.put("uptime", (System.currentTimeMillis() / 1000) - timeStamp);
-            data.put("onlinemode", server.getOnlineMode());
-            data.put("whitelisted", server.hasWhitelist());
-            data.put("flying", server.getAllowFlight());
-            data.put("nether", server.getAllowNether());
-            data.put("spawnradius", server.getSpawnRadius());
-            data.put("viewdistance", server.getViewDistance());
-            data.put("defaultgamemode", server.getDefaultGameMode().getValue());
+            data.put("id",                  server.getServerId());
+            data.put("name",                server.getServerName());
+            data.put("ip",                  server.getIp());
+            data.put("port",                server.getPort());
+            data.put("players",             server.getOnlinePlayers().length);
+            data.put("maxplayers",          server.getMaxPlayers());
+            data.put("worlds",              server.getWorlds().size());
+            data.put("version",             server.getVersion());
+            data.put("bukkitVersion",       server.getBukkitVersion());
+            data.put("plugins",             server.getPluginManager().getPlugins().length);
+            data.put("uptime",              (System.currentTimeMillis() / 1000) - timeStamp);
+            data.put("onlinemode",          server.getOnlineMode());
+            data.put("whitelisted",         server.hasWhitelist());
+            data.put("spawnRadius",         server.getSpawnRadius());
+            data.put("viewDistance",        server.getViewDistance());
+            data.put("defaultGamemode",     server.getDefaultGameMode().getValue());
+            data.put("allowEnd",            server.getAllowEnd());
+            data.put("allowNether",         server.getAllowNether());
+            data.put("allowFlight",         server.getAllowFlight());
+            data.put("allowNether",         server.getAllowNether());
+            data.put("worldContainer",      server.getWorldContainer().toString());
+            data.put("updateFolder",        server.getUpdateFolderFile().toString());
+            
+            data.put("maxmemory",           runtime.maxMemory());
+            data.put("freememory",          runtime.freeMemory());
             
             return data;
         }
@@ -124,19 +133,6 @@ public class ServerController extends ApiRequestController
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             return server.getVersion();
-        }
-    }
-    
-    private class StatsAction extends ApiRequestAction
-    {
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            Map<String, Object> data = new HashMap<String, Object>();
-            Runtime runtime = Runtime.getRuntime();
-            data.put("maxmemory", runtime.maxMemory());
-            data.put("freememory", runtime.freeMemory());
-            return data;
         }
     }
     
@@ -275,6 +271,15 @@ public class ServerController extends ApiRequestController
             {
                 throw new ApiRequestException("Could not find the server log!", 1);
             }
+        }
+    }
+
+    private class OfflinePlayersAction extends ApiRequestAction
+    {
+        @Override
+        public Object execute(Parameters params, Server server) throws ApiRequestException
+        {
+            return server.getOfflinePlayers();
         }
     }
 }

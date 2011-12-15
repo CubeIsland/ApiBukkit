@@ -131,11 +131,31 @@ public class PlayerController extends ApiRequestController
                 if (player != null)
                 {
                     Map<String, Object> data = new HashMap<String, Object>();
-                    data.put("name", player.getName());
-                    data.put("displayName", player.getDisplayName());
-                    int health = player.getHealth();
-                    data.put("health", health < 0 ? 0 : health);
-                    data.put("armor", this.getArmorPoints(player));
+                    
+                    data.put("name",                player.getName());
+                    data.put("displayName",         player.getDisplayName());
+                    data.put("listName",            player.getPlayerListName());
+                    data.put("health",              player.getHealth());
+                    data.put("armor",               this.getArmorPoints(player));
+                    data.put("ip",                  player.getAddress().getAddress().getHostAddress());
+                    data.put("operator",            player.isOp());
+                    data.put("banned",              player.isBanned());
+                    data.put("whitelisted",         player.isWhitelisted());
+                    data.put("gamemode",            player.getGameMode().getValue());
+                    data.put("experience",          player.getExperience());
+                    data.put("totalExperience",     player.getTotalExperience());
+                    data.put("level",               player.getLevel());
+                    data.put("foodLevel",           player.getFoodLevel());
+                    data.put("remainingAir",        player.getRemainingAir());
+                    data.put("velocity",            player.getVelocity());
+                    data.put("exhaustion",          player.getExhaustion());
+                    data.put("gamemode",            player.getGameMode().getValue());
+                    data.put("heldItem",            player.getItemInHand().getType().getId());
+                    data.put("heldItemSlot",        player.getInventory().getHeldItemSlot());
+                    data.put("saturation",          player.getSaturation());
+                    data.put("firstPlayed",         player.getFirstPlayed());
+                    data.put("lastPlayed",          player.getLastPlayed());
+                    data.put("playedBefore",        player.hasPlayedBefore());
 
                     Location playerLoc = player.getLocation();
                     data.put("world", playerLoc.getWorld().getName());
@@ -149,20 +169,28 @@ public class PlayerController extends ApiRequestController
                         playerLoc.getBlockY(),
                         playerLoc.getBlockZ()
                     });
+
+                    Location compassTarget = player.getCompassTarget();
+                    data.put("compassTarget", new Object[] {
+                        compassTarget.getWorld(),
+                        compassTarget.getX(),
+                        compassTarget.getY(),
+                        compassTarget.getZ()
+                    });
+
+                    Location bedSpawnLocation = player.getBedSpawnLocation();
+                    data.put("bedSpawnLocation", new Object[] {
+                        bedSpawnLocation.getWorld(),
+                        bedSpawnLocation.getX(),
+                        bedSpawnLocation.getY(),
+                        bedSpawnLocation.getZ()
+                    });
+
                     HashMap<String, Object> orientation = new HashMap<String, Object>();
                     orientation.put("yaw", playerLoc.getYaw()); // horizontal
                     orientation.put("pitch", playerLoc.getPitch()); // vertical
                     orientation.put("cardinalDirection", getCardinalDirection(playerLoc.getYaw()));
                     data.put("orientation", orientation);
-
-                    data.put("ip", player.getAddress().getAddress().getHostAddress());
-                    data.put("operator", player.isOp());
-                    data.put("gamemode", player.getGameMode().getValue());
-                    data.put("experience", player.getExperience());
-                    data.put("totalexperience", player.getTotalExperience());
-                    data.put("foodlevel", player.getFoodLevel());
-                    data.put("remainingair", player.getRemainingAir());
-                    data.put("velocity", player.getVelocity());
 
                     return data;
                 }
