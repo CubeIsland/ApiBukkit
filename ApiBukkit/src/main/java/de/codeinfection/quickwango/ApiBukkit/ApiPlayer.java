@@ -194,6 +194,7 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Deprecated
     public void updateInventory() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -238,10 +239,12 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Deprecated
     public int getExperience() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Deprecated
     public void setExperience(int i) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

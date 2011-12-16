@@ -142,7 +142,7 @@ public class PlayerController extends ApiRequestController
                     data.put("banned",              player.isBanned());
                     data.put("whitelisted",         player.isWhitelisted());
                     data.put("gamemode",            player.getGameMode().getValue());
-                    data.put("experience",          player.getExperience());
+                    data.put("experience",          player.getExp());
                     data.put("totalExperience",     player.getTotalExperience());
                     data.put("level",               player.getLevel());
                     data.put("foodLevel",           player.getFoodLevel());
@@ -158,33 +158,42 @@ public class PlayerController extends ApiRequestController
                     data.put("playedBefore",        player.hasPlayedBefore());
 
                     Location playerLoc = player.getLocation();
-                    data.put("world", playerLoc.getWorld().getName());
-                    data.put("position", new Double[] {
-                        playerLoc.getX(),
-                        playerLoc.getY(),
-                        playerLoc.getZ()
-                    });
-                    data.put("blockPosition", new Integer[] {
-                        playerLoc.getBlockX(),
-                        playerLoc.getBlockY(),
-                        playerLoc.getBlockZ()
-                    });
+                    if (playerLoc != null)
+                    {
+                        data.put("world", playerLoc.getWorld().getName());
+                        data.put("position", new Double[] {
+                            playerLoc.getX(),
+                            playerLoc.getY(),
+                            playerLoc.getZ()
+                        });
+                        data.put("blockPosition", new Integer[] {
+                            playerLoc.getBlockX(),
+                            playerLoc.getBlockY(),
+                            playerLoc.getBlockZ()
+                        });
+                    }
 
                     Location compassTarget = player.getCompassTarget();
-                    data.put("compassTarget", new Object[] {
-                        compassTarget.getWorld(),
-                        compassTarget.getX(),
-                        compassTarget.getY(),
-                        compassTarget.getZ()
-                    });
+                    if (compassTarget != null)
+                    {
+                        data.put("compassTarget", new Object[] {
+                            compassTarget.getWorld(),
+                            compassTarget.getX(),
+                            compassTarget.getY(),
+                            compassTarget.getZ()
+                        });
+                    }
 
                     Location bedSpawnLocation = player.getBedSpawnLocation();
-                    data.put("bedSpawnLocation", new Object[] {
-                        bedSpawnLocation.getWorld(),
-                        bedSpawnLocation.getX(),
-                        bedSpawnLocation.getY(),
-                        bedSpawnLocation.getZ()
-                    });
+                    if (bedSpawnLocation != null)
+                    {
+                        data.put("bedSpawnLocation", new Object[] {
+                            bedSpawnLocation.getWorld(),
+                            bedSpawnLocation.getX(),
+                            bedSpawnLocation.getY(),
+                            bedSpawnLocation.getZ()
+                        });
+                    }
 
                     HashMap<String, Object> orientation = new HashMap<String, Object>();
                     orientation.put("yaw", playerLoc.getYaw()); // horizontal
