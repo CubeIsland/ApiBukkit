@@ -217,14 +217,14 @@ public class ServerController extends ApiRequestController
         public ConsoleAction()
         {
             this.colorReplacements = new HashMap<String, String>();
-            this.colorReplacements.put("\\033\\[0m", "&0");
-            this.colorReplacements.put("\\033\\[31m", "&c");
-            this.colorReplacements.put("\\033\\[32m", "&a");
-            this.colorReplacements.put("\\033\\[33m", "&e");
-            this.colorReplacements.put("\\033\\[34m", "&9");
-            this.colorReplacements.put("\\033\\[35m", "&d");
-            this.colorReplacements.put("\\033\\[36m", "&b");
-            this.colorReplacements.put("\\033\\[37m", "&f");
+            this.colorReplacements.put("\033[0m", "&0");
+            this.colorReplacements.put("\033[31m", "&c");
+            this.colorReplacements.put("\033[32m", "&a");
+            this.colorReplacements.put("\033[33m", "&e");
+            this.colorReplacements.put("\033[34m", "&9");
+            this.colorReplacements.put("\033[35m", "&d");
+            this.colorReplacements.put("\033[36m", "&b");
+            this.colorReplacements.put("\033[37m", "&f");
         }
 
         @Override
@@ -259,7 +259,7 @@ public class ServerController extends ApiRequestController
                 {
                     for (Map.Entry<String, String> entry : this.colorReplacements.entrySet())
                     {
-                        line.replaceAll(entry.getKey(), entry.getValue());
+                        line = line.replace(entry.getKey(), entry.getValue());
                     }
                     lines.add(line);
                 }

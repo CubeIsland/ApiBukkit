@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
 
 /**
  *
@@ -30,11 +31,11 @@ public class ApibukkitCommand implements CommandExecutor
 
             if (action.equalsIgnoreCase("help"))
             {
-                ApiBukkit.log("Command: apibukkit <help|info|reload>");
-                ApiBukkit.log("");
-                ApiBukkit.log("help: prints this text");
-                ApiBukkit.log("info: prints information about the API");
-                ApiBukkit.log("reload: reloads the API web server");
+                log("Command: apibukkit <help|info|reload>");
+                log("");
+                log("help: prints this text");
+                log("info: prints information about the API");
+                log("reload: reloads the API web server");
             }
             else if (action.equalsIgnoreCase("info"))
             {

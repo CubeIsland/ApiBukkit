@@ -39,14 +39,14 @@ public class ApiBukkitServer extends WebServer
         this.requestControllers.put("apibukkit", new ApibukkitController(null));
     }
 
-    public void start(int port, String authKey, int maxSessions) throws IOException
+    public void start(int port, int maxSessions, String authKey) throws IOException
     {
         this.authenticationKey = authKey;
         this.start(port, maxSessions);
     }
 
     @Override
-    public Response serve(String uri, InetAddress remoteIp, String method, Map<String, String> header, Parameters params)
+    public Response processRequest(String uri, InetAddress remoteIp, String method, Map<String, String> header, Parameters params)
     {
         params.put("__REQUEST_PATH__", uri);
         params.put("__REQUEST_METHOD__", method);
@@ -115,27 +115,32 @@ public class ApiBukkitServer extends WebServer
                         return new Response(Status.FORBIDDEN, MimeType.PLAIN, this.error(ApiError.ACTION_DISABLED));
                     }
                 }
+                boolean authNeeded = controller.isAuthNeeded();
                 if (action != null)
                 {
-                    boolean controllerAuthNeeded = controller.isAuthNeeded();
                     Boolean actionAuthNeeded = action.isAuthNeeded();
-                    if (actionAuthNeeded == null)
+                    if (actionAuthNeeded != null)
                     {
-                        actionAuthNeeded = controllerAuthNeeded;
+                        authNeeded = actionAuthNeeded;
                     }
-                    if (actionAuthNeeded && !this.authenticationKey.equals(authKey))
-                    {
-                        ApiBukkit.error("Wrong authentication key!");
-                        return new Response(Status.UNAUTHORIZED, MimeType.PLAIN, this.error(ApiError.AUTHENTICATION_FAILURE));
-                    }
+                    
+                    this.authorized(authKey, authNeeded);
+                    
                     ApiBukkit.debug("Running action '" + actionName + "'");
                     response = action.execute(params, Bukkit.getServer());
                 }
                 else
                 {
+                    this.authorized(authKey, authNeeded);
+                    
                     ApiBukkit.debug("Runnung default action");
                     response = controller.defaultAction(actionName, params, Bukkit.getServer());
                 }
+            }
+            catch (UnauthorizedRequestException e)
+            {
+                ApiBukkit.error("Wrong authentication key!");
+                return new Response(Status.UNAUTHORIZED, MimeType.PLAIN, this.error(ApiError.AUTHENTICATION_FAILURE));
             }
             catch (ApiRequestException e)
             {
@@ -171,6 +176,15 @@ public class ApiBukkitServer extends WebServer
         {
             ApiBukkit.debug("Responding without content: HTTP 204");
             return new Response(Status.NOCONTENT, MimeType.PLAIN, "");
+        }
+    }
+
+    private void authorized(String key, boolean needed) throws UnauthorizedRequestException
+    {
+        ApiBukkit.debug("Authkey: " + key);
+        if (needed && !this.authenticationKey.equals(key))
+        {
+            throw new UnauthorizedRequestException();
         }
     }
 

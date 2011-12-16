@@ -4,6 +4,7 @@ import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.util.ArrayList;
 import java.util.Map;
 import org.bukkit.Server;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 
 /**
  *
@@ -55,7 +56,7 @@ public class ApibukkitController extends ApiRequestController
                     }
                     if (controller != null)
                     {
-                        ApiBukkit.debug("Got controller '" + controller.getClass().getSimpleName() + "'");
+                        debug("Got controller '" + controller.getClass().getSimpleName() + "'");
                         ApiRequestAction action = controller.getActionByAlias(actionName);
                         if (action == null)
                         {
@@ -79,12 +80,12 @@ public class ApibukkitController extends ApiRequestController
                         {
                             if (action != null)
                             {
-                                ApiBukkit.debug("Running action '" + action.getClass().getSimpleName() + "'");
+                                debug("Running action '" + action.getClass().getSimpleName() + "'");
                                 responses.add(action.execute(actionParams, server));
                             }
                             else
                             {
-                                ApiBukkit.debug("Running default action");
+                                debug("Running default action");
                                 responses.add(controller.defaultAction(actionName, params, server));
                             }
                         }

@@ -79,7 +79,7 @@ public class ApiBukkit extends JavaPlugin
             log(String.format("Starting the web server on port %s!", this.config.port));
             log(String.format("Using %s as the auth key", this.config.authKey));
             log(String.format("with a maximum of %s parallel sessions!", this.config.maxSessions));
-            this.webserver.start(this.config.port, this.config.authKey, this.config.maxSessions);
+            this.webserver.start(this.config.port, this.config.maxSessions, this.config.authKey);
             log("Web server started!");
         }
         catch (Throwable t)

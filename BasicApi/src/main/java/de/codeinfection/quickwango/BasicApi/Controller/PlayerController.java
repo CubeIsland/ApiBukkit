@@ -216,7 +216,7 @@ public class PlayerController extends ApiRequestController
 
         private String getCardinalDirection(float yaw)
         {
-            //yaw = (yaw + 90) % 360;
+            yaw = (yaw - 90) % 360;
             if (yaw < 0)
             {
                 yaw += 360.0;

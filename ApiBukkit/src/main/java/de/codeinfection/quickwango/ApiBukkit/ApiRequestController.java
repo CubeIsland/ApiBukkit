@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 
 /**
  *
@@ -63,7 +64,7 @@ public abstract class ApiRequestController
         {
             name = name.toLowerCase();
             this.actions.put(name, action);
-            ApiBukkit.debug(String.format("Registered action '%s' in '%s'", name, this.getClass().getSimpleName()));
+            debug(String.format("Registered action '%s' in '%s'", name, this.getClass().getSimpleName()));
         }
     }
 

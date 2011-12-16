@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Net;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
 import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -80,7 +80,7 @@ public abstract class WebServer
      * @param header url-decoded headers
      * @return response, see class Response for details
      */
-    public abstract Response serve(String uri, InetAddress remoteIp, String method, Map<String, String> headers, Parameters params);
+    public abstract Response processRequest(String uri, InetAddress remoteIp, String method, Map<String, String> headers, Parameters params);
 
 
     
@@ -118,7 +118,7 @@ public abstract class WebServer
 
                     if (!IPAllowed)
                     {
-                        ApiBukkit.log("IP \"" + IP + "\" rejected!");
+                        log("IP \"" + IP + "\" rejected!");
                     }
 
                     if (IPAllowed && requests.size() < this.maxSessions)
@@ -305,7 +305,7 @@ public abstract class WebServer
                 }
 
                 // generate the response
-                Response response = serve(uri, socket.getInetAddress(), method, headers, params);
+                Response response = processRequest(uri, socket.getInetAddress(), method, headers, params);
                 if (response == null)
                 {
                     sendError(Status.INTERNALERROR, "No content to serve!");
