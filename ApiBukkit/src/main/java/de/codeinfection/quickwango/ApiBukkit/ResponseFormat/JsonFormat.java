@@ -98,7 +98,7 @@ public class JsonFormat implements ApiResponseFormat
                 }
                 else
                 {
-                    response += "\"" + String.valueOf(o).replaceAll("\\\\", "\\\\\\\\").replaceAll("\\\"", "\\\\\"") + "\"";
+                    response += "\"" + String.valueOf(o).replace("\\", "\\\\").replace("\"", "\\\"").replace("\t", "\\t") + "\"";
                 }
                 if (firstLevel)
                 {

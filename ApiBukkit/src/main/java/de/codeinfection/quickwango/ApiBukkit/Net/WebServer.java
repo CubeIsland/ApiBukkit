@@ -30,11 +30,24 @@ public abstract class WebServer
     private ServerSocket httpServerSocket;
     private Thread httpServerThread;
     protected final ApiConfiguration config;
+    private String charset;
 
     public WebServer(ApiConfiguration config)
     {
         this.config = config;
         this.requests = Collections.synchronizedList(new ArrayList<Request>());
+        this.charset = "UTF-8";
+    }
+
+    public String getCharset()
+    {
+        return this.charset;
+    }
+
+    public WebServer setCharset(String charset)
+    {
+        this.charset = charset;
+        return this;
     }
 
     /**
@@ -515,7 +528,7 @@ public abstract class WebServer
 
                 if (mimeType != null)
                 {
-                    writer.print("Content-Type: " + mimeType + "\r\n");
+                    writer.print("Content-Type: " + mimeType + "; charset=" + charset + "\r\n");
                 }
 
                 if (header != null)
