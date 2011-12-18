@@ -82,8 +82,6 @@ public class ServerController extends ApiRequestController
             data.put("players",             server.getOnlinePlayers().length);
             data.put("maxplayers",          server.getMaxPlayers());
             data.put("worlds",              server.getWorlds().size());
-            data.put("version",             server.getVersion());
-            data.put("bukkitVersion",       server.getBukkitVersion());
             data.put("plugins",             server.getPluginManager().getPlugins().length);
             data.put("uptime",              (System.currentTimeMillis() / 1000) - timeStamp);
             data.put("onlinemode",          server.getOnlineMode());
@@ -101,6 +99,13 @@ public class ServerController extends ApiRequestController
             data.put("maxmemory",           runtime.maxMemory());
             data.put("freememory",          runtime.freeMemory());
 
+            Map<String, Object> versions = new HashMap<String, Object>();
+            versions.put("bukkit", server.getBukkitVersion());
+            versions.put("server", server.getVersion());
+            versions.put("apibukkit", ApiBukkit.getInstance().getDescription().getVersion());
+            versions.put("basicapi", plugin.getDescription().getVersion());
+
+            data.put("versions",            versions);
             data.put("os",                  this.getPropertiesByPrefix("os."));
             
             return data;
