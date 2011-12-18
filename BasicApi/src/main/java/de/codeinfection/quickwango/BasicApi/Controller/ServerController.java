@@ -44,9 +44,6 @@ public class ServerController extends ApiRequestController
         this.setAction("reload",           new ReloadAction());
         this.setAction("console",          new ConsoleAction());
         this.setAction("offlineplayers",   new OfflinePlayersAction());
-        
-        this.setActionAlias("playerlimit",      "maxplayers");
-        this.setActionAlias("gc",               "garbagecollect");
     }
 
     @Override
@@ -77,7 +74,7 @@ public class ServerController extends ApiRequestController
         {
             Runtime runtime = Runtime.getRuntime();
             Map<String, Object> data = new HashMap<String, Object>();
-            
+
             data.put("id",                  server.getServerId());
             data.put("name",                server.getServerName());
             data.put("ip",                  server.getIp());
@@ -100,11 +97,32 @@ public class ServerController extends ApiRequestController
             data.put("allowNether",         server.getAllowNether());
             data.put("worldContainer",      server.getWorldContainer().toString());
             data.put("updateFolder",        server.getUpdateFolderFile().toString());
-            
+
             data.put("maxmemory",           runtime.maxMemory());
             data.put("freememory",          runtime.freeMemory());
+
+            data.put("os",                  this.getPropertiesByPrefix("os."));
             
             return data;
+        }
+
+        private Map<String, String> getPropertiesByPrefix(String prefix)
+        {
+            Map<String, String> properties = new HashMap<String, String>();
+            int prefixLen = prefix.length();
+
+            for (Map.Entry entry : System.getProperties().entrySet())
+            {
+                String key = String.valueOf(entry.getKey());
+                if (key.startsWith(prefix))
+                {
+                    String value = String.valueOf(entry.getValue());
+
+                    properties.put(key.substring(prefixLen), value);
+                }
+            }
+
+            return properties;
         }
     }
     

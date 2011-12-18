@@ -177,7 +177,7 @@ public class PlayerController extends ApiRequestController
                     if (compassTarget != null)
                     {
                         data.put("compassTarget", new Object[] {
-                            compassTarget.getWorld(),
+                            compassTarget.getWorld().getName(),
                             compassTarget.getX(),
                             compassTarget.getY(),
                             compassTarget.getZ()
@@ -188,7 +188,7 @@ public class PlayerController extends ApiRequestController
                     if (bedSpawnLocation != null)
                     {
                         data.put("bedSpawnLocation", new Object[] {
-                            bedSpawnLocation.getWorld(),
+                            bedSpawnLocation.getWorld().getName(),
                             bedSpawnLocation.getX(),
                             bedSpawnLocation.getY(),
                             bedSpawnLocation.getZ()

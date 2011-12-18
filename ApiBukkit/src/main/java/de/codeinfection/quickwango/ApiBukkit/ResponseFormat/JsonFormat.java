@@ -98,7 +98,9 @@ public class JsonFormat implements ApiResponseFormat
                 }
                 else
                 {
-                    response += "\"" + String.valueOf(o).replace("\\", "\\\\").replace("\"", "\\\"").replace("\t", "\\t") + "\"";
+                    response += "\"";
+                    response += escape(String.valueOf(o));
+                    response += "\"";
                 }
                 if (firstLevel)
                 {
@@ -108,5 +110,14 @@ public class JsonFormat implements ApiResponseFormat
         }
         
         return response;
+    }
+
+    private static String escape(String string)
+    {
+        return string.replace("\\", "\\\\")
+                     .replace("\"", "\\\"")
+                     .replace("\t", "\\t")
+                     .replace("\n", "\\n")
+                     .replace("\r", "\\r");
     }
 }

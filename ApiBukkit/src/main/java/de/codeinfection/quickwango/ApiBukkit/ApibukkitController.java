@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import java.util.HashMap;
 import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
-import java.util.ArrayList;
 import java.util.Map;
 import org.bukkit.Server;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
@@ -30,16 +30,16 @@ public class ApibukkitController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            ArrayList<Object> responses = null;
+            HashMap<String, Object> responses = null;
             Parameters routes = params.getParameters("routes");
             if (routes != null)
             {
-                 responses = new ArrayList<Object>();
+                 responses = new HashMap<String, Object>();
 
                 for (Map.Entry<String, Object> entry : routes.entrySet())
                 {
                     String route = entry.getKey();
-                    ApiBukkit.debug("Route: " + route);
+                    debug("Route: " + route);
                     String controllerName = route;
                     String actionName = null;
                     int delimPosition = route.indexOf("/");
@@ -81,12 +81,12 @@ public class ApibukkitController extends ApiRequestController
                             if (action != null)
                             {
                                 debug("Running action '" + action.getClass().getSimpleName() + "'");
-                                responses.add(action.execute(actionParams, server));
+                                responses.put(route, action.execute(actionParams, server));
                             }
                             else
                             {
                                 debug("Running default action");
-                                responses.add(controller.defaultAction(actionName, params, server));
+                                responses.put(route, controller.defaultAction(actionName, params, server));
                             }
                         }
                         catch (ApiRequestException e)
