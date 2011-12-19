@@ -1,6 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.Net;
 
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -210,7 +211,6 @@ public abstract class WebServer
                 Map<String, String> pre = new HashMap<String, String>();
                 Parameters params = new Parameters();
                 Map<String, String> headers = new HashMap<String, String>();
-                Map<String, String> files = new HashMap<String, String>();
 
                 // Decode the header into parms and header java properties
                 parseHeader(readr, pre, params, headers);
@@ -432,29 +432,41 @@ public abstract class WebServer
         }
 
         /**
-         * Decodes parameters in percent-encoded URI-format
-         * ( e.g. "name=Jack%20Daniels&pass=Single%20Malt" ) and
-         * adds them to given Properties. NOTE: this doesn't support multiple
-         * identical keys due to the simplicity of Properties -- if you need multiples,
-         * you might want to replace the Properties with a Hashtable of Vectors or such.
+         * parses a querystring
          */
         private void parseQueryString(String queryString, Parameters params)
+        {
+            this.parseQueryString(queryString, params, "&");
+        }
+
+        /**
+         * parses a querystring
+         */
+        private void parseQueryString(String queryString, Parameters params, String pairDelim)
+        {
+            this.parseQueryString(queryString, params, pairDelim, "=");
+        }
+
+        /**
+         * parses a querystring
+         */
+        private void parseQueryString(String queryString, Parameters params, String pairDelim, String valueDelim)
         {
             if (queryString == null || queryString.length() == 0)
             {
                 return;
             }
 
-            StringTokenizer tokenizer = new StringTokenizer(queryString, "&");
+            StringTokenizer tokenizer = new StringTokenizer(queryString, pairDelim);
             while (tokenizer.hasMoreTokens())
             {
-                this.parseKeyValuePair(tokenizer.nextToken(), params);
+                this.parseKeyValuePair(tokenizer.nextToken(), params, valueDelim);
             }
         }
 
-        private void parseKeyValuePair(String keyValuePair, Parameters params)
+        private void parseKeyValuePair(String keyValuePair, Parameters params, String valueDelim)
         {
-            int delimPosition = keyValuePair.indexOf("=");
+            int delimPosition = keyValuePair.indexOf(valueDelim);
             if (delimPosition > -1)
             {
                 String key = keyValuePair.substring(0, delimPosition);
@@ -484,13 +496,19 @@ public abstract class WebServer
                 {
                     key = urlDecode(key.substring(0, firstOpenBracketPosition));
                     String delimitedIndices = indicesString.substring(1, lastCloseBracketPosition);
-                    
-                    StringTokenizer tokenizer = new StringTokenizer(delimitedIndices, "][");
 
                     path.add(key);
-                    while (tokenizer.hasMoreTokens())
+                    for (String token : this.tokenize(delimitedIndices, "]["))
                     {
-                        path.add(urlDecode(tokenizer.nextToken()));
+                        debug("Token: >" + token + "<");
+                        if (token.length() == 0)
+                        {
+                            path.add(null);
+                        }
+                        else
+                        {
+                            path.add(urlDecode(token));
+                        }
                     }
                     return path;
                 }
@@ -498,6 +516,20 @@ public abstract class WebServer
 
             path.add(urlDecode(key));
             return path;
+        }
+
+        private List<String> tokenize(String string, String delim)
+        {
+            int pos = 0, offset = 0, delimLen = delim.length();
+            List<String> tokens = new ArrayList<String>();
+
+            while ((pos = string.indexOf(delim, offset)) > -1)
+            {
+                tokens.add(string.substring(offset, pos));
+                offset = pos + delimLen;
+            }
+
+            return tokens;
         }
 
         /**
