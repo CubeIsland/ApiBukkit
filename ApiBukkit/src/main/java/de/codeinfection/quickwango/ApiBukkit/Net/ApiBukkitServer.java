@@ -166,7 +166,7 @@ public class ApiBukkitServer extends WebServer
         
         if (response != null)
         {
-            String formatProperty = params.getProperty("format", defaultResponseFormat);
+            String formatProperty = params.getString("format", defaultResponseFormat);
             ApiResponseFormat responseFormat = this.getResponseFormat(formatProperty);
             
             ApiBukkit.debug("Responding normally: HTTP 200");

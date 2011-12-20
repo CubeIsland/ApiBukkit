@@ -63,7 +63,7 @@ public class PluginController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String pluginName = params.getProperty("plugin");
+            String pluginName = params.getString("plugin");
             if (pluginName != null)
             {
                 Plugin targetPlugin = server.getPluginManager().getPlugin(pluginName);
@@ -100,7 +100,7 @@ public class PluginController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String pluginName = params.getProperty("plugin");
+            String pluginName = params.getString("plugin");
             if (pluginName != null)
             {
                 return (server.getPluginManager().getPlugin(pluginName) != null);

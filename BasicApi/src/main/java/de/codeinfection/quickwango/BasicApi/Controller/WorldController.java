@@ -52,7 +52,7 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String worldName = params.getProperty("world");
+            String worldName = params.getString("world");
             if (worldName != null)
             {
                 World world = server.getWorld(worldName);
@@ -132,18 +132,18 @@ public class WorldController extends ApiRequestController
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
             this.executionThread = Thread.currentThread();
-            this.worldName = params.getProperty("world");
+            this.worldName = params.getString("world");
             if (this.worldName != null)
             {
                 World world = server.getWorld(this.worldName);
                 if (world == null)
                 {
-                    String envParam = params.getProperty("environment");
-                    if (envParam != null)
+                    String environmentParam = params.getString("environment");
+                    if (environmentParam != null)
                     {
                         try
                         {
-                            this.env = World.Environment.getEnvironment(Integer.valueOf(envParam));
+                            this.env = World.Environment.getEnvironment(Integer.valueOf(environmentParam));
                         }
                         catch (NumberFormatException e)
                         {}
@@ -158,7 +158,7 @@ public class WorldController extends ApiRequestController
                         throw new ApiRequestException("Invalid environment specified!", 4);
                     }
 
-                    String generatorParam = params.getProperty("generator");
+                    String generatorParam = params.getString("generator");
                     if (generatorParam != null)
                     {
                         generatorParam = generatorParam.trim();
@@ -180,7 +180,7 @@ public class WorldController extends ApiRequestController
                         }
                     }
 
-                    String seedParam = params.getProperty("seed");
+                    String seedParam = params.getString("seed");
                     if (seedParam != null)
                     {
                         if (seedParam.matches("/^\\d+$/"))
@@ -255,13 +255,13 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String worldName = params.getProperty("world");
+            String worldName = params.getString("world");
             if (worldName != null)
             {
                 World world = server.getWorld(worldName);
                 if (world != null)
                 {
-                    String timeParam = params.getProperty("time");
+                    String timeParam = params.getString("time");
                     if (timeParam != null)
                     {
                         try
@@ -297,13 +297,13 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String worldName = params.getProperty("world");
+            String worldName = params.getString("world");
             if (worldName != null)
             {
                 World world = server.getWorld(worldName);
                 if (world != null)
                 {
-                    String state = params.getProperty("pvp");
+                    String state = params.getString("pvp");
                     if (state != null)
                     {
                         if (state.equalsIgnoreCase("on"))
@@ -342,13 +342,13 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String worldName = params.getProperty("world");
+            String worldName = params.getString("world");
             if (worldName != null)
             {
                 World world = server.getWorld(worldName);
                 if (world != null)
                 {
-                    String state = params.getProperty("storm");
+                    String state = params.getString("storm");
                     if (state != null)
                     {
                         if (state.equalsIgnoreCase("on"))
@@ -387,14 +387,14 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String worldName = params.getProperty("world");
+            String worldName = params.getString("world");
             if (worldName != null)
             {
                 World world = server.getWorld(worldName);
                 if (world != null)
                 {
-                    String locationParam = params.getProperty("location");
-                    String playerName = params.getProperty("player");
+                    String locationParam = params.getString("location");
+                    String playerName = params.getString("player");
                     if (locationParam != null)
                     {
                         String[] locationParts = locationParam.split(",");
@@ -469,7 +469,7 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String worldName = params.getProperty("world");
+            String worldName = params.getString("world");
             if (worldName != null)
             {
                 World world = server.getWorld(worldName);
@@ -500,7 +500,7 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String worldName = params.getProperty("world");
+            String worldName = params.getString("world");
             if (worldName != null)
             {
                 World world = server.getWorld(worldName);
@@ -509,7 +509,7 @@ public class WorldController extends ApiRequestController
                     boolean monsters = world.getAllowMonsters();
                     boolean animals = world.getAllowAnimals();
 
-                    String state = params.getProperty("monsters");
+                    String state = params.getString("monsters");
                     if (state != null)
                     {
                         if (state.equalsIgnoreCase("on"))
@@ -521,7 +521,7 @@ public class WorldController extends ApiRequestController
                             monsters = false;
                         }
                     }
-                    state = params.getProperty("animals");
+                    state = params.getString("animals");
                     if (state != null)
                     {
                         if (state.equalsIgnoreCase("on"))
@@ -554,7 +554,7 @@ public class WorldController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String worldName = params.getProperty("world");
+            String worldName = params.getString("world");
             if (worldName != null)
             {
                 World world = server.getWorld(worldName);

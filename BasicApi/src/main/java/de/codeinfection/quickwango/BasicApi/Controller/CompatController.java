@@ -57,7 +57,7 @@ public class CompatController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String requestPath = params.getProperty("__REQUEST_PATH__");
+            String requestPath = params.getString("__REQUEST_PATH__");
             if (requestPath == null)
             {
                 return null;

@@ -38,7 +38,11 @@ public class JsonFormat implements ApiResponseFormat
             for (Map.Entry entry : data.entrySet())
             {
                 counter++;
-                String name = entry.getKey().toString();
+                String name = "";
+                if (entry.getKey() != null)
+                {
+                    name = entry.getKey().toString();
+                }
                 Object value = entry.getValue();
                 response += "\"" + name + "\":" + this.format(value, false);
                 if (counter < dataSize)

@@ -35,14 +35,14 @@ public class CommandController extends ApiRequestController
             ApiBukkit.log("Command " + action + " requested");
             
             String commandLine = action;
-            String paramsParam = params.getProperty("params");
+            String paramsParam = params.getString("params");
             if (paramsParam != null)
             {
                 commandLine += " " + BasicApi.implode(" ", Arrays.asList(paramsParam.split(",")));
             }
             
             Player player = null;
-            String senderParam = params.getProperty("sender");
+            String senderParam = params.getString("sender");
             if (senderParam != null)
             {
                 player = server.getPlayerExact(senderParam);

@@ -209,7 +209,7 @@ public class ServerController extends ApiRequestController
     {
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String msg = params.getProperty("message");
+            String msg = params.getString("message");
             if (msg != null)
             {
                 server.broadcastMessage(msg.replaceAll("&([0-9a-f])", "§$1"));
@@ -256,7 +256,7 @@ public class ServerController extends ApiRequestController
             try
             {
                 long lineCount = 100L;
-                String linesParam = params.getProperty("lines");
+                String linesParam = params.getString("lines");
                 if (linesParam != null)
                 try
                 {

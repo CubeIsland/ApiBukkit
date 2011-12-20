@@ -40,8 +40,8 @@ public class BanController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
-            String IP = params.getProperty("ip");
+            String playerName = params.getString("player");
+            String IP = params.getString("ip");
             if (playerName != null)
             {
                 OfflinePlayer player = server.getOfflinePlayer(playerName);
@@ -51,7 +51,7 @@ public class BanController extends ApiRequestController
                     ApiBukkit.log("banned player " + playerName);
                     if (player instanceof Player)
                     {
-                        ((Player)player).kickPlayer(params.getProperty("reason", "You got banned from this server!"));
+                        ((Player)player).kickPlayer(params.getString("reason", "You got banned from this server!"));
                     }
                 }
                 else
@@ -84,8 +84,8 @@ public class BanController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
-            String IP = params.getProperty("ip");
+            String playerName = params.getString("player");
+            String IP = params.getString("ip");
             if (playerName != null)
             {
                 OfflinePlayer player = server.getOfflinePlayer(playerName);

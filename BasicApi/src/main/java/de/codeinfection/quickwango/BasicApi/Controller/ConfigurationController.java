@@ -47,9 +47,9 @@ public class ConfigurationController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String fileParam = params.getProperty("file");
-            String appendParam = params.getProperty("append");
-            String dataParam = params.getProperty("data");
+            String fileParam = params.getString("file");
+            String appendParam = params.getString("append");
+            String dataParam = params.getString("data");
             if (fileParam != null)
             {
                 if (availableConfigs.contains(fileParam))
@@ -103,7 +103,7 @@ public class ConfigurationController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String fileParam = params.getProperty("file");
+            String fileParam = params.getString("file");
             if (fileParam != null)
             {
                 if (availableConfigs.contains(fileParam))
@@ -121,7 +121,7 @@ public class ConfigurationController extends ApiRequestController
                                 stringBuilder.append(line).append("\n");
                             }
 
-                            params.setProperty("format", "raw");
+                            params.put("format", "raw");
                             return stringBuilder.toString();
                         }
                         catch (IOException e)
@@ -151,7 +151,7 @@ public class ConfigurationController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String fileParam = params.getProperty("file");
+            String fileParam = params.getString("file");
             if (fileParam != null)
             {
                 if (availableConfigs.contains(fileParam))
@@ -176,7 +176,7 @@ public class ConfigurationController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String fileParam = params.getProperty("file");
+            String fileParam = params.getString("file");
             if (fileParam != null)
             {
                 if (availableConfigs.contains(fileParam))

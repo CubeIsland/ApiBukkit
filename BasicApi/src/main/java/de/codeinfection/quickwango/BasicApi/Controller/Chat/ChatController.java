@@ -56,7 +56,7 @@ public class ChatController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String sessionParam = params.getProperty("session");
+            String sessionParam = params.getString("session");
             try
             {
                 Long sessionID = Long.valueOf(sessionParam);
@@ -82,10 +82,10 @@ public class ChatController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String nameParam = params.getProperty("name");
+            String nameParam = params.getString("name");
             if (nameParam != null)
             {
-                String messageParam = params.getProperty("message");
+                String messageParam = params.getString("message");
                 if (messageParam != null)
                 {
                     Player chatPlayer = new ChatPlayer(nameParam, server);
@@ -119,16 +119,16 @@ public class ChatController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String targetParam = params.getProperty("target");
+            String targetParam = params.getString("target");
             if (targetParam != null)
             {
                 Player target = server.getPlayerExact(targetParam);
                 if (target != null)
                 {
-                    String nameParam = params.getProperty("name");
+                    String nameParam = params.getString("name");
                     if (nameParam != null)
                     {
-                        String messageParam = params.getProperty("message");
+                        String messageParam = params.getString("message");
                         if (messageParam != null)
                         {
                             String message = String.format(config.chatFormat, nameParam, messageParam);
@@ -162,17 +162,17 @@ public class ChatController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String sessionParam = params.getProperty("session");
+            String sessionParam = params.getString("session");
             try
             {
                 Long sessionID = Long.valueOf(sessionParam);
                 ChatSession session = chatSessions.get(sessionID);
                 if (session != null)
                 {
-                    String nameParam = params.getProperty("name");
+                    String nameParam = params.getString("name");
                     if (nameParam != null)
                     {
-                        String messageParam = params.getProperty("message");
+                        String messageParam = params.getString("message");
                         if (messageParam != null)
                         {
                             session.chat(nameParam, messageParam);
@@ -204,7 +204,7 @@ public class ChatController extends ApiRequestController
     {
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String sessionParam = params.getProperty("session");
+            String sessionParam = params.getString("session");
             try
             {
                 Long sessionID = Long.valueOf(sessionParam);
@@ -237,7 +237,7 @@ public class ChatController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playersParam = params.getProperty("players");
+            String playersParam = params.getString("players");
             if (playersParam != null)
             {
                 String[] playerNames = playersParam.split(",");

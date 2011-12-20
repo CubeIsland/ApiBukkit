@@ -1,7 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Net;
 
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
-import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -498,17 +497,9 @@ public abstract class WebServer
                     String delimitedIndices = indicesString.substring(1, lastCloseBracketPosition);
 
                     path.add(key);
-                    for (String token : this.tokenize(delimitedIndices, "]["))
+                    for (String token : this.explode("][", delimitedIndices))
                     {
-                        debug("Token: >" + token + "<");
-                        if (token.length() == 0)
-                        {
-                            path.add(null);
-                        }
-                        else
-                        {
-                            path.add(urlDecode(token));
-                        }
+                        path.add(urlDecode(token));
                     }
                     return path;
                 }
@@ -518,7 +509,7 @@ public abstract class WebServer
             return path;
         }
 
-        private List<String> tokenize(String string, String delim)
+        private List<String> explode(String delim, String string)
         {
             int pos = 0, offset = 0, delimLen = delim.length();
             List<String> tokens = new ArrayList<String>();
@@ -528,6 +519,7 @@ public abstract class WebServer
                 tokens.add(string.substring(offset, pos));
                 offset = pos + delimLen;
             }
+            tokens.add(string.substring(offset));
 
             return tokens;
         }

@@ -37,7 +37,7 @@ public class WhitelistController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 OfflinePlayer player = server.getOfflinePlayer(playerName);
@@ -63,7 +63,7 @@ public class WhitelistController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 OfflinePlayer player = server.getOfflinePlayer(playerName);
@@ -89,7 +89,7 @@ public class WhitelistController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 return server.getOfflinePlayer(playerName).isWhitelisted();

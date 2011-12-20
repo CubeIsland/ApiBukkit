@@ -124,7 +124,7 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
@@ -269,7 +269,7 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
@@ -296,14 +296,14 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     int seconds = 5;
-                    String duration = params.getProperty("duration");
+                    String duration = params.getString("duration");
                     if (duration != null)
                     {
                         try
@@ -336,14 +336,14 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
                     World world = null;
-                    String worldName = params.getProperty("world");
+                    String worldName = params.getString("world");
                     if (worldName != null)
                     {
                         world = server.getWorld(worldName);
@@ -359,7 +359,7 @@ public class PlayerController extends ApiRequestController
 
 
                     Location targetLocation = null;
-                    String targetPlayerName = params.getProperty("targetplayer");
+                    String targetPlayerName = params.getString("targetplayer");
                     if (targetPlayerName != null)
                     {
                         Player targetPlayer = server.getPlayerExact(targetPlayerName);
@@ -370,7 +370,7 @@ public class PlayerController extends ApiRequestController
                     }
                     if (targetLocation == null)
                     {
-                        String locationParam = params.getProperty("location");
+                        String locationParam = params.getString("location");
                         if (locationParam != null)
                         {
                             try
@@ -431,7 +431,7 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
@@ -458,13 +458,13 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
-                    String itemidParam = params.getProperty("itemid");
+                    String itemidParam = params.getString("itemid");
                     if (itemidParam != null)
                     {
                         int item = 0;
@@ -477,7 +477,7 @@ public class PlayerController extends ApiRequestController
                             throw new ApiRequestException("Invalid item ID '" + itemidParam + "' given!", 4);
                         }
                         short data = 0;
-                        String dataParam = params.getProperty("data");
+                        String dataParam = params.getString("data");
                         if (dataParam != null)
                         {
                             try
@@ -491,7 +491,7 @@ public class PlayerController extends ApiRequestController
                         }
 
                         int amount = 1;
-                        String amountParam = params.getProperty("amount");
+                        String amountParam = params.getString("amount");
                         if (amountParam != null)
                         {
                             try
@@ -542,13 +542,13 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
-                    player.kickPlayer(params.getProperty("reason"));
+                    player.kickPlayer(params.getString("reason"));
                     ApiBukkit.log("kicked player " + playerName);
                 }
                 else
@@ -569,13 +569,13 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
-                    String msg = params.getProperty("message");
+                    String msg = params.getString("message");
                     if (msg != null)
                     {
                         if (msg.length() > 100)
@@ -608,7 +608,7 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
@@ -635,13 +635,13 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerName = params.getProperty("player");
+            String playerName = params.getString("player");
             if (playerName != null)
             {
                 Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
-                    String newDisplayName = params.getProperty("displayname");
+                    String newDisplayName = params.getString("displayname");
                     if (newDisplayName != null)
                     {
                         player.setDisplayName(newDisplayName);
@@ -670,7 +670,7 @@ public class PlayerController extends ApiRequestController
         @Override
         public Object execute(Parameters params, Server server) throws ApiRequestException
         {
-            String playerParam = params.getProperty("player");
+            String playerParam = params.getString("player");
             if (playerParam != null)
             {
                 Player player = server.getPlayerExact(playerParam);
