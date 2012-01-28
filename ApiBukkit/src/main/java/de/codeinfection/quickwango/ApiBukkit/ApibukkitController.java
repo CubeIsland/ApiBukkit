@@ -17,6 +17,7 @@ public class ApibukkitController extends ApiRequestController
         super(plugin, true);
         
         this.setAction("combined", new CombinedAction());
+        this.setAction("testing", new TestingAction());
     }
     
     @Override
@@ -101,6 +102,27 @@ public class ApibukkitController extends ApiRequestController
                 }
             }
             return responses;
+        }
+    }
+    
+    private class TestingAction extends ApiRequestAction
+    {
+        public TestingAction()
+        {
+            super(false);
+        }
+
+        @Override
+        public Object execute(Parameters params, Server server) throws ApiRequestException
+        {
+            params.remove("__REQUEST_PATH__");
+            params.remove("__REQUEST_USERAGENT__");
+            params.remove("__REQUEST_METHOD__");
+            params.remove("__REMOTE_ADDR__");
+
+            params.put("format", "json");
+            
+            return params;
         }
     }
 }
