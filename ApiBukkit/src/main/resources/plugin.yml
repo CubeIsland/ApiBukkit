@@ -4,7 +4,7 @@ version: "${project.version}"
 description: "Provides an API to mak Web APIs."
 authors:
   - Quick_Wango
-website: http://mc-portal.de
+website: http://parallel-universe.de
 commands:
   apibukkit:
     usage: /<command> [action]

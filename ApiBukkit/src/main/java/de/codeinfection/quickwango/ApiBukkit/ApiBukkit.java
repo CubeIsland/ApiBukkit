@@ -1,21 +1,21 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import java.io.File;
-import java.util.logging.Logger;
-import org.bukkit.Server;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.ApiResponseFormat;
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.logging.Logger;
+import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class ApiBukkit extends JavaPlugin
 {
-    protected static final Logger logger = Logger.getLogger("Minecraft");
+    private static Logger logger = null;
     private static ApiBukkit instance = null;
 
     private Server server;
@@ -34,6 +34,7 @@ public class ApiBukkit extends JavaPlugin
 
     public void onEnable()
     {
+        logger = this.getLogger();
         this.pdf = this.getDescription();
         this.server = this.getServer();
         this.pm = this.server.getPluginManager();

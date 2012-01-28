@@ -2,25 +2,12 @@ package de.codeinfection.quickwango.ApiBukkit.Net;
 
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
 import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.StringTokenizer;
-
-import java.io.ByteArrayOutputStream;
-import java.net.InetAddress;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class WebServer
 {
@@ -511,7 +498,7 @@ public abstract class WebServer
 
         private List<String> explode(String delim, String string)
         {
-            int pos = 0, offset = 0, delimLen = delim.length();
+            int pos, offset = 0, delimLen = delim.length();
             List<String> tokens = new ArrayList<String>();
 
             while ((pos = string.indexOf(delim, offset)) > -1)

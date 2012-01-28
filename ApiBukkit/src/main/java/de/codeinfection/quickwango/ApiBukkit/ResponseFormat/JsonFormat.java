@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
+import de.codeinfection.quickwango.ApiBukkit.Net.MimeType;
 import java.util.Iterator;
 import java.util.Map;
-import de.codeinfection.quickwango.ApiBukkit.Net.MimeType;
 
 public class JsonFormat implements ApiResponseFormat
 {

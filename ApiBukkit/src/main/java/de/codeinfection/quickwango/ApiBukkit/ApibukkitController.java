@@ -1,10 +1,10 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import java.util.HashMap;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
+import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Server;
-import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 
 /**
  *
@@ -65,7 +65,7 @@ public class ApibukkitController extends ApiRequestController
                         }
 
                         Object routeParameters = entry.getValue();
-                        Parameters actionParams = null;
+                        Parameters actionParams;
                         if (routeParameters != null && routeParameters instanceof Parameters)
                         {
                             actionParams = (Parameters)entry.getValue();

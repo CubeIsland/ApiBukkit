@@ -1,11 +1,11 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
-import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 
 /**
  *

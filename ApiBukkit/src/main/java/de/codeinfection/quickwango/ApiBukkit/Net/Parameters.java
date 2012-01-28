@@ -116,9 +116,9 @@ public class Parameters extends HashMap<String, Object>
     {
         int keyCount = path.size() - 1;
 
-        String key = null;
+        String key;
         Parameters node = this;
-        Object tmpNode = null;
+        Object tmpNode;
         for (int i = 0; i < keyCount; ++i)
         {
             key = path.get(i);
@@ -147,9 +147,9 @@ public class Parameters extends HashMap<String, Object>
     {
         int keyCount = path.size() - 1;
 
-        String key = null;
+        String key;
         Parameters node = this;
-        Object tmpNode = null;
+        Object tmpNode;
         for (int i = 0; i < keyCount; ++i)
         {
             key = path.get(i);
@@ -180,9 +180,9 @@ public class Parameters extends HashMap<String, Object>
     {
         int keyCount = path.size() - 1;
 
-        String key = null;
+        String key;
         Parameters node = this;
-        Object tmpNode = null;
+        Object tmpNode;
         for (int i = 0; i < keyCount; ++i)
         {
             key = path.get(i);

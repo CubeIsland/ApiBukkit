@@ -1,18 +1,12 @@
 package de.codeinfection.quickwango.ApiBukkit.Net;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;
-import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
+import de.codeinfection.quickwango.ApiBukkit.*;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
-import de.codeinfection.quickwango.ApiBukkit.ApibukkitController;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 
 public class ApiBukkitServer extends WebServer
@@ -82,7 +76,7 @@ public class ApiBukkitServer extends WebServer
             return new Response(Status.BADREQUEST, MimeType.PLAIN, this.error(ApiError.INVALID_PATH));
         }
         
-        Object response = null;
+        Object response;
         ApiRequestController controller = null;
 
         if (this.requestControllerAliases.containsKey(controllerName))
