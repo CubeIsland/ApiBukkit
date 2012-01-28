@@ -1,13 +1,8 @@
 package de.codeinfection.quickwango.BasicApi;
 
-import de.codeinfection.quickwango.BasicApi.Controller.Chat.ChatController;
-import de.codeinfection.quickwango.BasicApi.Controller.*;
-import org.bukkit.Server;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
+import de.codeinfection.quickwango.BasicApi.Controller.*;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -15,7 +10,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  *
@@ -114,8 +113,6 @@ public class BasicApi extends JavaPlugin
         this.api.setRequestController("operator", new OperatorController(this));
 
         this.api.setRequestController("configuration", new ConfigurationController(this, this.config.configFiles));
-
-        this.api.setRequestController("chat", new ChatController(this));
         
         log("Version " + this.pdf.getVersion() + " enabled!");
     }
