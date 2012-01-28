@@ -342,7 +342,7 @@ public class PlayerController extends ApiRequestController
                 Player player = server.getPlayerExact(playerName);
                 if (player != null)
                 {
-                    World world = null;
+                    World world;
                     String worldName = params.getString("world");
                     if (worldName != null)
                     {

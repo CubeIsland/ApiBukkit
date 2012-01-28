@@ -1,14 +1,14 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import org.bukkit.Server;
+import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
-import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
 import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Arrays;
 import java.util.List;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -49,7 +49,7 @@ public class CommandController extends ApiRequestController
             }
             
             ApiBukkit.debug("Commandline: " + commandLine);
-            boolean commandSuccessful = false;
+            boolean commandSuccessful;
             if (player != null)
             {
                 ApiBukkit.debug("Using the player " + player.getName() + " as CommandSender");

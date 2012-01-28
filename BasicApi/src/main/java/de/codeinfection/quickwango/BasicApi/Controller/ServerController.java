@@ -274,7 +274,7 @@ public class ServerController extends ApiRequestController
                     startPosition = 0;
                 }
 
-                String line = "";
+                String line;
                 List<String> lines = new ArrayList<String>();
                 file.seek(startPosition);
                 file.readLine(); // ignore first line
