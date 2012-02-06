@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Net;
+package de.codeinfection.quickwango.ApiBukkit.Server;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

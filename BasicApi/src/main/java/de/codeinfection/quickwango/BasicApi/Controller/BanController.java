@@ -1,10 +1,11 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
-import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
+import de.codeinfection.quickwango.ApiBukkit.Server.Action;
+import de.codeinfection.quickwango.ApiBukkit.Server.Controller;
+import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,121 +19,109 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class BanController extends ApiRequestController
+@Controller(name = "ban")
+public class BanController extends ApiController
 {
     public BanController(Plugin plugin)
     {
-        super(plugin, true);
-
-        this.setAction("add", new AddAction());
-        this.setAction("remove", new RemoveAction());
-        this.setAction("get", new GetAction());
+        super(plugin);
     }
 
     @Override
-    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
+    public Object defaultAction(String action, Parameters params, Server server)
     {
         return this.getActions().keySet();
     }
 
-    private class AddAction extends ApiRequestAction
+    @Action
+    public Object add(Parameters params, Server server)
     {
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
+        String playerName = params.getString("player");
+        String IP = params.getString("ip");
+        if (playerName != null)
         {
-            String playerName = params.getString("player");
-            String IP = params.getString("ip");
-            if (playerName != null)
+            OfflinePlayer player = server.getOfflinePlayer(playerName);
+            if (!player.isBanned())
             {
-                OfflinePlayer player = server.getOfflinePlayer(playerName);
-                if (!player.isBanned())
+                player.setBanned(true);
+                ApiBukkit.log("banned player " + playerName);
+                if (player instanceof Player)
                 {
-                    player.setBanned(true);
-                    ApiBukkit.log("banned player " + playerName);
-                    if (player instanceof Player)
-                    {
-                        ((Player)player).kickPlayer(params.getString("reason", "You got banned from this server!"));
-                    }
-                }
-                else
-                {
-                    throw new ApiRequestException("The given player is already banned!", 3);
-                }
-            }
-            else if (IP != null)
-            {
-                if (IP.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"))
-                {
-                    server.banIP(IP);
-                    ApiBukkit.log("banned ip " + IP);
-                }
-                else
-                {
-                    throw new ApiRequestException("The given IP is invalid!", 2);
+                    ((Player)player).kickPlayer(params.getString("reason", "You got banned from this server!"));
                 }
             }
             else
             {
-                throw new ApiRequestException("No player or IP given!", 1);
+                throw new ApiRequestException("The given player is already banned!", 3);
             }
-            return null;
         }
-    }
-
-    private class RemoveAction extends ApiRequestAction
-    {
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
+        else if (IP != null)
         {
-            String playerName = params.getString("player");
-            String IP = params.getString("ip");
-            if (playerName != null)
+            if (IP.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"))
             {
-                OfflinePlayer player = server.getOfflinePlayer(playerName);
-                if (player.isBanned())
-                {
-                    player.setBanned(false);
-                    ApiBukkit.log("unbanned player " + playerName);
-                }
-                else
-                {
-                    throw new ApiRequestException("The given player is not banned!", 3);
-                }
-            }
-            else if (IP != null)
-            {
-                if (server.getIPBans().contains(IP))
-                {
-                    server.unbanIP(IP);
-                    ApiBukkit.log("unbanned ip " + IP);
-                }
-                else
-                {
-                    throw new ApiRequestException("The given IP is not banned!", 2);
-                }
+                server.banIP(IP);
+                ApiBukkit.log("banned ip " + IP);
             }
             else
             {
-                throw new ApiRequestException("No player or IP given!", 1);
+                throw new ApiRequestException("The given IP is invalid!", 2);
             }
-            return null;
         }
+        else
+        {
+            throw new ApiRequestException("No player or IP given!", 1);
+        }
+        return null;
     }
 
-    private class GetAction extends ApiRequestAction
+    @Action
+    public Object remove(Parameters params, Server server)
     {
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
+        String playerName = params.getString("player");
+        String IP = params.getString("ip");
+        if (playerName != null)
         {
-            Map<String, Object> data = new HashMap<String, Object>();
-            List<String> bannedPlayers = new ArrayList<String>();
-            for (OfflinePlayer offlinePlayer : server.getBannedPlayers())
+            OfflinePlayer player = server.getOfflinePlayer(playerName);
+            if (player.isBanned())
             {
-                bannedPlayers.add(offlinePlayer.getName());
+                player.setBanned(false);
+                ApiBukkit.log("unbanned player " + playerName);
             }
-            data.put("player", bannedPlayers);
-            data.put("ip", server.getIPBans());
-            return data;
+            else
+            {
+                throw new ApiRequestException("The given player is not banned!", 3);
+            }
         }
+        else if (IP != null)
+        {
+            if (server.getIPBans().contains(IP))
+            {
+                server.unbanIP(IP);
+                ApiBukkit.log("unbanned ip " + IP);
+            }
+            else
+            {
+                throw new ApiRequestException("The given IP is not banned!", 2);
+            }
+        }
+        else
+        {
+            throw new ApiRequestException("No player or IP given!", 1);
+        }
+        return null;
+    }
+    
+    @Action
+    public Object execute(Parameters params, Server server)
+    {
+        Map<String, Object> data = new HashMap<String, Object>();
+        List<String> bannedPlayers = new ArrayList<String>();
+        for (OfflinePlayer offlinePlayer : server.getBannedPlayers())
+        {
+            bannedPlayers.add(offlinePlayer.getName());
+        }
+        data.put("player", bannedPlayers);
+        data.put("ip", server.getIPBans());
+        return data;
     }
 }

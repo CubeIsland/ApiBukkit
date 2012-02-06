@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Net;
+package de.codeinfection.quickwango.ApiBukkit.Server;
 
 /**
  * Common mime types for dynamic content

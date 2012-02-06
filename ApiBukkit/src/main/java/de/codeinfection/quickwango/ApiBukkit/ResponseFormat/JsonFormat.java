@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
-import de.codeinfection.quickwango.ApiBukkit.Net.MimeType;
+import de.codeinfection.quickwango.ApiBukkit.Server.MimeType;
 import java.util.Iterator;
 import java.util.Map;
 

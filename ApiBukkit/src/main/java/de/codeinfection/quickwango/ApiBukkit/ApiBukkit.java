@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Net.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.Server.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.ApiResponseFormat;
 import java.io.File;
 import java.security.MessageDigest;
@@ -236,32 +236,25 @@ public class ApiBukkit extends JavaPlugin
         return null;
     }
 
+    public void registerController(ApiController controller)
+    {
+        if (this.webserver != null)
+        {
+            this.webserver.registerController(controller);
+        }
+    }
+
     /**
      * Returns a request controller.
      *
      * @param name the name of the request controller
      * @return a request controller or null
      */
-    public ApiRequestController getRequestController(String name)
+    public ApiController getController(String name)
     {
         if (this.webserver != null)
         {
-            return this.webserver.getRequestController(name);
-        }
-        return null;
-    }
-
-    /**
-     * Returns a request controller by an alias.
-     *
-     * @param alias the alias
-     * @return the controllers refered by the alias
-     */
-    public ApiRequestController getRequestControllerByAlias(String alias)
-    {
-        if (this.webserver != null)
-        {
-            return this.webserver.getRequestControllerByAlias(alias);
+            return this.webserver.getController(name);
         }
         return null;
     }
@@ -271,45 +264,13 @@ public class ApiBukkit extends JavaPlugin
      *
      * @return a map of all controllers
      */
-    public Map<String, ApiRequestController> getAllRequestControllers()
+    public Map<String, ApiController> getAllRequestControllers()
     {
         if (this.webserver != null)
         {
-            return this.webserver.getAllRequestControllers();
+            return this.webserver.getAllControllers();
         }
         return null;
-    }
-
-    /**
-     * Sets a request controller.
-     *
-     * @param name the name of hte controller
-     * @param controller the controller
-     * @return false an failure
-     */
-    public boolean setRequestController(String name, ApiRequestController controller)
-    {
-        if (this.webserver != null)
-        {
-            return this.webserver.setRequestController(name, controller);
-        }
-        return false;
-    }
-
-    /**
-     * Sets an alias for controller.
-     *
-     * @param alias the name of the alias
-     * @param controller the name of the controller to refer
-     * @return false on failure
-     */
-    public boolean setRequestControllerAlias(String alias, String controller)
-    {
-        if (this.webserver != null)
-        {
-            return this.webserver.setRequestControllerAlias(alias, controller);
-        }
-        return false;
     }
 
     /**
@@ -327,19 +288,6 @@ public class ApiBukkit extends JavaPlugin
     }
 
     /**
-     * Removes a controller alias.
-     *
-     * @param name the name of the alias
-     */
-    public void removeRequestControllerAlias(String alias)
-    {
-        if (this.webserver != null)
-        {
-            this.webserver.removeRequestControllerAlias(alias);
-        }
-    }
-
-    /**
      * Removes all controllers and aliases.
      */
     public void clearRequestControllers()
@@ -347,17 +295,6 @@ public class ApiBukkit extends JavaPlugin
         if (this.webserver != null)
         {
             this.webserver.clearRequestControllers();
-        }
-    }
-
-    /**
-     * Removes all aliases.
-     */
-    public void clearRequestControllerAliases()
-    {
-        if (this.webserver != null)
-        {
-            this.webserver.clearRequestControllerAliases();
         }
     }
 
@@ -379,7 +316,7 @@ public class ApiBukkit extends JavaPlugin
         if (requiredLogLevel.level <= logLevel.level)
         {
             String prefix = (requiredLogLevel.prefix == null ? "" : "[" + requiredLogLevel.prefix + "] ");
-            message = "[ApiBukkit] " + prefix + message;
+            message = prefix + message;
             logger.log(requiredLogLevel.logLevel, message);
         }
     }

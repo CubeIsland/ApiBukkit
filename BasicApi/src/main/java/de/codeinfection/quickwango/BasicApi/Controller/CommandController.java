@@ -2,9 +2,10 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
-import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
+import de.codeinfection.quickwango.ApiBukkit.Server.Controller;
+import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Arrays;
 import java.util.List;
@@ -16,14 +17,15 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class CommandController extends ApiRequestController
+@Controller(name = "command")
+public class CommandController extends ApiController
 {
     private ApiCommandSender commandSender;
     
     public CommandController(Plugin plugin)
     {
-        super(plugin, true);
-        this.commandSender = new ApiCommandSender(this.plugin.getServer());
+        super(plugin);
+        this.commandSender = new ApiCommandSender(this.getPlugin().getServer());
     }
 
     @Override

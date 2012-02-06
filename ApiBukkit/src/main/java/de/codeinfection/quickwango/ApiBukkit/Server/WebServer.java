@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Net;
+package de.codeinfection.quickwango.ApiBukkit.Server;
 
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
 import de.codeinfection.quickwango.ApiBukkit.ApiConfiguration;

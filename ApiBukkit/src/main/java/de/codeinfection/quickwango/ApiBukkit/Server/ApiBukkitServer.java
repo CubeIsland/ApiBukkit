@@ -1,21 +1,23 @@
-package de.codeinfection.quickwango.ApiBukkit.Net;
+package de.codeinfection.quickwango.ApiBukkit.Server;
 
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.*;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 
 public class ApiBukkitServer extends WebServer
 {
-    protected String authenticationKey;
-    protected final ConcurrentHashMap<String, ApiResponseFormat> responseFormats;
-    protected final Map<String, ApiRequestController> requestControllers;
-    protected final Map<String, String> requestControllerAliases;
-    protected String defaultResponseFormat = "plain";
+    private String authenticationKey;
+    private final ConcurrentHashMap<String, ApiResponseFormat> responseFormats;
+    private final Map<String, ApiController> controllers;
+    private String defaultResponseFormat = "plain";
 
     public ApiBukkitServer(ApiConfiguration config) throws IOException
     {
@@ -28,9 +30,8 @@ public class ApiBukkitServer extends WebServer
         this.addResponseFormat("xml", new XMLFormat());
         this.addResponseFormat("raw", new RawFormat());
         
-        this.requestControllers = new ConcurrentHashMap<String, ApiRequestController>();
-        this.requestControllerAliases = new ConcurrentHashMap<String, String>();
-        this.requestControllers.put("apibukkit", new ApibukkitController(null));
+        this.controllers = new ConcurrentHashMap<String, ApiController>();
+        this.registerController(new ApibukkitController(ApiBukkit.getInstance()));
     }
 
     public void start(int port, int maxSessions, String authKey) throws IOException
@@ -77,29 +78,17 @@ public class ApiBukkitServer extends WebServer
         }
         
         Object response;
-        ApiRequestController controller = null;
-
-        if (this.requestControllerAliases.containsKey(controllerName))
-        {
-            controller = this.requestControllers.get(this.requestControllerAliases.get(controllerName));
-        }
-        if (controller == null)
-        {
-            controller = this.requestControllers.get(controllerName);
-        }
+        ApiController controller = this.controllers.get(controllerName);
         if (controller != null)
         {
             ApiBukkit.debug("Selected controller '" + controller.getClass().getSimpleName() + "'");
+
             try
             {
                 String authKey = params.getString("authkey");
                 params.remove("authkey");
                 
-                ApiRequestAction action = controller.getActionByAlias(actionName);
-                if (action == null)
-                {
-                    action = controller.getAction(actionName);
-                }
+                ApiAction action = controller.getAction(actionName);
                 if (this.config.disabledActions.containsKey(controllerName))
                 {
                     List<String> disabledActions = this.config.disabledActions.get(controllerName);
@@ -109,23 +98,16 @@ public class ApiBukkitServer extends WebServer
                         return new Response(Status.FORBIDDEN, MimeType.PLAIN, this.error(ApiError.ACTION_DISABLED));
                     }
                 }
-                boolean authNeeded = controller.isAuthNeeded();
                 if (action != null)
                 {
-                    Boolean actionAuthNeeded = action.isAuthNeeded();
-                    if (actionAuthNeeded != null)
-                    {
-                        authNeeded = actionAuthNeeded;
-                    }
-                    
-                    this.authorized(authKey, authNeeded);
+                    this.authorized(authKey, action);
                     
                     ApiBukkit.debug("Running action '" + actionName + "'");
                     response = action.execute(params, Bukkit.getServer());
                 }
                 else
                 {
-                    this.authorized(authKey, authNeeded);
+                    this.authorized(authKey, controller);
                     
                     ApiBukkit.debug("Runnung default action");
                     response = controller.defaultAction(actionName, params, Bukkit.getServer());
@@ -173,10 +155,19 @@ public class ApiBukkitServer extends WebServer
         }
     }
 
-    private void authorized(String key, boolean needed) throws UnauthorizedRequestException
+    private void authorized(String key, ApiController controller)
     {
         ApiBukkit.debug("Authkey: " + key);
-        if (needed && !this.authenticationKey.equals(key))
+        if (controller.isAuthNeeded() && !this.authenticationKey.equals(key))
+        {
+            throw new UnauthorizedRequestException();
+        }
+    }
+
+    private void authorized(String key, ApiAction action)
+    {
+        ApiBukkit.debug("Authkey: " + key);
+        if (action.isAuthNeeded() && !this.authenticationKey.equals(key))
         {
             throw new UnauthorizedRequestException();
         }
@@ -184,14 +175,12 @@ public class ApiBukkitServer extends WebServer
 
     protected String error(ApiError error)
     {
-        ApiResponseFormat formater = this.getResponseFormat("plain");
-        return formater.format(error);
+        return this.getResponseFormat("plain").format(error);
     }
 
     protected String error(ApiError error, int errCode)
     {
-        ApiResponseFormat formater = this.getResponseFormat("plain");
-        return formater.format(new Object[] {
+        return this.getResponseFormat("plain").format(new Object[] {
             error,
             errCode
         });
@@ -278,6 +267,64 @@ public class ApiBukkitServer extends WebServer
         return false;
     }
 
+    public final void registerController(final ApiController controller)
+    {
+        Controller controllerAnnotation = controller.getClass().getAnnotation(Controller.class);
+        if (controllerAnnotation == null)
+        {
+            throw new IllegalArgumentException("Missing annotation for controller " + controller.getClass().getSimpleName());
+        }
+        String controllerName = controllerAnnotation.name().trim();
+        if (controllerName.length() == 0)
+        {
+            controllerName = controller.getClass().getSimpleName();
+        }
+        controllerName = controllerName.toLowerCase();
+
+        if (controllerName.equals("apibukkit") && this.controllers.containsKey("apibukkit"))
+        {
+            debug("apibukkit is reserved!");
+            return;
+        }
+
+        debug("Registering " + controllerName + "...");
+
+        if (!controller.isInitialized())
+        {
+            debug("The controller isn't initialized, let's do that...");
+            Map<String, ApiAction> actions = new ConcurrentHashMap<String, ApiAction>();
+
+            for (final Method method : controller.getClass().getMethods())
+            {
+                Action actionAnnotation = method.getAnnotation(Action.class);
+                if (actionAnnotation != null)
+                {
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    if (parameterTypes.length == 2)
+                    {
+                        if (parameterTypes[0].equals(Parameters.class) && parameterTypes[1].equals(Server.class))
+                        {
+                            String name = actionAnnotation.name().trim();
+                            if (name.length() == 0)
+                            {
+                                name = method.getName();
+                            }
+                            name = name.toLowerCase();
+
+                            debug("  Found action: " + name);
+                            actions.put(name, new ApiAction(controller, name, method, actionAnnotation.authenticate()));
+                        }
+                    }
+                }
+            }
+
+            controller.initialize(actions);
+            controller.setAuthNeeded(controllerAnnotation.authenticate());
+        }
+
+        this.controllers.put(controllerName, controller);
+    }
+
     /**
      * Returns the default responce format.
      *
@@ -294,26 +341,11 @@ public class ApiBukkitServer extends WebServer
      * @param name the name of the request controller
      * @return a request controller or null
      */
-    public ApiRequestController getRequestController(String name)
+    public ApiController getController(String name)
     {
         if (name != null)
         {
-            return this.requestControllers.get(name.toLowerCase());
-        }
-        return null;
-    }
-
-    /**
-     * Returns a request controller by an alias.
-     *
-     * @param alias the alias
-     * @return the controllers refered by the alias
-     */
-    public ApiRequestController getRequestControllerByAlias(String alias)
-    {
-        if (alias != null)
-        {
-            return this.getRequestController(this.requestControllerAliases.get(alias.toLowerCase()));
+            return this.controllers.get(name.toLowerCase());
         }
         return null;
     }
@@ -323,54 +355,9 @@ public class ApiBukkitServer extends WebServer
      *
      * @return a map of all controllers
      */
-    public Map<String, ApiRequestController> getAllRequestControllers()
+    public Map<String, ApiController> getAllControllers()
     {
-        return this.requestControllers;
-    }
-
-    /**
-     * Sets a request controller.
-     *
-     * @param name the name of hte controller
-     * @param controller the controller
-     * @return false an failure
-     */
-    public boolean setRequestController(String name, ApiRequestController controller)
-    {
-        if (controller != null)
-        {
-            name = name.toLowerCase();
-            if (!name.equals("apibukkit"))
-            {
-                this.requestControllers.put(name, controller);
-                ApiBukkit.debug(String.format("Set the controller '%s' on '%s'", controller.getClass().getSimpleName(), name));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Sets an alias for controller.
-     *
-     * @param alias the name of the alias
-     * @param controller the name of the controller to refer
-     * @return false on failure
-     */
-    public boolean setRequestControllerAlias(String alias, String controller)
-    {
-        if (alias != null && controller != null)
-        {
-            alias = alias.toLowerCase();
-            controller = controller.toLowerCase();
-            if (this.requestControllers.containsKey(controller) && !alias.equals("apibukkit"))
-            {
-                this.requestControllerAliases.put(alias, controller);
-                ApiBukkit.debug(String.format("Set the alias '%s' for the controller '%s'", alias, controller));
-                return true;
-            }
-        }
-        return false;
+        return this.controllers;
     }
 
     /**
@@ -384,31 +371,8 @@ public class ApiBukkitServer extends WebServer
         if (name != null)
         {
             name = name.toLowerCase();
-            this.requestControllers.remove(name);
-            // remove aliases of the deleted controllers as well
-            for (Map.Entry<String, String> entry : this.requestControllerAliases.entrySet())
-            {
-                if (entry.getValue().equals(name))
-                {
-                    this.requestControllerAliases.remove(entry.getKey());
-                }
-            }
+            this.controllers.remove(name);
             ApiBukkit.debug("Removed the controller '" + name + "' and all its aliases");
-        }
-    }
-
-    /**
-     * Removes a controller alias.
-     *
-     * @param name the name of the alias
-     */
-    public void removeRequestControllerAlias(String name)
-    {
-        if (name != null)
-        {
-            name = name.toLowerCase();
-            this.requestControllerAliases.remove(name);
-            ApiBukkit.debug("Removed the controller alias '" + name + "'");
         }
     }
 
@@ -417,17 +381,7 @@ public class ApiBukkitServer extends WebServer
      */
     public void clearRequestControllers()
     {
-        this.requestControllers.clear();
-        this.requestControllerAliases.clear();
+        this.controllers.clear();
         ApiBukkit.debug("Cleared the controllers and aliases");
-    }
-
-    /**
-     * Removes all aliases.
-     */
-    public void clearRequestControllerAliases()
-    {
-        this.requestControllerAliases.clear();
-        ApiBukkit.debug("Cleared the aliases");
     }
 }

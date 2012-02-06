@@ -92,27 +92,25 @@ public class BasicApi extends JavaPlugin
         this.config = new BasicApiConfiguration(configFile);
         this.saveConfig();
         
-        this.api.setRequestController("command", new CommandController(this));
-        this.api.setRequestControllerAlias("cmd", "command");
+        this.api.registerController(new CommandController(this));
         
-        this.api.setRequestController("serverinfos", new CompatController(this));
+        this.api.registerController(new CompatController(this));
         
-        this.api.setRequestController("plugin", new PluginController(this));
-        this.api.setRequestControllerAlias("pluginmanager", "plugin");
+        this.api.registerController(new PluginController(this));
         
-        this.api.setRequestController("server", new ServerController(this));
+        this.api.registerController(new ServerController(this));
         
-        this.api.setRequestController("player", new PlayerController(this));
+        this.api.registerController(new PlayerController(this));
 
-        this.api.setRequestController("world", new WorldController(this));
+        this.api.registerController(new WorldController(this));
 
-        this.api.setRequestController("ban", new BanController(this));
+        this.api.registerController(new BanController(this));
 
-        this.api.setRequestController("whitelist", new WhitelistController(this));
+        this.api.registerController(new WhitelistController(this));
 
-        this.api.setRequestController("operator", new OperatorController(this));
+        this.api.registerController(new OperatorController(this));
 
-        this.api.setRequestController("configuration", new ConfigurationController(this, this.config.configFiles));
+        this.api.registerController(new ConfigurationController(this, this.config.configFiles));
         
         log("Version " + this.pdf.getVersion() + " enabled!");
     }

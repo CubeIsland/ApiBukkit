@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Net;
+package de.codeinfection.quickwango.ApiBukkit.Server;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -4,7 +4,7 @@ package de.codeinfection.quickwango.ApiBukkit;
  *
  * @author CodeInfection
  */
-public class ApiRequestException extends Exception
+public class ApiRequestException extends RuntimeException
 {
     int errCode;
 

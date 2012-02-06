@@ -1,10 +1,12 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestAction;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestController;
+import de.codeinfection.quickwango.ApiBukkit.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
-import de.codeinfection.quickwango.ApiBukkit.Net.Parameters;
+import de.codeinfection.quickwango.ApiBukkit.Server.Action;
+import de.codeinfection.quickwango.ApiBukkit.Server.Controller;
+import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
+import de.codeinfection.quickwango.BasicApi.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -20,30 +22,19 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class ServerController extends ApiRequestController
+@Controller(name = "server")
+public class ServerController extends ApiController
 {
     protected static Long timeStamp = null;
     
     public ServerController(Plugin plugin)
     {
-        super(plugin, true);
+        super(plugin);
         
         if (timeStamp == null)
         {
             timeStamp = System.currentTimeMillis() / 1000;
         }
-        
-        this.setAction("info",             new InfoAction());
-        this.setAction("maxplayers",       new MaxplayersAction());
-        this.setAction("online",           new OnlineAction());
-        this.setAction("version",          new VersionAction());
-        this.setAction("garbagecollect",   new GarbagecollectAction());
-        this.setAction("kill",             new KillAction());
-        this.setAction("stop",             new StopAction());
-        this.setAction("broadcast",        new BroadcastAction());
-        this.setAction("reload",           new ReloadAction());
-        this.setAction("console",          new ConsoleAction());
-        this.setAction("offlineplayers",   new OfflinePlayersAction());
     }
 
     @Override
@@ -52,257 +43,168 @@ public class ServerController extends ApiRequestController
         return this.getActions().keySet();
     }
     
-    private class MaxplayersAction extends ApiRequestAction
+    @Action(authenticate = false)
+    public Object maxplayers(Parameters params, Server server)
     {
-        public MaxplayersAction()
-        {
-            super(false);
-        }
-        
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            return server.getMaxPlayers();
-        }
+        return server.getMaxPlayers();
     }
     
-    private class InfoAction extends ApiRequestAction
+    @Action
+    public Object info(Parameters params, Server server)
     {
-        
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            Runtime runtime = Runtime.getRuntime();
-            Map<String, Object> data = new HashMap<String, Object>();
+        Runtime runtime = Runtime.getRuntime();
+        Map<String, Object> data = new HashMap<String, Object>();
 
-            data.put("id",                  server.getServerId());
-            data.put("name",                server.getServerName());
-            data.put("ip",                  server.getIp());
-            data.put("port",                server.getPort());
-            data.put("players",             server.getOnlinePlayers().length);
-            data.put("maxplayers",          server.getMaxPlayers());
-            data.put("worlds",              server.getWorlds().size());
-            data.put("plugins",             server.getPluginManager().getPlugins().length);
-            data.put("uptime",              (System.currentTimeMillis() / 1000) - timeStamp);
-            data.put("onlinemode",          server.getOnlineMode());
-            data.put("whitelisted",         server.hasWhitelist());
-            data.put("spawnRadius",         server.getSpawnRadius());
-            data.put("viewDistance",        server.getViewDistance());
-            data.put("defaultGamemode",     server.getDefaultGameMode().getValue());
-            data.put("allowEnd",            server.getAllowEnd());
-            data.put("allowNether",         server.getAllowNether());
-            data.put("allowFlight",         server.getAllowFlight());
-            data.put("allowNether",         server.getAllowNether());
-            data.put("worldContainer",      server.getWorldContainer().toString());
-            data.put("updateFolder",        server.getUpdateFolderFile().toString());
+        data.put("id",                  server.getServerId());
+        data.put("name",                server.getServerName());
+        data.put("ip",                  server.getIp());
+        data.put("port",                server.getPort());
+        data.put("players",             server.getOnlinePlayers().length);
+        data.put("maxplayers",          server.getMaxPlayers());
+        data.put("worlds",              server.getWorlds().size());
+        data.put("plugins",             server.getPluginManager().getPlugins().length);
+        data.put("uptime",              (System.currentTimeMillis() / 1000) - timeStamp);
+        data.put("onlinemode",          server.getOnlineMode());
+        data.put("whitelisted",         server.hasWhitelist());
+        data.put("spawnRadius",         server.getSpawnRadius());
+        data.put("viewDistance",        server.getViewDistance());
+        data.put("defaultGamemode",     server.getDefaultGameMode().getValue());
+        data.put("allowEnd",            server.getAllowEnd());
+        data.put("allowNether",         server.getAllowNether());
+        data.put("allowFlight",         server.getAllowFlight());
+        data.put("allowNether",         server.getAllowNether());
+        data.put("worldContainer",      server.getWorldContainer().toString());
+        data.put("updateFolder",        server.getUpdateFolderFile().toString());
 
-            data.put("maxmemory",           runtime.maxMemory());
-            data.put("freememory",          runtime.freeMemory());
+        data.put("maxmemory",           runtime.maxMemory());
+        data.put("freememory",          runtime.freeMemory());
 
-            Map<String, Object> versions = new HashMap<String, Object>();
-            versions.put("bukkit", server.getBukkitVersion());
-            versions.put("server", server.getVersion());
-            versions.put("apibukkit", ApiBukkit.getInstance().getDescription().getVersion());
-            versions.put("basicapi", plugin.getDescription().getVersion());
+        Map<String, Object> versions = new HashMap<String, Object>();
+        versions.put("bukkit", server.getBukkitVersion());
+        versions.put("server", server.getVersion());
+        versions.put("apibukkit", ApiBukkit.getInstance().getDescription().getVersion());
+        versions.put("basicapi", getPlugin().getDescription().getVersion());
 
-            data.put("versions",            versions);
-            data.put("os",                  this.getPropertiesByPrefix("os."));
-            
-            return data;
-        }
+        data.put("versions",            versions);
+        data.put("os",                  Utils.getPropertiesByPrefix("os."));
 
-        private Map<String, String> getPropertiesByPrefix(String prefix)
-        {
-            Map<String, String> properties = new HashMap<String, String>();
-            int prefixLen = prefix.length();
+        return data;
+    }
 
-            for (Map.Entry entry : System.getProperties().entrySet())
-            {
-                String key = String.valueOf(entry.getKey());
-                if (key.startsWith(prefix))
-                {
-                    String value = String.valueOf(entry.getValue());
+    @Action(authenticate = false)
+    public Object online(Parameters params, Server server)
+    {
+        return server.getOnlinePlayers().length;
+    }
 
-                    properties.put(key.substring(prefixLen), value);
-                }
+    @Action(authenticate = false)
+    public Object version(Parameters params, Server server)
+    {
+        return server.getVersion();
+    }
+    
+    @Action
+    public Object garbagecollect(Parameters params, Server server)
+    {
+        server.getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable() {
+            public void run() {
+                Runtime runtime = Runtime.getRuntime();
+                long free = runtime.freeMemory();
+                runtime.gc();
+                int freed = (int)((runtime.freeMemory() - free) / 1024 / 1024);
+                ApiBukkit.log("executed the garbage collector (Freed " + freed + "mb)");
             }
-
-            return properties;
-        }
+        });
+        return null;
     }
     
-    private class OnlineAction extends ApiRequestAction
+    @Action
+    public Object kill(Parameters params, Server server)
     {
-        public OnlineAction()
-        {
-            super(false);
-        }
-        
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            return server.getOnlinePlayers().length;
-        }
+        ApiBukkit.log("killing java runtime");
+        System.exit(0);
+        return null;
     }
     
-    private class VersionAction extends ApiRequestAction
+    @Action
+    public Object stop(Parameters params, Server server)
     {
-        public VersionAction()
+        for (World world : server.getWorlds())
         {
-            super(false);
+            world.save();
         }
-        
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            return server.getVersion();
-        }
+        server.shutdown();
+        return null;
     }
     
-    private class GarbagecollectAction extends ApiRequestAction
+    @Action
+    public Object broadcast(Parameters params, Server server)
     {
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
+        String msg = params.getString("message");
+        if (msg != null)
         {
-            server.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    Runtime runtime = Runtime.getRuntime();
-                    long free = runtime.freeMemory();
-                    runtime.gc();
-                    int freed = (int)((runtime.freeMemory() - free) / 1024 / 1024);
-                    ApiBukkit.log("executed the garbage collector (Freed " + freed + "mb)");
-                }
-            });
-            return null;
+            server.broadcastMessage(msg.replaceAll("&([0-9a-f])", "§$1"));
+            ApiBukkit.log("broadcasted message '" + msg + "'");
         }
+        else
+        {
+            throw new ApiRequestException("No message given!", 1);
+        }
+        return null;
     }
     
-    private class KillAction extends ApiRequestAction
+    @Action
+    public Object reload(Parameters params, Server server)
     {
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            ApiBukkit.log("killing java runtime");
-            System.exit(0);
-            return null;
-        }
+        server.reload();
+        return null;
     }
     
-    private class StopAction extends ApiRequestAction
+    @Action
+    public Object console(Parameters params, Server server)
     {
-        /**
-         * Stops the Server by dispatching the commands "save-all" and "stop"
-         */
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
+        try
         {
-            for (World world : server.getWorlds())
-            {
-                world.save();
-            }
-            server.shutdown();
-            return null;
-        }
-    }
-    
-    private class BroadcastAction extends ApiRequestAction
-    {
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            String msg = params.getString("message");
-            if (msg != null)
-            {
-                server.broadcastMessage(msg.replaceAll("&([0-9a-f])", "§$1"));
-                ApiBukkit.log("broadcasted message '" + msg + "'");
-            }
-            else
-            {
-                throw new ApiRequestException("No message given!", 1);
-            }
-            return null;
-        }
-    }
-    
-    private class ReloadAction extends ApiRequestAction
-    {
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            server.reload();
-            return null;
-        }
-    }
-
-    private class ConsoleAction extends ReloadAction
-    {
-        private final HashMap<String, String> colorReplacements;
-
-        public ConsoleAction()
-        {
-            this.colorReplacements = new HashMap<String, String>();
-            this.colorReplacements.put("\033[0m",  "&0");
-            this.colorReplacements.put("\033[34m", "&1");
-            this.colorReplacements.put("\033[32m", "&2");
-            this.colorReplacements.put("\033[36m", "&3");
-            this.colorReplacements.put("\033[31m", "&4");
-            this.colorReplacements.put("\033[35m", "&5");
-            this.colorReplacements.put("\033[33m", "&6");
-            this.colorReplacements.put("\033[37m", "&7");
-        }
-
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
+            long lineCount = 100L;
+            String linesParam = params.getString("lines");
+            if (linesParam != null)
             try
             {
-                long lineCount = 100L;
-                String linesParam = params.getString("lines");
-                if (linesParam != null)
-                try
-                {
-                    lineCount = Long.valueOf(linesParam);
-                }
-                catch (NumberFormatException e)
-                {}
-                File serverLog = new File("server.log");
-                RandomAccessFile file = new RandomAccessFile(serverLog, "r");
-
-                lineCount = Math.abs(lineCount);
-                long startPosition = file.length() - (lineCount * 100);
-                if (startPosition < 0)
-                {
-                    startPosition = 0;
-                }
-
-                String line;
-                List<String> lines = new ArrayList<String>();
-                file.seek(startPosition);
-                file.readLine(); // ignore first line
-                while ((line = file.readLine()) != null)
-                {
-                    for (Map.Entry<String, String> entry : this.colorReplacements.entrySet())
-                    {
-                        line = line.replace(entry.getKey(), entry.getValue());
-                    }
-                    lines.add(line);
-                }
-                file.close();
-
-                return lines;
+                lineCount = Long.valueOf(linesParam);
             }
-            catch (IOException e)
+            catch (NumberFormatException e)
+            {}
+            File serverLog = new File("server.log");
+            RandomAccessFile file = new RandomAccessFile(serverLog, "r");
+
+            lineCount = Math.abs(lineCount);
+            long startPosition = file.length() - (lineCount * 100);
+            if (startPosition < 0)
             {
-                throw new ApiRequestException("Could not find the server log!", 1);
+                startPosition = 0;
             }
+
+            String line;
+            List<String> lines = new ArrayList<String>();
+            file.seek(startPosition);
+            file.readLine(); // ignore first line
+            while ((line = file.readLine()) != null)
+            {
+                lines.add(Utils.reverseChatColors(line));
+            }
+            file.close();
+
+            return lines;
+        }
+        catch (IOException e)
+        {
+            throw new ApiRequestException("Could not find the server log!", 1);
         }
     }
 
-    private class OfflinePlayersAction extends ApiRequestAction
+    @Action
+    public Object offlineplayers(Parameters params, Server server)
     {
-        @Override
-        public Object execute(Parameters params, Server server) throws ApiRequestException
-        {
-            return server.getOfflinePlayers();
-        }
+        return server.getOfflinePlayers();
     }
 }
