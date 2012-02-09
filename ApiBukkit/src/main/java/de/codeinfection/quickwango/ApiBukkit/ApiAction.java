@@ -20,6 +20,9 @@ public final class ApiAction
     /**
      * Initializes the request action.
      *
+     * @param controller the parent
+     * @param name the name of the action
+     * @param method the method to invoke
      * @param authNeeded whether authentication is needed
      */
     public ApiAction(ApiController controller, String name, Method method, boolean authNeeded)
@@ -31,9 +34,19 @@ public final class ApiAction
     }
 
     /**
+     * Returns the name of action
+     *
+     * @return the name
+     */
+    public String getName()
+    {
+        return this.name;
+    }
+
+    /**
      * Returns whether this action requires authentication.
      *
-     * @return
+     * @return whether authentication is needed
      */
     public Boolean isAuthNeeded()
     {
@@ -57,5 +70,11 @@ public final class ApiAction
         {
             throw ex.getCause();
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.getName();
     }
 }

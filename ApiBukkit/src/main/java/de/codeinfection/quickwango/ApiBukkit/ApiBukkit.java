@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Server.ApiBukkitServer;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.ApiResponseFormat;
+import de.codeinfection.quickwango.ApiBukkit.Server.ApiBukkitServer;
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -110,7 +110,9 @@ public class ApiBukkit extends JavaPlugin
                 this.webserver.clearRequestControllers();
             }
             this.webserver.stop();
+            this.webserver = null;
         }
+        this.config = null;
 
         log(String.format("Version %s is now disabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
     }

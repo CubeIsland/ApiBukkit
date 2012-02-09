@@ -30,12 +30,6 @@ public class PlayerController extends ApiController
         super(plugin);
     }
 
-    @Override
-    public Object defaultAction(String action, Parameters params, Server server)
-    {
-        return this.getActions().keySet();
-    }
-
     @Action(authenticate = false)
     public Object list(Parameters params, Server server)
     {

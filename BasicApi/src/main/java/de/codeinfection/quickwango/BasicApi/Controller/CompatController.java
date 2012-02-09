@@ -23,12 +23,6 @@ public class CompatController extends ApiController
     {
         super(plugin);
     }
-    
-    @Override
-    public Object defaultAction(String action, Parameters params, Server server)
-    {
-        return this.getActions().keySet();
-    }
 
     @Action
     public Object online(Parameters params, Server server)

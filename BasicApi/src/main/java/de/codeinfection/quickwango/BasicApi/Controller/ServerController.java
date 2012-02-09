@@ -36,12 +36,6 @@ public class ServerController extends ApiController
             timeStamp = System.currentTimeMillis() / 1000;
         }
     }
-
-    @Override
-    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
-    {
-        return this.getActions().keySet();
-    }
     
     @Action(authenticate = false)
     public Object maxplayers(Parameters params, Server server)

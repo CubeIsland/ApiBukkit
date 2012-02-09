@@ -27,12 +27,6 @@ public class ConfigurationController extends ApiController
 
         this.availableConfigs = paths;
     }
-
-    @Override
-    public Object defaultAction(String action, Parameters params, Server server)
-    {
-        return this.getActions().keySet();
-    }
     
     @Action
     public Object write(Parameters params, Server server)

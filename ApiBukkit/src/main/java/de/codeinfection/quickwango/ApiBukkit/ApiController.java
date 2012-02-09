@@ -114,12 +114,15 @@ public abstract class ApiController
     }
 
     /**
-     * This method will be called if the requested actions was not found.
+     * This method will be called if the requested action was not found.
      *
      * @param action the name of the action which was requested
      * @param server a org.bukkit.Server instance
      * @return the response as an Object
      * @throws ApiRequestException
      */
-    abstract public Object defaultAction(String action, Parameters params, Server server);
+    public Object defaultAction(String action, Parameters params, Server server)
+    {
+        return this.getActions().keySet();
+    }
 }
