@@ -1,9 +1,8 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
+import ApiServer.ApiRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.bukkit.Server;
 
 /**
  *
@@ -16,6 +15,7 @@ public final class ApiAction
     private final String name;
     private final Method method;
     private final boolean authNeeded;
+    private final String[] parameters;
 
     /**
      * Initializes the request action.
@@ -25,12 +25,13 @@ public final class ApiAction
      * @param method the method to invoke
      * @param authNeeded whether authentication is needed
      */
-    public ApiAction(ApiController controller, String name, Method method, boolean authNeeded)
+    public ApiAction(ApiController controller, String name, Method method, boolean authNeeded, String[] parameters)
     {
         this.controller = controller;
         this.name = name;
         this.method = method;
         this.authNeeded = authNeeded;
+        this.parameters = parameters;
     }
 
     /**
@@ -54,17 +55,25 @@ public final class ApiAction
     }
 
     /**
+     *
+     */
+    public String[] getParameters()
+    {
+        return this.parameters;
+    }
+
+    /**
      * This method handles the request.
      *
      * @param server a org.bukkit.Server instance
      * @return the response
      * @throws ApiRequestException
      */
-    public Object execute(Parameters params, Server server) throws Throwable
+    public Object execute(ApiRequest request) throws Throwable
     {
         try
         {
-            return this.method.invoke(this.controller, params, server);
+            return this.method.invoke(this.controller, request);
         }
         catch (InvocationTargetException ex)
         {

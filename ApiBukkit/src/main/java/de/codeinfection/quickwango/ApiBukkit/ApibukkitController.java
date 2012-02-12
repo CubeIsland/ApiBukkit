@@ -1,8 +1,8 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.Server.Action;
 import de.codeinfection.quickwango.ApiBukkit.Server.Controller;
-import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +18,6 @@ public class ApibukkitController extends ApiController
     public ApibukkitController(ApiBukkit plugin)
     {
         super(plugin);
-    }
-    
-    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
-    {
-        return this.getActions().keySet();
     }
 
     @Action(authenticate = true)
@@ -71,12 +66,12 @@ public class ApibukkitController extends ApiController
                         if (action != null)
                         {
                             debug("Running action '" + action.getClass().getSimpleName() + "'");
-                            responses.put(route, action.execute(actionParams, server));
+                            responses.put(route, action.execute(actionParams));
                         }
                         else
                         {
                             debug("Running default action");
-                            responses.put(route, controller.defaultAction(actionName, params, server));
+                            responses.put(route, controller.defaultAction(actionName, params));
                         }
                     }
                     catch (ApiRequestException e)

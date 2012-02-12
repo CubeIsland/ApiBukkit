@@ -12,29 +12,41 @@ public class JsonFormat implements ApiResponseFormat
         return MimeType.JSON;
     }
 
+    /**
+     * Serializes an object
+     *
+     * @param o the object to serialize
+     * @return the JSON representation of this given object
+     */
     public String format(Object o)
     {
-        return this.format(o, true);
+        StringBuilder buffer = new StringBuilder();
+        this.format(buffer, o, true);
+        return buffer.toString();
+    }
+
+    private void format(StringBuilder buffer, Object o)
+    {
+        this.format(buffer, o, false);
     }
     
     @SuppressWarnings("unchecked")
-    protected String format(Object o, boolean firstLevel)
+    private void format(StringBuilder buffer, Object o, boolean firstLevel)
     {
-        String response = "";
         if (o == null)
         {
-            response += (firstLevel ? "[null]" : "null");
+            buffer.append(firstLevel ? "[null]" : "null");
         }
         else if (o instanceof ApiSerializable)
         {
-            response += this.format(((ApiSerializable)o).serialize());
+            this.format(buffer, ((ApiSerializable)o).serialize());
         }
         else if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
             int dataSize = data.size();
             int counter = 0;
-            response += "{";
+            buffer.append("{");
             for (Map.Entry entry : data.entrySet())
             {
                 counter++;
@@ -44,76 +56,73 @@ public class JsonFormat implements ApiResponseFormat
                     name = entry.getKey().toString();
                 }
                 Object value = entry.getValue();
-                response += "\"" + name + "\":" + this.format(value, false);
+                buffer.append("\"").append(name).append("\":");
+                this.format(buffer, value);
                 if (counter < dataSize)
                 {
-                    response += ",";
+                    buffer.append(",");
                 }
             }
-            response += "}";
+            buffer.append("}");
         }
         else if (o instanceof Iterable)
         {
             Iterable<Object> data = (Iterable<Object>) o;
             Iterator iter = data.iterator();
-            response += "[";
+            buffer.append("[");
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                response += this.format(value, false);
+                this.format(buffer, value);
                 if (iter.hasNext())
                 {
-                    response += ",";
+                    buffer.append(",");
                 }
             }
-            response += "]";
+            buffer.append("]");
         }
         else if (o.getClass().isArray())
         {
             Object[] data = (Object[]) o;
             int end = data.length - 1;
-            response += "[";
+            buffer.append("[");
             for (int i = 0; i < data.length; i++)
             {
-                response += this.format(data[i], false);
+                this.format(buffer, data[i]);
                 if (i < end)
                 {
-                    response += ",";
+                    buffer.append(",");
                 }
             }
-            response += "]";
+            buffer.append("]");
         }
         else
         {
-
+            // TODO check this
             if (o instanceof Iterable || o instanceof Map || o.getClass().isArray())
             {
-                response += this.format(o, false);
+                this.format(buffer, o);
             }
             else
             {
                 if (firstLevel)
                 {
-                    response += "[";
+                    buffer.append("[");
                 }
                 if (o instanceof Number || o instanceof Boolean)
                 {
-                    response += String.valueOf(o);
+                    buffer.append(String.valueOf(o));
                 }
                 else
                 {
-                    response += "\"";
-                    response += escape(String.valueOf(o));
-                    response += "\"";
+                    buffer.append("\"").append(escape(String.valueOf(o))).append("\"");
                 }
                 if (firstLevel)
                 {
-                    response += "]";
+                    buffer.append("]");
                 }
             }
         }
-        
-        return response;
     }
 
     private static String escape(String string)

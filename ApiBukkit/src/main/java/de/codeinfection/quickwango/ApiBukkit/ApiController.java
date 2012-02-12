@@ -1,9 +1,8 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import ApiServer.ApiRequest;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
-import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
 import java.util.Map;
-import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -121,8 +120,8 @@ public abstract class ApiController
      * @return the response as an Object
      * @throws ApiRequestException
      */
-    public Object defaultAction(String action, Parameters params, Server server)
+    public void defaultAction(String action, ApiRequest request)
     {
-        return this.getActions().keySet();
+        request.response.setContent(this.getActions().keySet());
     }
 }

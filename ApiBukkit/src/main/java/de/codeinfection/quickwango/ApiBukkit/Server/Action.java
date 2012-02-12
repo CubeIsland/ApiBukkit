@@ -15,4 +15,5 @@ public @interface Action
 {
     public String name() default "";
     public boolean authenticate() default true;
+    public String[] parameters() default {};
 }

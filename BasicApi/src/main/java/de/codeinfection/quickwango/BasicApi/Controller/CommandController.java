@@ -29,7 +29,7 @@ public class CommandController extends ApiController
     }
 
     @Override
-    public Object defaultAction(String action, Parameters params, Server server) throws ApiRequestException
+    public void defaultAction(String action, ApiServer.ApiRequest params) throws ApiRequestException
     {
         List<String> response = null;
         if (action != null)

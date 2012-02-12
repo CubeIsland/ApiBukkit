@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.Server;
 
-import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.*;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -110,7 +110,7 @@ public class ApiBukkitServer extends WebServer
                     this.authorized(authKey, controller);
                     
                     ApiBukkit.debug("Runnung default action");
-                    response = controller.defaultAction(actionName, params, Bukkit.getServer());
+                    response = controller.defaultAction(actionName, params);
                 }
             }
             catch (UnauthorizedRequestException e)
@@ -312,7 +312,7 @@ public class ApiBukkitServer extends WebServer
                             name = name.toLowerCase();
 
                             debug("  Found action: " + name);
-                            actions.put(name, new ApiAction(controller, name, method, actionAnnotation.authenticate()));
+                            actions.put(name, new ApiAction(controller, name, method, actionAnnotation.authenticate(), actionAnnotation.parameters()));
                         }
                     }
                 }
