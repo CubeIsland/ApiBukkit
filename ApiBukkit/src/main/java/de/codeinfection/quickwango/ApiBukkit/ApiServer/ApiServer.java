@@ -1,4 +1,4 @@
-package ApiServer;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import java.util.concurrent.Executors;
 import org.jboss.netty.bootstrap.ServerBootstrap;

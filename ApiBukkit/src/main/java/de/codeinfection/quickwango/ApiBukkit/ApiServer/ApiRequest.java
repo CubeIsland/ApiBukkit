@@ -1,4 +1,4 @@
-package ApiServer;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import ApiServer.ApiRequest;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import java.util.Map;
 import org.bukkit.plugin.Plugin;

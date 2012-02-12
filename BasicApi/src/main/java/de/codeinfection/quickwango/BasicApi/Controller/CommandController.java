@@ -29,7 +29,7 @@ public class CommandController extends ApiController
     }
 
     @Override
-    public void defaultAction(String action, ApiServer.ApiRequest params) throws ApiRequestException
+    public void defaultAction(String action, de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest params) throws ApiRequestException
     {
         List<String> response = null;
         if (action != null)

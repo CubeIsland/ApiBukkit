@@ -1,4 +1,4 @@
-package ApiServer;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;

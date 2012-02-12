@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import ApiServer.ApiRequest;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

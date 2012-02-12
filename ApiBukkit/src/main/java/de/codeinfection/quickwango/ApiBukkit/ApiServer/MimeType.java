@@ -1,4 +1,4 @@
-package ApiServer;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 /**
  * Common mime types for dynamic content

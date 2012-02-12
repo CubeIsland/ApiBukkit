@@ -1,4 +1,4 @@
-package ApiServer;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 

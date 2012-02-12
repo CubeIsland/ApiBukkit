@@ -1,4 +1,4 @@
-package ApiServer;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
