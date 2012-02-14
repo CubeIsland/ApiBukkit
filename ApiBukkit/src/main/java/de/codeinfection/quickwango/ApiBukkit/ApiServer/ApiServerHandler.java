@@ -38,7 +38,6 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
     @Override
     public void messageReceived(ChannelHandlerContext context, MessageEvent message) throws Exception
     {
-        ApiBukkit.debug("messsage received!");
         HttpResponse response = this.processRequest(message, (HttpRequest)message.getMessage());
         if (response != null)
         {
@@ -104,7 +103,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             apiRequest.SERVER.put("REQUEST_PATH", requestUri);
             apiRequest.SERVER.put("REQUEST_METHOD", method);
             apiRequest.SERVER.put("REMOTE_ADDR", remoteAddress);
-            ApiBukkit.log(String.format("'%s' requested '%s'", remoteAddress.getAddress().getHostAddress(), requestUri), ApiLogLevel.INFO);
+            ApiBukkit.log(String.format("'%s' requested '%s'", remoteAddress.getAddress().getHostAddress(), requestPath), ApiLogLevel.INFO);
             String useragent = apiRequest.headers.get("apibukkit-useragent");
             if (useragent != null)
             {
