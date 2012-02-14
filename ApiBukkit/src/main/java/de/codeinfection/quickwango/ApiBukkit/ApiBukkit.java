@@ -84,13 +84,13 @@ public class ApiBukkit extends JavaPlugin
         {
             log(String.format("Starting the web server on port %s!", this.config.port));
             log(String.format("Using %s as the auth key", this.config.authKey));
-            log(String.format("with a maximum of %s parallel sessions!", this.config.maxSessions));
+            log(String.format("with a maximum of %s parallel sessions!", this.config.maxContentLength));
             
             ApiServer.getInstance()
                 .setIp(InetAddress.getByName(this.server.getIp()))
                 .setPort(this.config.port)
                 .setAuthenticationKey(this.config.authKey)
-                .setMaxContentLength(this.config.maxSessions)
+                .setMaxContentLength(this.config.maxContentLength)
                 .start();
 
             log("Web server started!");

@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 /**
  *

@@ -3,7 +3,7 @@ General:
 Network:
     port: 6561
     authKey: ''
-    maxSessions: 30
+    maxContentLength: 1048576
 DisabledActions: {}
 Blacklist:
     enabled: false

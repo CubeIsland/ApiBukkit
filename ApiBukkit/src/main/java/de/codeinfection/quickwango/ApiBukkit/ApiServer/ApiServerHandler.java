@@ -1,8 +1,8 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -38,6 +38,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
     @Override
     public void messageReceived(ChannelHandlerContext context, MessageEvent message) throws Exception
     {
+        ApiBukkit.debug("messsage received!");
         HttpResponse response = this.processRequest(message, (HttpRequest)message.getMessage());
         if (response != null)
         {
@@ -62,13 +63,25 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 
         if (method == HttpMethod.GET || method == HttpMethod.POST)
         {
-            final String uri = request.getUri();
+            final String requestUri = request.getUri();
+            List<String> stringParts = explode("?", requestUri);
+            String requestPath;
+            String queryString = "";
+            if (stringParts.size() > 1)
+            {
+                requestPath = stringParts.get(0);
+                queryString = stringParts.get(1);
+            }
+            else
+            {
+                requestPath = requestUri;
+            }
 
             /**
              * @TODO get rid of the direct bukkit dependency
              */
             ApiRequest apiRequest = new ApiRequest(Bukkit.getServer());
-            apiRequest.SERVER.put("REQUEST_URI", uri);
+            apiRequest.SERVER.put("REQUEST_URI", requestPath);
             
             final Map<String, String> headers = new HashMap<String, String>();
             for (Entry<String, String> entry :  request.getHeaders())
@@ -76,7 +89,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 headers.put(entry.getKey().toLowerCase(), entry.getValue());
             }
 
-            parseQueryString(request.getUri(), apiRequest.GET);
+            parseQueryString(queryString, apiRequest.GET);
 
             ChannelBuffer content = request.getContent();
             if (content.readable())
@@ -88,10 +101,10 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             apiRequest.REQUEST.putAll(apiRequest.POST);
 
 
-            apiRequest.SERVER.put("REQUEST_PATH", uri);
+            apiRequest.SERVER.put("REQUEST_PATH", requestUri);
             apiRequest.SERVER.put("REQUEST_METHOD", method);
             apiRequest.SERVER.put("REMOTE_ADDR", remoteAddress);
-            ApiBukkit.log(String.format("'%s' requested '%s'", remoteAddress.getAddress().getHostAddress(), uri), ApiLogLevel.INFO);
+            ApiBukkit.log(String.format("'%s' requested '%s'", remoteAddress.getAddress().getHostAddress(), requestUri), ApiLogLevel.INFO);
             String useragent = apiRequest.headers.get("apibukkit-useragent");
             if (useragent != null)
             {
@@ -99,23 +112,24 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 ApiBukkit.log("Useragent: " + useragent, ApiLogLevel.INFO);
             }
 
-            String route = uri.substring(1);
+            String route = requestPath.substring(1);
             if (route.length() == 0)
             {
                 ApiBukkit.error("Invalid route requested!");
                 return this.toResponse(ApiError.INVALID_PATH);
             }
-            String[] pathParts = uri.split("/");
+            stringParts = explode("/", route);
 
-            String controllerName = null;
+            String controllerName;
             String actionName = null;
-            if (pathParts.length >= 2)
+            if (stringParts.size() >= 2)
             {
-                actionName = pathParts[1];
+                controllerName = stringParts.get(0);
+                actionName = stringParts.get(1);
             }
-            else if (pathParts.length >= 1)
+            else if (stringParts.size() >= 1)
             {
-                controllerName = pathParts[0];
+                controllerName = stringParts.get(0);
             }
             else
             {
@@ -133,6 +147,9 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             {
                 serializer = manager.getDefaultSerializer();
             }
+
+            debug("Controllername: " + controllerName);
+            debug("Actionname: " + actionName);
 
             ApiController controller = manager.getController(controllerName);
             ApiResponse apiResponse = new ApiResponse(serializer);
@@ -341,6 +358,12 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         if (queryString == null || queryString.length() == 0)
         {
             return;
+        }
+
+        int queryDelimIndex = queryString.indexOf("?");
+        if (queryDelimIndex > -1)
+        {
+            queryString = queryString.substring(queryDelimIndex + 1);
         }
 
         StringTokenizer tokenizer = new StringTokenizer(queryString, pairDelim);

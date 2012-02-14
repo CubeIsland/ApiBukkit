@@ -301,7 +301,7 @@ public final class ApiManager
     public boolean isActionDisabled(String controller, String action)
     {
         Collection<String> actions = this.disabledActions.get(controller);
-        if (action == null)
+        if (actions == null)
         {
             return false;
         }

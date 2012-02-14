@@ -1,12 +1,12 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
+import de.codeinfection.quickwango.BasicApi.BasicApi;
 import de.codeinfection.quickwango.BasicApi.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -112,7 +112,7 @@ public class WorldController extends ApiController
 
                     if (plugin == null || !plugin.isEnabled())
                     {
-                        ApiBukkit.error("Could not set generator for default world '" + worldName + "': Plugin '" + split[0] + "' does not exist");
+                        BasicApi.error("Could not set generator for default world '" + worldName + "': Plugin '" + split[0] + "' does not exist");
                         throw new ApiRequestException("Failed to load generator plugin", 3);
                     }
                     else

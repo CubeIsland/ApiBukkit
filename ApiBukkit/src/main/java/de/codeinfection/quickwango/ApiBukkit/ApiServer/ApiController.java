@@ -58,7 +58,7 @@ public abstract class ApiController
                         }
                         actionName = actionName.toLowerCase();
 
-                        debug("  Found action: " + actionName);
+                        debug("  Found action: " + this.name + "/" + actionName);
                         this.actions.put(actionName, new ApiAction(this, actionName, method, actionAnnotation.authenticate(), actionAnnotation.parameters(), actionAnnotation.serializer()));
                     }
                     else
