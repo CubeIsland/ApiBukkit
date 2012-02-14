@@ -13,9 +13,10 @@ import org.bukkit.plugin.Plugin;
 public abstract class ApiController
 {
     private final Plugin plugin;
-    private boolean authNeeded;
+    private final boolean authNeeded;
     private final Map<String, ApiAction> actions;
     private final String name;
+    private final String serializer;
 
     /**
      * Initializes the controllers
@@ -37,6 +38,7 @@ public abstract class ApiController
             throw new IllegalArgumentException("Missing annotation for controller " + clazz.getSimpleName());
         }
         this.name = controllerAnnotation.name().trim().toLowerCase();
+        this.serializer = controllerAnnotation.serializer();
 
         for (final Method method : clazz.getDeclaredMethods())
         {
@@ -94,13 +96,13 @@ public abstract class ApiController
     }
 
     /**
-     * Returns whether this actions needs authentication.
+     * Returns the default serializer of te default action
      *
-     * @return true if auth is needed, otherwise false
+     * @return the serializer
      */
-    public final void setAuthNeeded(boolean authNeeded)
+    public final String getSerializer()
     {
-        this.authNeeded = authNeeded;
+        return this.serializer;
     }
 
     /**

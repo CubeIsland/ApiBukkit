@@ -2,6 +2,7 @@ package de.codeinfection.quickwango.BasicApi;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.BasicApi.Controller.*;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -92,25 +93,17 @@ public class BasicApi extends JavaPlugin
         this.config = new BasicApiConfiguration(configFile);
         this.saveConfig();
         
-        this.api.registerController(new CommandController(this));
-        
-        this.api.registerController(new CompatController(this));
-        
-        this.api.registerController(new PluginController(this));
-        
-        this.api.registerController(new ServerController(this));
-        
-        this.api.registerController(new PlayerController(this));
-
-        this.api.registerController(new WorldController(this));
-
-        this.api.registerController(new BanController(this));
-
-        this.api.registerController(new WhitelistController(this));
-
-        this.api.registerController(new OperatorController(this));
-
-        this.api.registerController(new ConfigurationController(this, this.config.configFiles));
+        ApiManager.getInstance()
+            .registerController(new CommandController(this))
+            .registerController(new CompatController(this))
+            .registerController(new PluginController(this))
+            .registerController(new ServerController(this))
+            .registerController(new PlayerController(this))
+            .registerController(new WorldController(this))
+            .registerController(new BanController(this))
+            .registerController(new WhitelistController(this))
+            .registerController(new OperatorController(this))
+            .registerController(new ConfigurationController(this, this.config.configFiles));
         
         log("Version " + this.pdf.getVersion() + " enabled!");
     }

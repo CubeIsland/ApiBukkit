@@ -1,20 +1,16 @@
 package de.codeinfection.quickwango.ApiBukkit.Server;
 
+import de.codeinfection.quickwango.ApiBukkit.*;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiAction;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.UnauthorizedRequestException;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiAction;
-import de.codeinfection.quickwango.ApiBukkit.*;
-import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
-import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.*;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 
 public class ApiBukkitServer extends WebServer
 {
@@ -188,204 +184,5 @@ public class ApiBukkitServer extends WebServer
             error,
             errCode
         });
-    }
-
-
-    /*
-     * Public API
-     */
-
-    /**
-     * Returns the response format with the given name, the default response format or the plain response format.
-     *
-     * @param name the name of the response format
-     * @return see description
-     */
-    public ApiResponseFormat getResponseFormat(String name)
-    {
-        if (name != null)
-        {
-            name = name.toLowerCase();
-            if (this.responseFormats.containsKey(name))
-            {
-                return this.responseFormats.get(name);
-            }
-            if (this.responseFormats.containsKey(this.defaultResponseFormat))
-            {
-                return this.responseFormats.get(this.defaultResponseFormat);
-            }
-        }
-        
-        return this.responseFormats.get("plain");
-    }
-
-    /**
-     * Adds a new response format.
-     *
-     * @param name the name of the response format
-     * @param format the response format
-     */
-    public final void addResponseFormat(String name, ApiResponseFormat format)
-    {
-        if (name != null && format != null)
-        {
-            name = name.toLowerCase();
-            this.responseFormats.put(name, format);
-            ApiBukkit.debug(String.format("Response format '%s' (%s) was added", name, format.getClass().getSimpleName()));
-        }
-    }
-
-    /**
-     * Removes a response format.
-     *
-     * @param name the name of the format to remove
-     */
-    public void removeResponseFormat(String name)
-    {
-        if (name != null)
-        {
-            name = name.toLowerCase();
-            this.responseFormats.remove(name);
-            ApiBukkit.debug(String.format("Response format '%s' was removed", name));
-        }
-    }
-
-    /**
-     * Sets the default response format.
-     *
-     * @param format the name of a registered format
-     * @return whether or not the default response format was set
-     */
-    public boolean setDefaultResponseFormat(String format)
-    {
-        if (format != null)
-        {
-            format = format.toLowerCase();
-            if (this.responseFormats.containsKey(format))
-            {
-                this.defaultResponseFormat = format;
-                ApiBukkit.debug(String.format("Response format '%s' was set as default", format));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public final void registerController(final ApiController controller)
-    {
-        Controller controllerAnnotation = controller.getClass().getAnnotation(Controller.class);
-        if (controllerAnnotation == null)
-        {
-            throw new IllegalArgumentException("Missing annotation for controller " + controller.getClass().getSimpleName());
-        }
-        String controllerName = controllerAnnotation.name().trim();
-        if (controllerName.length() == 0)
-        {
-            controllerName = controller.getClass().getSimpleName();
-        }
-        controllerName = controllerName.toLowerCase();
-
-        if (controllerName.equals("apibukkit") && this.controllers.containsKey("apibukkit"))
-        {
-            debug("apibukkit is reserved!");
-            return;
-        }
-
-        debug("Registering " + controllerName + "...");
-
-        if (!controller.isInitialized())
-        {
-            debug("The controller isn't initialized, let's do that...");
-            Map<String, ApiAction> actions = new ConcurrentHashMap<String, ApiAction>();
-
-            for (final Method method : controller.getClass().getMethods())
-            {
-                Action actionAnnotation = method.getAnnotation(Action.class);
-                if (actionAnnotation != null)
-                {
-                    Class<?>[] parameterTypes = method.getParameterTypes();
-                    if (parameterTypes.length == 2)
-                    {
-                        if (parameterTypes[0].equals(Parameters.class) && parameterTypes[1].equals(Server.class))
-                        {
-                            String name = actionAnnotation.name().trim();
-                            if (name.length() == 0)
-                            {
-                                name = method.getName();
-                            }
-                            name = name.toLowerCase();
-
-                            debug("  Found action: " + name);
-                            actions.put(name, new ApiAction(controller, name, method, actionAnnotation.authenticate(), actionAnnotation.parameters()));
-                        }
-                    }
-                }
-            }
-
-            controller.initialize(actions);
-            controller.setAuthNeeded(controllerAnnotation.authenticate());
-        }
-
-        this.controllers.put(controllerName, controller);
-    }
-
-    /**
-     * Returns the default responce format.
-     *
-     * @return the default response format
-     */
-    public String getDefaultResponseFormat()
-    {
-        return this.defaultResponseFormat;
-    }
-
-    /**
-     * Returns a request controller.
-     *
-     * @param name the name of the request controller
-     * @return a request controller or null
-     */
-    public ApiController getController(String name)
-    {
-        if (name != null)
-        {
-            return this.controllers.get(name.toLowerCase());
-        }
-        return null;
-    }
-
-    /**
-     * Returns all controllers.
-     *
-     * @return a map of all controllers
-     */
-    public Map<String, ApiController> getAllControllers()
-    {
-        return this.controllers;
-    }
-
-    /**
-     * Removes a controller.
-     * This also removes any alias which refered to the deleted controller.
-     *
-     * @param name the name of the controller
-     */
-    public void removeRequestController(String name)
-    {
-        if (name != null)
-        {
-            name = name.toLowerCase();
-            this.controllers.remove(name);
-            ApiBukkit.debug("Removed the controller '" + name + "' and all its aliases");
-        }
-    }
-
-    /**
-     * Removes all controllers and aliases.
-     */
-    public void clearRequestControllers()
-    {
-        this.controllers.clear();
-        ApiBukkit.debug("Cleared the controllers and aliases");
     }
 }

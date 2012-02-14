@@ -135,19 +135,25 @@ public final class ApiManager
         {
             throw new IllegalArgumentException("The class of serializer must be annotated with @ResponseSerializer");
         }
-        this.registerSerializer(formatAnnotation.name(), serializer);
+        this.registerSerializer(formatAnnotation.name().toLowerCase(), serializer);
         return this;
     }
 
-    public ApiManager registerSerializer(String name, ApiResponseSerializer format)
+    public ApiManager registerSerializer(String name, ApiResponseSerializer serializer)
     {
-        this.responseSerializers.put(name, format);
+        if (name != null && serializer != null)
+        {
+            this.responseSerializers.put(name.toLowerCase(), serializer);
+        }
         return this;
     }
 
     public ApiManager unregisterSerializer(String name)
     {
-        this.responseSerializers.remove(name);
+        if (name != null)
+        {
+            this.responseSerializers.remove(name.toLowerCase());
+        }
         return this;
     }
 

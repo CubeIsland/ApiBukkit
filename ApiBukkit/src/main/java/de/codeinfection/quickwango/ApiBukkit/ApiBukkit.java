@@ -1,12 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
-import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.ApiResponseFormat;
-import de.codeinfection.quickwango.ApiBukkit.Server.ApiBukkitServer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
@@ -23,7 +20,6 @@ public class ApiBukkit extends JavaPlugin
     private PluginManager pm;
     private PluginDescriptionFile pdf;
     private File dataFolder;
-    private ApiBukkitServer webserver;
     private ApiConfiguration config;
     private boolean zombie = false;
     private static ApiLogLevel logLevel = ApiLogLevel.DEFAULT;
@@ -74,14 +70,16 @@ public class ApiBukkit extends JavaPlugin
         
         try
         {
-            if (webserver == null)
-            {
-                this.webserver = new ApiBukkitServer(this.config);
-            }
             log(String.format("Starting the web server on port %s!", this.config.port));
             log(String.format("Using %s as the auth key", this.config.authKey));
             log(String.format("with a maximum of %s parallel sessions!", this.config.maxSessions));
-            this.webserver.start(this.config.port, this.config.maxSessions, this.config.authKey);
+            
+            ApiServer.getInstance()
+                .setPort(this.config.port)
+                .setAuthenticationKey(this.config.authKey)
+                .setMaxContentLength(this.config.maxSessions)
+                .start();
+
             log("Web server started!");
         }
         catch (Throwable t)
@@ -89,7 +87,7 @@ public class ApiBukkit extends JavaPlugin
             error("Failed to start the web server!", t);
             error("Staying in a zombie state...");
             this.zombie = true;
-            this.webserver = null;
+            this.pm.disablePlugin(this);
             return;
         }
         
@@ -104,15 +102,8 @@ public class ApiBukkit extends JavaPlugin
     public void onDisable(boolean complete)
     {
         log("Stopping Web Server...");
-        if (this.webserver != null)
-        {
-            if (complete)
-            {
-                this.webserver.clearRequestControllers();
-            }
-            this.webserver.stop();
-            this.webserver = null;
-        }
+
+        ApiServer.getInstance().stop();
         this.config = null;
 
         log(String.format("Version %s is now disabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
@@ -132,11 +123,6 @@ public class ApiBukkit extends JavaPlugin
         }
         return hash.toString();
     }
-
-
-    /*
-     * Public API
-     */
 
     /**
      * Returns the instance of ApiBukkit.
@@ -161,144 +147,6 @@ public class ApiBukkit extends JavaPlugin
     public boolean isZombie()
     {
         return this.zombie;
-    }
-
-
-    /*
-     * Proxy methods
-     */
-
-    /**
-     * Returns the response format with the given name, the default response format or the plain response format.
-     *
-     * @param name the name of the response format
-     * @return see description
-     */
-    public ApiResponseFormat getResponseFormat(String name)
-    {
-        if (this.webserver != null)
-        {
-            return this.webserver.getResponseFormat(name);
-        }
-        return null;
-    }
-
-    /**
-     * Adds a new response format.
-     *
-     * @param name the name of the response format
-     * @param format the response format
-     */
-    public final void addResponseFormat(String name, ApiResponseFormat format)
-    {
-        if (this.webserver != null)
-        {
-            this.webserver.addResponseFormat(name, format);
-        }
-    }
-
-    /**
-     * Removes a response format.
-     *
-     * @param name the name of the format to remove
-     */
-    public void removeResponseFormat(String name)
-    {
-        if (this.webserver != null)
-        {
-            this.webserver.removeResponseFormat(name);
-        }
-    }
-
-    /**
-     * Sets the default response format.
-     *
-     * @param format the name of a registered format
-     * @return whether or not the default response format was set
-     */
-    public boolean setDefaultResponseFormat(String format)
-    {
-        if (this.webserver != null)
-        {
-            return this.webserver.setDefaultResponseFormat(format);
-        }
-        return false;
-    }
-
-    /**
-     * Returns the default responce format.
-     *
-     * @return the default response format
-     */
-    public String getDefaultResponseFormat()
-    {
-        if (this.webserver != null)
-        {
-            return this.webserver.getDefaultResponseFormat();
-        }
-        return null;
-    }
-
-    public void registerController(ApiController controller)
-    {
-        if (this.webserver != null)
-        {
-            this.webserver.registerController(controller);
-        }
-    }
-
-    /**
-     * Returns a request controller.
-     *
-     * @param name the name of the request controller
-     * @return a request controller or null
-     */
-    public ApiController getController(String name)
-    {
-        if (this.webserver != null)
-        {
-            return this.webserver.getController(name);
-        }
-        return null;
-    }
-
-    /**
-     * Returns all controllers.
-     *
-     * @return a map of all controllers
-     */
-    public Map<String, ApiController> getAllRequestControllers()
-    {
-        if (this.webserver != null)
-        {
-            return this.webserver.getAllControllers();
-        }
-        return null;
-    }
-
-    /**
-     * Removes a controller.
-     * This also removes any alias which refered to the deleted controller.
-     *
-     * @param name the name of the controller
-     */
-    public void removeRequestController(String name)
-    {
-        if (this.webserver != null)
-        {
-            this.webserver.removeRequestController(name);
-        }
-    }
-
-    /**
-     * Removes all controllers and aliases.
-     */
-    public void clearRequestControllers()
-    {
-        if (this.webserver != null)
-        {
-            this.webserver.clearRequestControllers();
-        }
     }
 
     /*

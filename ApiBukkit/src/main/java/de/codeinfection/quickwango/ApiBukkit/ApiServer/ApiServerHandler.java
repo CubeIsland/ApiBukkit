@@ -82,8 +82,6 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             apiRequest.REQUEST.putAll(apiRequest.GET);
             apiRequest.REQUEST.putAll(apiRequest.POST);
 
-            /***********************************/
-
 
             apiRequest.SERVER.put("REQUEST_PATH", uri);
             apiRequest.SERVER.put("REQUEST_METHOD", method);
@@ -119,9 +117,20 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 ApiBukkit.error("Invalid route requested!");
                 return this.toResponse(ApiError.INVALID_PATH);
             }
+            
+            ApiResponseSerializer serializer = null, actionSerializer;
+            String formatParam = apiRequest.REQUEST.getString("format");
+            if (formatParam != null)
+            {
+                serializer = manager.getSerializer(formatParam);
+            }
+            if (serializer == null)
+            {
+                serializer = manager.getDefaultSerializer();
+            }
 
             ApiController controller = manager.getController(controllerName);
-            ApiResponse apiResponse = new ApiResponse(manager.getDefaultSerializer());
+            ApiResponse apiResponse = new ApiResponse(serializer);
             if (controller != null)
             {
                 ApiBukkit.debug("Selected controller '" + controller.getClass().getSimpleName() + "'");
@@ -159,12 +168,24 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                             }
                         }
 
+                        actionSerializer = manager.getSerializer(action.getSerializer());
+                        if (actionSerializer != null)
+                        {
+                            apiResponse.setSerializer(serializer);
+                        }
+
                         ApiBukkit.debug("Running action '" + actionName + "'");
                         action.execute(apiRequest, apiResponse);
                     }
                     else
                     {
                         this.authorized(authKey, controller);
+
+                        actionSerializer = manager.getSerializer(controller.getSerializer());
+                        if (actionSerializer != null)
+                        {
+                            apiResponse.setSerializer(serializer);
+                        }
 
                         ApiBukkit.debug("Runnung default action");
                         controller.defaultAction(actionName, apiRequest, apiResponse);
