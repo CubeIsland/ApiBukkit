@@ -1,8 +1,9 @@
-package de.codeinfection.quickwango.ApiBukkit;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
+import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -13,7 +14,8 @@ public abstract class ApiController
 {
     private final Plugin plugin;
     private boolean authNeeded;
-    private Map<String, ApiAction> actions;
+    private final Map<String, ApiAction> actions;
+    private final String name;
 
     /**
      * Initializes the controllers
@@ -25,20 +27,50 @@ public abstract class ApiController
     {
         this.plugin = plugin;
         this.authNeeded = true;
-        this.actions = null;
-    }
-
-    public final void initialize(Map<String, ApiAction> actions)
-    {
-        if (this.actions == null)
+        this.actions = new ConcurrentHashMap<String, ApiAction>();
+        
+        
+        Class<? extends ApiController> clazz = this.getClass();
+        Controller controllerAnnotation = clazz.getAnnotation(Controller.class);
+        if (controllerAnnotation == null)
         {
-            this.actions = actions;
+            throw new IllegalArgumentException("Missing annotation for controller " + clazz.getSimpleName());
+        }
+        this.name = controllerAnnotation.name().trim().toLowerCase();
+
+        for (final Method method : clazz.getDeclaredMethods())
+        {
+            Action actionAnnotation = method.getAnnotation(Action.class);
+            if (actionAnnotation != null)
+            {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes.length == 2)
+                {
+                    if (parameterTypes[0].equals(ApiRequest.class) && parameterTypes[1].equals(ApiResponse.class))
+                    {
+                        String actionName = actionAnnotation.name().trim();
+                        if (actionName.length() == 0)
+                        {
+                            actionName = method.getName();
+                        }
+                        actionName = actionName.toLowerCase();
+
+                        debug("  Found action: " + actionName);
+                        this.actions.put(actionName, new ApiAction(this, actionName, method, actionAnnotation.authenticate(), actionAnnotation.parameters(), actionAnnotation.serializer()));
+                    }
+                }
+            }
         }
     }
 
-    public final boolean isInitialized()
+    /**
+     * Returns the name of this controller
+     *
+     * @return the name
+     */
+    public final String getName()
     {
-        return (actions != null);
+        return this.name;
     }
 
     /**
@@ -120,8 +152,8 @@ public abstract class ApiController
      * @return the response as an Object
      * @throws ApiRequestException
      */
-    public void defaultAction(String action, ApiRequest request)
+    public void defaultAction(String action, ApiRequest request, ApiResponse response)
     {
-        request.response.setContent(this.getActions().keySet());
+        response.setContent(this.getActions().keySet());
     }
 }

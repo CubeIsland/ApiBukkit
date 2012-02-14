@@ -1,21 +1,22 @@
-package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
-import de.codeinfection.quickwango.ApiBukkit.Server.MimeType;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponseSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiSerializable;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.MimeType;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ResponseSerializer;
 import java.util.Iterator;
 import java.util.Map;
 
-public class PlainFormat implements ApiResponseFormat
+@ResponseSerializer(name = "plain")
+public class PlainSerializer implements ApiResponseSerializer
 {
-    
-    
     public MimeType getMime()
     {
         return MimeType.PLAIN;
     }
     
     @SuppressWarnings("unchecked")
-    public String format(Object o)
+    public String serialize(Object o)
     {
         String response = "";
         if (o == null)
@@ -24,7 +25,7 @@ public class PlainFormat implements ApiResponseFormat
         }
         else if (o instanceof ApiSerializable)
         {
-            response += this.format(((ApiSerializable)o).serialize());
+            response += this.serialize(((ApiSerializable)o).serialize());
         }
         else if (o instanceof Map)
         {
@@ -35,7 +36,7 @@ public class PlainFormat implements ApiResponseFormat
             {
                 ++counter;
                 Object value = entry.getValue();
-                response += this.format(value);
+                response += this.serialize(value);
                 if (counter < dataSize)
                 {
                     response += ",";
@@ -49,7 +50,7 @@ public class PlainFormat implements ApiResponseFormat
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                response += this.format(value);
+                response += this.serialize(value);
                 if (iter.hasNext())
                 {
                     response += ",";
@@ -62,7 +63,7 @@ public class PlainFormat implements ApiResponseFormat
             int end = data.length - 1;
             for (int i = 0; i < data.length; i++)
             {
-                response += this.format(data[i]);
+                response += this.serialize(data[i]);
                 if (i < end)
                 {
                     response += ",";
@@ -76,7 +77,7 @@ public class PlainFormat implements ApiResponseFormat
         return response;
     }
     
-    protected static String encode(String string)
+    private static String encode(String string)
     {
         return string.replaceAll("%", "%25").replaceAll(",", "%2C");
     }

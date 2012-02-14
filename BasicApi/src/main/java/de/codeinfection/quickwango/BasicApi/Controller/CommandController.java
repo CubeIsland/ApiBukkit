@@ -2,10 +2,10 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
-import de.codeinfection.quickwango.ApiBukkit.ApiController;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.Server.Controller;
-import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Arrays;
 import java.util.List;

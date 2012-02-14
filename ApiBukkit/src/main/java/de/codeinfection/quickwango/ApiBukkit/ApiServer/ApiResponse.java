@@ -1,6 +1,5 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.ApiResponseFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,15 +7,13 @@ import java.util.Map;
  *
  * @author CodeInfection
  */
-public class ApiResponse
+public final class ApiResponse
 {
     private final Map<String, String> headers;
-
-    private ApiResponseFormat responseFormat;
-
+    private ApiResponseSerializer serializer;
     private Object content;
 
-    public ApiResponse(ApiResponseFormat format)
+    public ApiResponse(ApiResponseSerializer format)
     {
         this.headers = new HashMap<String, String>();
         this.content = null;
@@ -24,12 +21,27 @@ public class ApiResponse
 
     public String getHeader(String name)
     {
-        return this.headers.get(name.toLowerCase());
+        if (name != null)
+        {
+            return this.headers.get(name.toLowerCase());
+        }
+        return null;
     }
 
     public ApiResponse setHeader(String name, String value)
     {
-        this.headers.put(name, value);
+        if (name == null)
+        {
+            throw new IllegalArgumentException("name must not be null!");
+        }
+        if (value == null)
+        {
+            this.headers.remove(name);
+        }
+        else
+        {
+            this.headers.put(name, value);
+        }
         return this;
     }
 
@@ -46,21 +58,28 @@ public class ApiResponse
 
     public ApiResponse setHeaders(Map<String, String> headers)
     {
-        for (Map.Entry<String, String> header : headers.entrySet())
+        if (headers != null)
         {
-            this.headers.put(header.getKey().toLowerCase(), header.getValue());
+            for (Map.Entry<String, String> header : headers.entrySet())
+            {
+                this.headers.put(header.getKey().toLowerCase(), header.getValue());
+            }
         }
         return this;
     }
 
-    public ApiResponseFormat getResponseFormat()
+    public ApiResponseSerializer getSerializer()
     {
-        return this.responseFormat;
+        return this.serializer;
     }
 
-    public ApiResponse setResponseFormat(ApiResponseFormat format)
+    public ApiResponse setSerializer(ApiResponseSerializer serializer)
     {
-        this.responseFormat = format;
+        if (serializer == null)
+        {
+            throw new IllegalArgumentException("serializer must not be null!");
+        }
+        this.serializer = serializer;
         return this;
     }
 

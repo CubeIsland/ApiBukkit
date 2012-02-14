@@ -1,20 +1,16 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
-import de.codeinfection.quickwango.ApiBukkit.ResponseFormat.ApiResponseFormat;
-import de.codeinfection.quickwango.ApiBukkit.Server.UnauthorizedRequestException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
@@ -34,27 +30,37 @@ import org.jboss.netty.util.CharsetUtil;
 public class ApiServerHandler extends SimpleChannelUpstreamHandler
 {
     private final static ApiServer server = ApiServer.getInstance();
-    private final static ApiControllerManager controllerManager = ApiControllerManager.getInstance();
+    private final static ApiManager manager = ApiManager.getInstance();
 
     @Override
     public void messageReceived(ChannelHandlerContext context, MessageEvent message) throws Exception
     {
-        message.getChannel().write(this.processRequest(message, (HttpRequest)message.getMessage()));
+        HttpResponse response = this.processRequest(message, (HttpRequest)message.getMessage());
+        if (response != null)
+        {
+            message.getChannel().write(response).addListener(ChannelFutureListener.CLOSE);
+        }
+        else
+        {
+            message.getChannel().close();
+        }
     }
 
-    private HttpResponse processRequest(MessageEvent message, HttpRequest request)
+    private HttpResponse processRequest(final MessageEvent message, final HttpRequest request)
     {
         final InetSocketAddress remoteAddress = (InetSocketAddress)message.getRemoteAddress();
-        /**
-         * @TODO implement whitelisting and blacklisting
-         */
+
+        if (manager.isBlacklisted(remoteAddress) || !manager.isWhitelisted(remoteAddress))
+        {
+            return null;
+        }
 
         final HttpMethod method = request.getMethod();
 
         if (method == HttpMethod.GET || method == HttpMethod.POST)
         {
             final String uri = request.getUri();
-            ApiRequest apiRequest = new ApiRequest(new ApiResponse(null), Bukkit.getServer());
+            ApiRequest apiRequest = new ApiRequest(Bukkit.getServer());
             apiRequest.SERVER.put("REQUEST_URI", uri);
             QueryStringDecoder queryStringDecoder;
             final Map<String, String> headers = new HashMap<String, String>();
@@ -114,7 +120,8 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 return this.toResponse(ApiError.INVALID_PATH);
             }
 
-            ApiController controller = controllerManager.getController(controllerName);
+            ApiController controller = manager.getController(controllerName);
+            ApiResponse apiResponse = new ApiResponse(manager.getDefaultSerializer());
             if (controller != null)
             {
                 ApiBukkit.debug("Selected controller '" + controller.getClass().getSimpleName() + "'");
@@ -135,14 +142,10 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                     apiRequest.POST.remove(AUTHKEY_PARAM_NAME);
 
                     ApiAction action = controller.getAction(actionName);
-                    if (this.config.disabledActions.containsKey(controllerName))
+                    if (manager.isActionDisabled(controllerName, actionName))
                     {
-                        List<String> disabledActions = this.config.disabledActions.get(controllerName);
-                        if (disabledActions.contains(actionName) || disabledActions.contains("*"))
-                        {
-                            ApiBukkit.error("Requested action is disabled!");
-                            return this.toResponse(ApiError.ACTION_DISABLED);
-                        }
+                        ApiBukkit.error("Requested action is disabled!");
+                        return this.toResponse(ApiError.ACTION_DISABLED);
                     }
                     if (action != null)
                     {
@@ -157,14 +160,14 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                         }
 
                         ApiBukkit.debug("Running action '" + actionName + "'");
-                        action.execute(apiRequest);
+                        action.execute(apiRequest, apiResponse);
                     }
                     else
                     {
                         this.authorized(authKey, controller);
 
                         ApiBukkit.debug("Runnung default action");
-                        controller.defaultAction(actionName, apiRequest);
+                        controller.defaultAction(actionName, apiRequest, apiResponse);
                     }
                 }
                 catch (UnauthorizedRequestException e)
@@ -194,7 +197,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 return this.toResponse(ApiError.CONTROLLER_NOT_FOUND);
             }
 
-            return this.toResponse(apiRequest.response);
+            return this.toResponse(apiResponse);
         }
         else
         {
@@ -225,7 +228,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         final Object content = response.getContent();
         HttpResponseStatus status = (content == null ? HttpResponseStatus.NO_CONTENT : HttpResponseStatus.OK);
         
-        return this.toResponse(status, response.getResponseFormat(), content);
+        return this.toResponse(status, response.getSerializer(), content);
     }
 
     private HttpResponse toResponse(HttpVersion version, HttpResponseStatus status, Map<String, String> headers, final String content)
@@ -245,12 +248,12 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return this.toResponse(HttpVersion.HTTP_1_0, status, headers, content);
     }
 
-    private HttpResponse toResponse(HttpResponseStatus status, ApiResponseFormat format, Object o)
+    private HttpResponse toResponse(HttpResponseStatus status, ApiResponseSerializer serializer, Object o)
     {
         HashMap<String, String> headers = new HashMap<String, String>(1);
-        headers.put("content-type", format.getMime().toString());
+        headers.put("content-type", serializer.getMime().toString());
         
-        return this.toResponse(status, headers, format.format(o));
+        return this.toResponse(status, headers, serializer.serialize(o));
     }
 
     private HttpResponse toResponse(ApiError error)
@@ -271,6 +274,6 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             o = new Object[] {error.getCode(), minor};
         }
         
-        return this.toResponse(error.getRepsonseStatus(), controllerManager.getResponseFormat("plain"), o);
+        return this.toResponse(error.getRepsonseStatus(), manager.getSerializer("plain"), o);
     }
 }

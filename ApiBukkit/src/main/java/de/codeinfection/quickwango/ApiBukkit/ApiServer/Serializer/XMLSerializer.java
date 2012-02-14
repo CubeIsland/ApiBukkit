@@ -1,26 +1,29 @@
-package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
-import de.codeinfection.quickwango.ApiBukkit.Server.MimeType;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponseSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiSerializable;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.MimeType;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ResponseSerializer;
 import java.util.Iterator;
 import java.util.Map;
 
-public class XMLFormat implements ApiResponseFormat
+@ResponseSerializer(name = "xml")
+public class XmlSerializer implements ApiResponseSerializer
 {
-    protected final static String XMLDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
+    private final static String XMLDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
     
     public MimeType getMime()
     {
         return MimeType.XML;
     }
     
-    public String format(Object o)
+    public String serialize(Object o)
     {
-        return this.format(o, "response", true);
+        return this.serialize(o, "response", true);
     }
     
     @SuppressWarnings("unchecked")
-    protected String format(Object o, String nodeName, boolean firstLevel)
+    private String serialize(Object o, String nodeName, boolean firstLevel)
     {
         String response = "";
         response += "<" + nodeName + ">";
@@ -28,7 +31,7 @@ public class XMLFormat implements ApiResponseFormat
         {} // null -> do nothing
         else if (o instanceof ApiSerializable)
         {
-            response += this.format(((ApiSerializable)o).serialize());
+            response += this.serialize(((ApiSerializable)o).serialize());
         }
         else if (o instanceof Map)
         {
@@ -37,7 +40,7 @@ public class XMLFormat implements ApiResponseFormat
             {
                 String name = entry.getKey().toString();
                 Object value = entry.getValue();
-                response += this.format(value, name, false);
+                response += this.serialize(value, name, false);
             }
         }
         else if (o instanceof Iterable)
@@ -47,7 +50,7 @@ public class XMLFormat implements ApiResponseFormat
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                response += this.format(value, nodeName, false);
+                response += this.serialize(value, nodeName, false);
             }
         }
         else if (o.getClass().isArray())
@@ -55,7 +58,7 @@ public class XMLFormat implements ApiResponseFormat
             Object[] data = (Object[]) o;
             for (int i = 0; i < data.length; i++)
             {
-                response += this.format(data[i], nodeName, false);
+                response += this.serialize(data[i], nodeName, false);
             }
         }
         else

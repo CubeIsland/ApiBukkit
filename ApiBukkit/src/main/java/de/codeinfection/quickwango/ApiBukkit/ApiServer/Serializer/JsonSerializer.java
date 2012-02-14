@@ -1,37 +1,34 @@
-package de.codeinfection.quickwango.ApiBukkit.ResponseFormat;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiSerializable;
-import de.codeinfection.quickwango.ApiBukkit.Server.MimeType;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponseSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiSerializable;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.MimeType;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ResponseSerializer;
 import java.util.Iterator;
 import java.util.Map;
 
-public class JsonFormat implements ApiResponseFormat
+@ResponseSerializer(name = "json")
+public class JsonSerializer implements ApiResponseSerializer
 {
     public MimeType getMime()
     {
         return MimeType.JSON;
     }
 
-    /**
-     * Serializes an object
-     *
-     * @param o the object to serialize
-     * @return the JSON representation of this given object
-     */
-    public String format(Object o)
+    public String serialize(Object o)
     {
         StringBuilder buffer = new StringBuilder();
-        this.format(buffer, o, true);
+        this.serialize(buffer, o, true);
         return buffer.toString();
     }
 
-    private void format(StringBuilder buffer, Object o)
+    private void serialize(StringBuilder buffer, Object o)
     {
-        this.format(buffer, o, false);
+        this.serialize(buffer, o, false);
     }
     
     @SuppressWarnings("unchecked")
-    private void format(StringBuilder buffer, Object o, boolean firstLevel)
+    private void serialize(StringBuilder buffer, Object o, boolean firstLevel)
     {
         if (o == null)
         {
@@ -39,7 +36,7 @@ public class JsonFormat implements ApiResponseFormat
         }
         else if (o instanceof ApiSerializable)
         {
-            this.format(buffer, ((ApiSerializable)o).serialize());
+            this.serialize(buffer, ((ApiSerializable)o).serialize());
         }
         else if (o instanceof Map)
         {
@@ -57,7 +54,7 @@ public class JsonFormat implements ApiResponseFormat
                 }
                 Object value = entry.getValue();
                 buffer.append("\"").append(name).append("\":");
-                this.format(buffer, value);
+                this.serialize(buffer, value);
                 if (counter < dataSize)
                 {
                     buffer.append(",");
@@ -73,7 +70,7 @@ public class JsonFormat implements ApiResponseFormat
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                this.format(buffer, value);
+                this.serialize(buffer, value);
                 if (iter.hasNext())
                 {
                     buffer.append(",");
@@ -88,7 +85,7 @@ public class JsonFormat implements ApiResponseFormat
             buffer.append("[");
             for (int i = 0; i < data.length; i++)
             {
-                this.format(buffer, data[i]);
+                this.serialize(buffer, data[i]);
                 if (i < end)
                 {
                     buffer.append(",");
@@ -101,7 +98,7 @@ public class JsonFormat implements ApiResponseFormat
             // TODO check this
             if (o instanceof Iterable || o instanceof Map || o.getClass().isArray())
             {
-                this.format(buffer, o);
+                this.serialize(buffer, o);
             }
             else
             {

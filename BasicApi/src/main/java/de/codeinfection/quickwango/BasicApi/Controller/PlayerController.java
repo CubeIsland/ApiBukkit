@@ -1,9 +1,10 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.Server.Action;
 import de.codeinfection.quickwango.ApiBukkit.Server.Controller;
 import de.codeinfection.quickwango.ApiBukkit.*;
-import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import de.codeinfection.quickwango.BasicApi.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;

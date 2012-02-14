@@ -1,9 +1,12 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiAction;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
-import de.codeinfection.quickwango.ApiBukkit.Server.Action;
-import de.codeinfection.quickwango.ApiBukkit.Server.Controller;
-import de.codeinfection.quickwango.ApiBukkit.Server.Parameters;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Server;
@@ -12,7 +15,7 @@ import org.bukkit.Server;
  *
  * @author CodeInfection
  */
-@Controller(name = "apibukkit", authenticate = true)
+@Controller(name = "apibukkit", authenticate = true, serializer = "json")
 public class ApibukkitController extends ApiController
 {
     public ApibukkitController(ApiBukkit plugin)
@@ -21,7 +24,7 @@ public class ApibukkitController extends ApiController
     }
 
     @Action(authenticate = true)
-    public Object combined(Parameters params, Server server)
+    public void combined(ApiRequest request, ApiResponse response)
     {
         HashMap<String, Object> responses = null;
         Parameters routes = params.getParameters("routes");

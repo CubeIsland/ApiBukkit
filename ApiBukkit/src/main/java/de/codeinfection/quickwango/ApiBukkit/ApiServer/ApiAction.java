@@ -1,6 +1,5 @@
-package de.codeinfection.quickwango.ApiBukkit;
+package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -16,6 +15,7 @@ public final class ApiAction
     private final Method method;
     private final boolean authNeeded;
     private final String[] parameters;
+    private final String seriaizer;
 
     /**
      * Initializes the request action.
@@ -25,13 +25,14 @@ public final class ApiAction
      * @param method the method to invoke
      * @param authNeeded whether authentication is needed
      */
-    public ApiAction(ApiController controller, String name, Method method, boolean authNeeded, String[] parameters)
+    public ApiAction(ApiController controller, String name, Method method, boolean authNeeded, String[] parameters, String serializer)
     {
         this.controller = controller;
         this.name = name;
         this.method = method;
         this.authNeeded = authNeeded;
         this.parameters = parameters;
+        this.seriaizer = serializer;
     }
 
     /**
@@ -62,6 +63,11 @@ public final class ApiAction
         return this.parameters;
     }
 
+    public String getSerializer()
+    {
+        return this.seriaizer;
+    }
+
     /**
      * This method handles the request.
      *
@@ -69,11 +75,11 @@ public final class ApiAction
      * @return the response
      * @throws ApiRequestException
      */
-    public Object execute(ApiRequest request) throws Throwable
+    public void execute(ApiRequest request, ApiResponse response) throws Throwable
     {
         try
         {
-            return this.method.invoke(this.controller, request);
+            this.method.invoke(this.controller, request, response);
         }
         catch (InvocationTargetException ex)
         {
