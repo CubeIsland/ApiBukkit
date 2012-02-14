@@ -4,13 +4,13 @@ import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Server;
 
 /**
  *
@@ -19,19 +19,25 @@ import org.bukkit.Server;
 @Controller(name = "apibukkit", authenticate = true, serializer = "json")
 public class ApibukkitController extends ApiController
 {
+    ApiManager manager;
+
     public ApibukkitController(ApiBukkit plugin)
     {
         super(plugin);
+        this.manager = ApiManager.getInstance();
     }
 
     @Action(authenticate = true, parameters = {"routes"})
     public void combined(ApiRequest request, ApiResponse response)
     {
-        HashMap<String, Object> responses = null;
-        Parameters routes = params.getParameters("routes");
+        HashMap<String, Object> responses;
+        Parameters routes = request.REQUEST.getParameters("routes");
         if (routes != null)
         {
             responses = new HashMap<String, Object>();
+
+            ApiRequest apiRequest;
+            ApiResponse apiResponse = new ApiResponse(this.manager.getDefaultSerializer());
 
             for (Map.Entry<String, Object> entry : routes.entrySet())
             {
@@ -46,37 +52,38 @@ public class ApibukkitController extends ApiController
                     actionName = route.substring(delimPosition + 1);
                 }
 
-                ApiController controller = ApiBukkit.getInstance().getController(controllerName);
+                ApiController controller = this.manager.getController(controllerName);
                 if (controller != null)
                 {
                     debug("Got controller '" + controller.getClass().getSimpleName() + "'");
                     ApiAction action = controller.getAction(actionName);
 
+                    
+                    apiRequest = new ApiRequest(request.server);
+                    apiRequest.SERVER.putAll(request.SERVER);
+
                     Object routeParameters = entry.getValue();
-                    Parameters actionParams;
                     if (routeParameters != null && routeParameters instanceof Parameters)
                     {
-                        actionParams = (Parameters)entry.getValue();
-                    }
-                    else
-                    {
-                        actionParams = new Parameters(3);
-                        actionParams.put("__REQUEST_PATH__",    params.get("__REQUEST_PATH__"));
-                        actionParams.put("__REQUEST_METHOD__",  params.get("__REQUEST_METHOD__"));
-                        actionParams.put("__REMOTE_ADDR__",     params.get("__REMOTE_ADDR__"));
+                        apiRequest.REQUEST.putAll((Parameters)entry.getValue());
                     }
                     try
                     {
                         if (action != null)
                         {
                             debug("Running action '" + action.getClass().getSimpleName() + "'");
-                            responses.put(route, action.execute(actionParams));
+                            action.execute(apiRequest, apiResponse);
+                            responses.put(route, apiResponse.getContent());
                         }
                         else
                         {
                             debug("Running default action");
-                            responses.put(route, controller.defaultAction(actionName, params));
+                            controller.defaultAction(actionName, apiRequest, apiResponse);
+                            responses.put(route, apiResponse.getContent());
                         }
+                        apiResponse
+                            .clearHeaders()
+                            .setContent(null);
                     }
                     catch (ApiRequestException e)
                     {
@@ -93,22 +100,12 @@ public class ApibukkitController extends ApiController
                 }
             }
         }
-        return responses;
     }
 
     @Action
-    public Object testing(Parameters params, Server server)
+    public void testing(ApiRequest request, ApiResponse response)
     {
-        params.remove("__REQUEST_PATH__");
-        params.remove("__REQUEST_USERAGENT__");
-        params.remove("__REQUEST_METHOD__");
-        params.remove("__REMOTE_ADDR__");
-
-        if (params.get("format") == null)
-        {
-            params.put("format", "json");
-        }
-
-        return params;
+        response.setSerializer(ApiManager.getInstance().getSerializer("json"));
+        response.setContent(request.REQUEST);
     }
 }

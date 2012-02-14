@@ -4,8 +4,10 @@ import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
+import de.codeinfection.quickwango.BasicApi.BasicApi;
 import de.codeinfection.quickwango.BasicApi.Utils;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Server;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
@@ -38,129 +40,119 @@ public class ServerController extends ApiController
     }
     
     @Action(authenticate = false)
-    public Object maxplayers(Parameters params, Server server)
+    public Object maxplayers(ApiRequest request, ApiResponse response)
     {
-        return server.getMaxPlayers();
+        return request.server.getMaxPlayers();
     }
     
     @Action
-    public Object info(Parameters params, Server server)
+    public void info(ApiRequest request, ApiResponse response)
     {
         Runtime runtime = Runtime.getRuntime();
         Map<String, Object> data = new HashMap<String, Object>();
 
-        data.put("id",                  server.getServerId());
-        data.put("name",                server.getServerName());
-        data.put("ip",                  server.getIp());
-        data.put("port",                server.getPort());
-        data.put("players",             server.getOnlinePlayers().length);
-        data.put("maxplayers",          server.getMaxPlayers());
-        data.put("worlds",              server.getWorlds().size());
-        data.put("plugins",             server.getPluginManager().getPlugins().length);
+        data.put("id",                  request.server.getServerId());
+        data.put("name",                request.server.getServerName());
+        data.put("ip",                  request.server.getIp());
+        data.put("port",                request.server.getPort());
+        data.put("players",             request.server.getOnlinePlayers().length);
+        data.put("maxplayers",          request.server.getMaxPlayers());
+        data.put("worlds",              request.server.getWorlds().size());
+        data.put("plugins",             request.server.getPluginManager().getPlugins().length);
         data.put("uptime",              (System.currentTimeMillis() / 1000) - timeStamp);
-        data.put("onlinemode",          server.getOnlineMode());
-        data.put("whitelisted",         server.hasWhitelist());
-        data.put("spawnRadius",         server.getSpawnRadius());
-        data.put("viewDistance",        server.getViewDistance());
-        data.put("defaultGamemode",     server.getDefaultGameMode().getValue());
-        data.put("allowEnd",            server.getAllowEnd());
-        data.put("allowNether",         server.getAllowNether());
-        data.put("allowFlight",         server.getAllowFlight());
-        data.put("allowNether",         server.getAllowNether());
-        data.put("worldContainer",      server.getWorldContainer().toString());
-        data.put("updateFolder",        server.getUpdateFolderFile().toString());
+        data.put("onlinemode",          request.server.getOnlineMode());
+        data.put("whitelisted",         request.server.hasWhitelist());
+        data.put("spawnRadius",         request.server.getSpawnRadius());
+        data.put("viewDistance",        request.server.getViewDistance());
+        data.put("defaultGamemode",     request.server.getDefaultGameMode().getValue());
+        data.put("allowEnd",            request.server.getAllowEnd());
+        data.put("allowNether",         request.server.getAllowNether());
+        data.put("allowFlight",         request.server.getAllowFlight());
+        data.put("allowNether",         request.server.getAllowNether());
+        data.put("worldContainer",      request.server.getWorldContainer().toString());
+        data.put("updateFolder",        request.server.getUpdateFolderFile().toString());
 
         data.put("maxmemory",           runtime.maxMemory());
         data.put("freememory",          runtime.freeMemory());
 
         Map<String, Object> versions = new HashMap<String, Object>();
-        versions.put("bukkit", server.getBukkitVersion());
-        versions.put("server", server.getVersion());
+        versions.put("bukkit", request.server.getBukkitVersion());
+        versions.put("server", request.server.getVersion());
         versions.put("apibukkit", ApiBukkit.getInstance().getDescription().getVersion());
         versions.put("basicapi", getPlugin().getDescription().getVersion());
 
         data.put("versions",            versions);
         data.put("os",                  Utils.getPropertiesByPrefix("os."));
 
-        return data;
+        response.setContent(data);
     }
 
     @Action(authenticate = false)
-    public Object online(Parameters params, Server server)
+    public void online(ApiRequest request, ApiResponse response)
     {
-        return server.getOnlinePlayers().length;
+        response.setContent(request.server.getOnlinePlayers().length);
     }
 
     @Action(authenticate = false)
-    public Object version(Parameters params, Server server)
+    public void version(ApiRequest request, ApiResponse response)
     {
-        return server.getVersion();
+        response.setContent(request.server.getVersion());
     }
     
     @Action
-    public Object garbagecollect(Parameters params, Server server)
+    public void garbagecollect(ApiRequest request, ApiResponse response)
     {
-        server.getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable() {
+        request.server.getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable() {
             public void run() {
                 Runtime runtime = Runtime.getRuntime();
                 long free = runtime.freeMemory();
                 runtime.gc();
                 int freed = (int)((runtime.freeMemory() - free) / 1024 / 1024);
-                ApiBukkit.log("executed the garbage collector (Freed " + freed + "mb)");
+                BasicApi.log("executed the garbage collector (Freed " + freed + "mb)");
             }
         });
-        return null;
     }
     
     @Action
-    public Object kill(Parameters params, Server server)
+    public Object kill(ApiRequest request, ApiResponse response)
     {
-        ApiBukkit.log("killing java runtime");
+        BasicApi.log("killing java runtime");
         System.exit(0);
         return null;
     }
     
     @Action
-    public Object stop(Parameters params, Server server)
+    public void stop(ApiRequest request, ApiResponse response)
     {
-        for (World world : server.getWorlds())
+        for (World world : request.server.getWorlds())
         {
             world.save();
         }
-        server.shutdown();
-        return null;
+        request.server.shutdown();
     }
     
-    @Action
-    public Object broadcast(Parameters params, Server server)
+    @Action(parameters = {"message"})
+    public void broadcast(ApiRequest request, ApiResponse response)
     {
-        String msg = params.getString("message");
-        if (msg != null)
-        {
-            server.broadcastMessage(msg.replaceAll("&([0-9a-f])", "§$1"));
-            ApiBukkit.log("broadcasted message '" + msg + "'");
-        }
-        else
-        {
-            throw new ApiRequestException("No message given!", 1);
-        }
-        return null;
+        String message = request.REQUEST.getString("message");
+        request.server.broadcastMessage(message.replaceAll("&([0-9a-f])", "§$1"));
+        BasicApi.log("broadcasted message '" + message + "'");
     }
     
     @Action
-    public Object reload(Parameters params, Server server)
+    public Object reload(ApiRequest request, ApiResponse response)
     {
-        server.reload();
+        request.server.reload();
         return null;
     }
     
     @Action
-    public Object console(Parameters params, Server server)
+    public void console(ApiRequest request, ApiResponse response)
     {
         try
         {
             long lineCount = 100L;
-            String linesParam = params.getString("lines");
+            String linesParam = request.REQUEST.getString("lines");
             if (linesParam != null)
             try
             {
@@ -188,7 +180,7 @@ public class ServerController extends ApiController
             }
             file.close();
 
-            return lines;
+            response.setContent(lines);
         }
         catch (IOException e)
         {
@@ -197,8 +189,14 @@ public class ServerController extends ApiController
     }
 
     @Action
-    public Object offlineplayers(Parameters params, Server server)
+    public void offlineplayers(ApiRequest request, ApiResponse response)
     {
-        return server.getOfflinePlayers();
+        OfflinePlayer[] players = request.server.getOfflinePlayers();
+        List<String> data = new ArrayList<String>(players.length);
+        for (OfflinePlayer player : players)
+        {
+            data.add(player.getName());
+        }
+        response.setContent(data);
     }
 }

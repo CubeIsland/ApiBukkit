@@ -2,13 +2,13 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -25,40 +25,40 @@ public class CompatController extends ApiController
     }
 
     @Action
-    public Object online(Parameters params, Server server)
+    public void online(ApiRequest request, ApiResponse response)
     {
-        return server.getOnlinePlayers().length;
+        response.setContent(request.server.getOnlinePlayers().length);
     }
 
     @Action
-    public Object playersonline(Parameters params, Server server)
+    public void playersonline(ApiRequest request, ApiResponse response)
     {
-        Player[] players = server.getOnlinePlayers();
+        Player[] players = request.server.getOnlinePlayers();
         List<String> data = new ArrayList<String>();
         for (Player player : players)
         {
             data.add(player.getName());
         }
-        return data;
+        response.setContent(data);
     }
 
     @Action
-    public Object whois(Parameters params, Server server)
+    public void whois(ApiRequest request, ApiResponse response)
     {
-        String requestPath = params.getString("__REQUEST_PATH__");
+        String requestPath = (String)request.SERVER.get("REQUEST_PATH");
         if (requestPath == null)
         {
-            return null;
+            return;
         }
         String[] pathParts = requestPath.replaceFirst("^/", "").split("/");
         if (pathParts.length < 3)
         {
-            return null;
+            return;
         }
-        Player player = server.getPlayerExact(pathParts[2]);
+        Player player = request.server.getPlayerExact(pathParts[2]);
         if (player == null)
         {
-            return null;
+            return;
         }
 
         Map<String, Object> data = new HashMap<String, Object>();
@@ -67,12 +67,12 @@ public class CompatController extends ApiController
         data.put("displayName", player.getDisplayName());
         data.put("health", player.getHealth());
 
-        return data;
+        response.setContent(data);
     }
     
     @Action
-    public Object maxplayers(Parameters params, Server server)
+    public void maxplayers(ApiRequest request, ApiResponse response)
     {
-        return server.getMaxPlayers();
+        response.setContent(request.server.getMaxPlayers());
     }
 }

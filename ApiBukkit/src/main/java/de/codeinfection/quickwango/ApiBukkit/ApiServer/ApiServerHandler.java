@@ -4,9 +4,13 @@ import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import java.net.InetSocketAddress;
+import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 import org.bukkit.Bukkit;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -20,7 +24,6 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
-import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.jboss.netty.util.CharsetUtil;
 
 /**
@@ -60,23 +63,25 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         if (method == HttpMethod.GET || method == HttpMethod.POST)
         {
             final String uri = request.getUri();
+
+            /**
+             * @TODO get rid of the direct bukkit dependency
+             */
             ApiRequest apiRequest = new ApiRequest(Bukkit.getServer());
             apiRequest.SERVER.put("REQUEST_URI", uri);
-            QueryStringDecoder queryStringDecoder;
+            
             final Map<String, String> headers = new HashMap<String, String>();
-
-
-            queryStringDecoder = new QueryStringDecoder(request.getUri());
-            apiRequest.GET.putAll(queryStringDecoder.getParameters());
             for (Entry<String, String> entry :  request.getHeaders())
             {
                 headers.put(entry.getKey().toLowerCase(), entry.getValue());
             }
+
+            parseQueryString(request.getUri(), apiRequest.GET);
+
             ChannelBuffer content = request.getContent();
             if (content.readable())
             {
-                queryStringDecoder = new QueryStringDecoder(content.toString());
-                apiRequest.POST.putAll(queryStringDecoder.getParameters());
+                parseQueryString(content.toString(), apiRequest.POST);
             }
 
             apiRequest.REQUEST.putAll(apiRequest.GET);
@@ -139,16 +144,13 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 {
                     final String AUTHKEY_PARAM_NAME = "authkey";
                     String authKey = null;
-                    if (apiRequest.GET.containsKey(AUTHKEY_PARAM_NAME))
+                    if (apiRequest.REQUEST.containsKey(AUTHKEY_PARAM_NAME))
                     {
-                        authKey = apiRequest.GET.get(AUTHKEY_PARAM_NAME).get(0);
-                    }
-                    else if (apiRequest.POST.containsKey(AUTHKEY_PARAM_NAME))
-                    {
-                        authKey = apiRequest.POST.get(AUTHKEY_PARAM_NAME).get(0);
+                        authKey = apiRequest.GET.getString(AUTHKEY_PARAM_NAME);
                     }
                     apiRequest.GET.remove(AUTHKEY_PARAM_NAME);
                     apiRequest.POST.remove(AUTHKEY_PARAM_NAME);
+                    apiRequest.REQUEST.remove(AUTHKEY_PARAM_NAME);
 
                     ApiAction action = controller.getAction(actionName);
                     if (manager.isActionDisabled(controllerName, actionName))
@@ -296,5 +298,116 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         }
         
         return this.toResponse(error.getRepsonseStatus(), manager.getSerializer("plain"), o);
+    }
+
+
+    /**
+     * Decodes the percent encoding scheme. <br/>
+     * For example: "an+example%20string" -> "an example string"
+     */
+    private static String urlDecode(String string)
+    {
+        try
+        {
+            return URLDecoder.decode(string, "UTF-8");
+        }
+        catch (Exception e)
+        {
+            return string;
+        }
+    }
+
+    /**
+     * parses a querystring
+     */
+    private static void parseQueryString(String queryString, Parameters params)
+    {
+        parseQueryString(queryString, params, "&");
+    }
+
+    /**
+     * parses a querystring
+     */
+    private static void parseQueryString(String queryString, Parameters params, String pairDelim)
+    {
+        parseQueryString(queryString, params, pairDelim, "=");
+    }
+
+    /**
+     * parses a querystring
+     */
+    private static void parseQueryString(String queryString, Parameters params, String pairDelim, String valueDelim)
+    {
+        if (queryString == null || queryString.length() == 0)
+        {
+            return;
+        }
+
+        StringTokenizer tokenizer = new StringTokenizer(queryString, pairDelim);
+        while (tokenizer.hasMoreTokens())
+        {
+            parseKeyValuePair(tokenizer.nextToken(), params, valueDelim);
+        }
+    }
+
+    private static void parseKeyValuePair(String keyValuePair, Parameters params, String valueDelim)
+    {
+        int delimPosition = keyValuePair.indexOf(valueDelim);
+        if (delimPosition > -1)
+        {
+            String key = keyValuePair.substring(0, delimPosition);
+            String value = urlDecode(keyValuePair.substring(delimPosition + 1));
+
+            params.put(parseKey(key), value);
+        }
+        else
+        {
+            List<String> path = parseKey(keyValuePair);
+            if (!params.containsKey(path))
+            {
+                params.put(path, null);
+            }
+        }
+    }
+
+    private static List<String> parseKey(String key)
+    {
+        List<String> path = new ArrayList<String>();
+        int firstOpenBracketPosition = key.indexOf("[");
+        if (firstOpenBracketPosition > -1)
+        {
+            String indicesString = key.substring(firstOpenBracketPosition);
+            int lastCloseBracketPosition = indicesString.lastIndexOf("]");
+            if (lastCloseBracketPosition == indicesString.length() - 1)
+            {
+                key = urlDecode(key.substring(0, firstOpenBracketPosition));
+                String delimitedIndices = indicesString.substring(1, lastCloseBracketPosition);
+
+                path.add(key);
+                for (String token : explode("][", delimitedIndices))
+                {
+                    path.add(urlDecode(token));
+                }
+                return path;
+            }
+        }
+
+        path.add(urlDecode(key));
+        return path;
+    }
+
+    private static List<String> explode(String delim, String string)
+    {
+        int pos, offset = 0, delimLen = delim.length();
+        List<String> tokens = new ArrayList<String>();
+
+        while ((pos = string.indexOf(delim, offset)) > -1)
+        {
+            tokens.add(string.substring(offset, pos));
+            offset = pos + delimLen;
+        }
+        tokens.add(string.substring(offset));
+
+        return tokens;
     }
 }

@@ -3,12 +3,12 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
@@ -25,68 +25,47 @@ public class PluginController extends ApiController
     }
 
     @Action
-    public Object list(Parameters params, Server server)
+    public void list(ApiRequest request, ApiResponse response)
     {
         ArrayList<String> data = new ArrayList<String>();
-        Plugin[] plugins = server.getPluginManager().getPlugins();
+        Plugin[] plugins = request.server.getPluginManager().getPlugins();
         for (Plugin currentPlugin : plugins)
         {
             data.add(currentPlugin.getDescription().getName());
         }
-        return data;
+        response.setContent(data);
     }
-    
-    @Action
-    public Object info(Parameters params, Server server)
+
+    @Action(parameters = {"plugin"}, serializer = "json")
+    public void info(ApiRequest request, ApiResponse response)
     {
-        String pluginName = params.getString("plugin");
-        if (pluginName != null)
+        String pluginName = request.REQUEST.getString("plugin");
+        Plugin targetPlugin = request.server.getPluginManager().getPlugin(pluginName);
+        if (targetPlugin != null)
         {
-            Plugin targetPlugin = server.getPluginManager().getPlugin(pluginName);
-            if (targetPlugin != null)
-            {
-                Map<String, Object> data = new HashMap<String, Object>();
-                PluginDescriptionFile description = targetPlugin.getDescription();
-                data.put("name",        description.getName());
-                data.put("fullName",    description.getFullName());
-                data.put("version",     description.getVersion());
-                data.put("description", description.getDescription());
-                data.put("website",     description.getWebsite());
-                data.put("authors",     description.getAuthors());
-                data.put("depend",      description.getDepend());
-                data.put("commands",    description.getCommands());
-                data.put("enabled",     targetPlugin.isEnabled());
-                data.put("dataFolder",  targetPlugin.getDataFolder().getAbsolutePath());
-                return data;
-            }
-            else
-            {
-                throw new ApiRequestException("Plugin not found!", 2);
-            }
+            Map<String, Object> data = new HashMap<String, Object>();
+            PluginDescriptionFile description = targetPlugin.getDescription();
+            data.put("name",        description.getName());
+            data.put("fullName",    description.getFullName());
+            data.put("version",     description.getVersion());
+            data.put("description", description.getDescription());
+            data.put("website",     description.getWebsite());
+            data.put("authors",     description.getAuthors());
+            data.put("depend",      description.getDepend());
+            data.put("commands",    description.getCommands());
+            data.put("enabled",     targetPlugin.isEnabled());
+            data.put("dataFolder",  targetPlugin.getDataFolder().getAbsolutePath());
+            response.setContent(data);
         }
         else
         {
-            throw new ApiRequestException("No plugin given!", 1);
+            throw new ApiRequestException("Plugin not found!", 1);
         }
     }
 
-    @Action
-    public Object available(Parameters params, Server server)
+    @Action(parameters = {"plugin"})
+    public void available(ApiRequest request, ApiResponse response)
     {
-        String pluginName = params.getString("plugin");
-        if (pluginName != null)
-        {
-            return (server.getPluginManager().getPlugin(pluginName) != null);
-        }
-        else
-        {
-            throw new ApiRequestException("No plugin given!", 1);
-        }
-    }
-    
-    @Action
-    public Object execute(Parameters params, Server server)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
+        response.setContent(request.server.getPluginManager().getPlugin(request.REQUEST.getString("plugin")) != null);
     }
 }

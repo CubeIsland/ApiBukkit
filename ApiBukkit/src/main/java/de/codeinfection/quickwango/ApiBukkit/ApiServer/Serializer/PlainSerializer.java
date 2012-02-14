@@ -14,18 +14,22 @@ public class PlainSerializer implements ApiResponseSerializer
     {
         return MimeType.PLAIN;
     }
-    
-    @SuppressWarnings("unchecked")
+
     public String serialize(Object o)
     {
-        String response = "";
+        StringBuffer buffer = new StringBuffer();
+        this.serialize(buffer, o);
+        return buffer.toString();
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void serialize(StringBuffer buffer, Object o)
+    {
         if (o == null)
-        {
-            response = "";
-        }
+        {} // null => nothing
         else if (o instanceof ApiSerializable)
         {
-            response += this.serialize(((ApiSerializable)o).serialize());
+            this.serialize(buffer, ((ApiSerializable)o).serialize());
         }
         else if (o instanceof Map)
         {
@@ -36,10 +40,10 @@ public class PlainSerializer implements ApiResponseSerializer
             {
                 ++counter;
                 Object value = entry.getValue();
-                response += this.serialize(value);
+                this.serialize(buffer, value);
                 if (counter < dataSize)
                 {
-                    response += ",";
+                    buffer.append(',');
                 }
             }
         }
@@ -50,10 +54,10 @@ public class PlainSerializer implements ApiResponseSerializer
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                response += this.serialize(value);
+                this.serialize(buffer, value);
                 if (iter.hasNext())
                 {
-                    response += ",";
+                    buffer.append(',');
                 }
             }
         }
@@ -63,18 +67,17 @@ public class PlainSerializer implements ApiResponseSerializer
             int end = data.length - 1;
             for (int i = 0; i < data.length; i++)
             {
-                response += this.serialize(data[i]);
+                this.serialize(buffer, data[i]);
                 if (i < end)
                 {
-                    response += ",";
+                    buffer.append(',');
                 }
             }
         }
         else
         {
-            response = encode(String.valueOf(o));
+            buffer.append(encode(String.valueOf(o)));
         }
-        return response;
     }
     
     private static String encode(String string)

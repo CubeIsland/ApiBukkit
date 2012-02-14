@@ -1,10 +1,16 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.JsonSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.RawSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.XmlSerializer;
 import java.io.File;
+import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -67,6 +73,12 @@ public class ApiBukkit extends JavaPlugin
         ApiBukkit.log("Log level is: " + this.config.logLevel.name(), ApiLogLevel.INFO);
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
+
+        ApiManager.getInstance()
+            .registerController(new ApibukkitController(this))
+            .registerSerializer(new JsonSerializer())
+            .registerSerializer(new XmlSerializer())
+            .registerSerializer(new RawSerializer());
         
         try
         {
@@ -75,6 +87,7 @@ public class ApiBukkit extends JavaPlugin
             log(String.format("with a maximum of %s parallel sessions!", this.config.maxSessions));
             
             ApiServer.getInstance()
+                .setIp(InetAddress.getByName(this.server.getIp()))
                 .setPort(this.config.port)
                 .setAuthenticationKey(this.config.authKey)
                 .setMaxContentLength(this.config.maxSessions)

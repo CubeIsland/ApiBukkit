@@ -3,12 +3,12 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -24,13 +24,13 @@ public class OperatorController extends ApiController
         super(plugin);
     }
 
-    @Action
-    public Object add(Parameters params, Server server)
+    @Action(parameters = {"player"})
+    public void add(ApiRequest request, ApiResponse response)
     {
-        String playerName = params.getString("player");
+        String playerName = request.REQUEST.getString("player");
         if (playerName != null)
         {
-            OfflinePlayer player = server.getOfflinePlayer(playerName);
+            OfflinePlayer player = request.server.getOfflinePlayer(playerName);
             if (!player.isOp())
             {
                 player.setOp(true);
@@ -44,39 +44,30 @@ public class OperatorController extends ApiController
         {
             throw new ApiRequestException("No player given!", 1);
         }
-        return null;
     }
 
-    @Action
-    public Object execute(Parameters params, Server server)
+    @Action(parameters = {"player"})
+    public void remove(ApiRequest request, ApiResponse response)
     {
-        String playerName = params.getString("player");
-        if (playerName != null)
+        String playerName = request.REQUEST.getString("player");
+        OfflinePlayer player = request.server.getOfflinePlayer(playerName);
+        if (player.isOp())
         {
-            OfflinePlayer player = server.getOfflinePlayer(playerName);
-            if (player.isOp())
-            {
-                player.setOp(false);
-            }
-            else
-            {
-                throw new ApiRequestException("Player is not a Op!", 2);
-            }
+            player.setOp(false);
         }
         else
         {
-            throw new ApiRequestException("No player given!", 1);
+            throw new ApiRequestException("Player is not a Op!", 1);
         }
-        return null;
     }
 
-    @Action
-    public Object is(Parameters params, Server server)
+    @Action(parameters = {"player"})
+    public void is(ApiRequest request, ApiResponse response)
     {
-        String playerName = params.getString("player");
+        String playerName = request.REQUEST.getString("player");
         if (playerName != null)
         {
-            return server.getOfflinePlayer(playerName).isOp();
+            response.setContent(request.server.getOfflinePlayer(playerName).isOp());
         }
         else
         {
@@ -85,10 +76,10 @@ public class OperatorController extends ApiController
     }
 
     @Action
-    public Object get(Parameters params, Server server)
+    public Object get(ApiRequest request, ApiResponse response)
     {
         List<String> operators = new ArrayList<String>();
-        for (OfflinePlayer operator : server.getOperators())
+        for (OfflinePlayer operator : request.server.getOperators())
         {
             operators.add(operator.getName());
         }

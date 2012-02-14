@@ -10,11 +10,9 @@ import org.bukkit.configuration.Configuration;
 public class BasicApiConfiguration
 {
     public final List<String> configFiles;
-    public final String chatFormat;
 
     public BasicApiConfiguration(Configuration config)
     {
         this.configFiles = (List<String>)config.getList("configfiles");
-        this.chatFormat = config.getString("chatformat").replaceAll("\\{NAME\\}", "%1\\$s").replaceAll("\\{MESSAGE\\}", "%2\\$s");
     }
 }

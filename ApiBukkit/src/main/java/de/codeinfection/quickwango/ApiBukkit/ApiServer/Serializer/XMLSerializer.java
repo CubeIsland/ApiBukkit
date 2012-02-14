@@ -19,28 +19,31 @@ public class XmlSerializer implements ApiResponseSerializer
     
     public String serialize(Object o)
     {
-        return this.serialize(o, "response", true);
+        StringBuilder buffer = new StringBuilder();
+        this.serialize(buffer, o, "response", true);
+        return buffer.toString();
     }
     
     @SuppressWarnings("unchecked")
-    private String serialize(Object o, String nodeName, boolean firstLevel)
+    private void serialize(StringBuilder buffer, Object o, String nodeName, boolean firstLevel)
     {
-        String response = "";
-        response += "<" + nodeName + ">";
+        if (firstLevel)
+        {
+            buffer.append(XMLDeclaration);
+        }
+        buffer.append('<').append(nodeName).append('>');
         if (o == null)
         {} // null -> do nothing
         else if (o instanceof ApiSerializable)
         {
-            response += this.serialize(((ApiSerializable)o).serialize());
+            this.serialize(buffer, ((ApiSerializable)o).serialize(), nodeName, false);
         }
         else if (o instanceof Map)
         {
             Map<String, Object> data = (Map<String, Object>) o;
             for (Map.Entry entry : data.entrySet())
             {
-                String name = entry.getKey().toString();
-                Object value = entry.getValue();
-                response += this.serialize(value, name, false);
+                this.serialize(buffer, entry.getValue(), entry.getKey().toString(), false);
             }
         }
         else if (o instanceof Iterable)
@@ -50,7 +53,7 @@ public class XmlSerializer implements ApiResponseSerializer
             while (iter.hasNext())
             {
                 Object value = iter.next();
-                response += this.serialize(value, nodeName, false);
+                this.serialize(buffer, value, nodeName, false);
             }
         }
         else if (o.getClass().isArray())
@@ -58,20 +61,23 @@ public class XmlSerializer implements ApiResponseSerializer
             Object[] data = (Object[]) o;
             for (int i = 0; i < data.length; i++)
             {
-                response += this.serialize(data[i], nodeName, false);
+                this.serialize(buffer, data[i], nodeName, false);
             }
         }
         else
         {
-            response += String.valueOf(o).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+            buffer.append(escape(String.valueOf(o)));
         }
         
-        response += "</" + nodeName + ">";
-        if (firstLevel)
-        {
-            response = XMLDeclaration + response;
-        }
-        
-        return response;
+        buffer.append("</").append(nodeName).append('>');
+    }
+
+    private static String escape(String string)
+    {
+        return string
+                .replaceAll("&", "&amp;")
+                .replaceAll("\"", "&quot;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;");
     }
 }

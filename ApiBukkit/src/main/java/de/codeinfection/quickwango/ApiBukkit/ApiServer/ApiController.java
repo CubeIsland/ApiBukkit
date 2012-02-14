@@ -1,6 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
+import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.error;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,6 +61,14 @@ public abstract class ApiController
                         debug("  Found action: " + actionName);
                         this.actions.put(actionName, new ApiAction(this, actionName, method, actionAnnotation.authenticate(), actionAnnotation.parameters(), actionAnnotation.serializer()));
                     }
+                    else
+                    {
+                        error("Annotated method " + method.getName() + " has wrong parameters");
+                    }
+                }
+                else
+                {
+                    error("Annotated method " + method.getName() + " has too few or too many parameters");
                 }
             }
         }

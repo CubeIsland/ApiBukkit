@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -31,9 +32,9 @@ public final class ApiManager
 
     private ApiManager()
     {
-        this.controllers         = Collections.synchronizedMap(new HashMap<String, ApiController>());
-        this.responseSerializers = Collections.synchronizedMap(new HashMap<String, ApiResponseSerializer>());
-        this.disabledActions     = Collections.synchronizedMap(new HashMap<String, Collection<String>>());
+        this.controllers         = new ConcurrentHashMap<String, ApiController>();
+        this.responseSerializers = new ConcurrentHashMap<String, ApiResponseSerializer>();
+        this.disabledActions     = new ConcurrentHashMap<String, Collection<String>>();
         this.whitelist           = Collections.synchronizedList(new ArrayList<String>());
         this.blacklist           = Collections.synchronizedList(new ArrayList<String>());
 
@@ -51,6 +52,24 @@ public final class ApiManager
             instance = new ApiManager();
         }
         return instance;
+    }
+
+    public boolean isControllerRegistered(String controller)
+    {
+        if (controller == null)
+        {
+            throw new IllegalArgumentException("controller must not be null!");
+        }
+        return this.controllers.containsKey(controller.toLowerCase());
+    }
+
+    public boolean isControllerRegistered(ApiController controller)
+    {
+        if (controller == null)
+        {
+            throw new IllegalArgumentException("controller must not be null!");
+        }
+        return this.isControllerRegistered(controller.getName());
     }
 
     public ApiManager registerController(ApiController controller)
@@ -95,7 +114,7 @@ public final class ApiManager
     {
         if (name != null)
         {
-            
+            return this.controllers.get(name.toLowerCase());
         }
         return null;
     }
@@ -118,14 +137,23 @@ public final class ApiManager
         return this.controllers.values();
     }
 
-    public Map<String, Collection<ApiController>> getControllerMap()
+    public Map<String, ApiController> getControllerMap()
     {
-        return null;
+        return new HashMap<String, ApiController>(this.controllers);
     }
 
     public void clearControllers()
     {
         this.controllers.clear();
+    }
+
+    public boolean isSerializerRegistered(String name)
+    {
+        if (name == null)
+        {
+            throw new IllegalArgumentException("name must not be null!");
+        }
+        return this.responseSerializers.containsKey(name.toLowerCase());
     }
 
     public ApiManager registerSerializer(ApiResponseSerializer serializer)
