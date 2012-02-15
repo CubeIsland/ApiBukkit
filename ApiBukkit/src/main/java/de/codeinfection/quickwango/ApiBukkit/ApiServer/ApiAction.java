@@ -34,7 +34,7 @@ public final class ApiAction
         this.parameters = parameters;
         this.seriaizer = serializer;
 
-        this.method.setAccessable(true);
+        this.method.setAccessible(true);
     }
 
     /**
