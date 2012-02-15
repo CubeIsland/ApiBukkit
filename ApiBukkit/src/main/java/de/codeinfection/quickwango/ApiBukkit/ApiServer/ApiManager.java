@@ -45,6 +45,11 @@ public final class ApiManager
         this.registerSerializer("plain", this.defaultSerializer);
     }
 
+    /**
+     * Returns the singleton instance of the ApiManager
+     *
+     * @return the manager instance
+     */
     public static ApiManager getInstance()
     {
         if (instance == null)
@@ -54,6 +59,11 @@ public final class ApiManager
         return instance;
     }
 
+    /**
+     * Checks whether there is a controller with the given name
+     *
+     * return true if it exists
+     */
     public boolean isControllerRegistered(String controller)
     {
         if (controller == null)
@@ -63,6 +73,11 @@ public final class ApiManager
         return this.controllers.containsKey(controller.toLowerCase());
     }
 
+    /**
+     * checks whether the given controller is registered
+     *
+     * @return true if it is registered
+     */
     public boolean isControllerRegistered(ApiController controller)
     {
         if (controller == null)
@@ -72,6 +87,11 @@ public final class ApiManager
         return this.isControllerRegistered(controller.getName());
     }
 
+    /**
+     * Registeres a controller
+     *
+     * @return fluent interface
+     */
     public ApiManager registerController(ApiController controller)
     {
         if (controller == null)
@@ -83,12 +103,22 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * Unregisteres a controller by name
+     *
+     * @return fluent interface
+     */
     public ApiManager unregisterController(String controller)
     {
         this.controllers.remove(controller);
         return this;
     }
 
+    /**
+     * Unregisteres a controller
+     *
+     * @return fluent interface
+     */
     public ApiManager unregisterController(ApiController controller)
     {
         if (controller != null)
@@ -98,6 +128,11 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * Unregisteres all controllers of the given plugin
+     *
+     * @return fluent interface
+     */
     public ApiManager unregisterControllers(Plugin plugin)
     {
         if (plugin != null)
@@ -110,6 +145,11 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * Gets a controller by name
+     *
+     * @return the registered controller or null if it does not exist
+     */
     public ApiController getController(String name)
     {
         if (name != null)
@@ -119,6 +159,11 @@ public final class ApiManager
         return null;
     }
 
+    /**
+     * Gets all controllers of a plugin
+     * 
+     * @return a collection of all the controllers
+     */
     public Collection<ApiController> getControllers(Plugin plugin)
     {
         Collection<ApiController> controllersOfPlugin = new ArrayList<ApiController>();
@@ -132,21 +177,42 @@ public final class ApiManager
         return controllersOfPlugin;
     }
 
+    /**
+     * Returns all controllers
+     *
+     * @return a collection of all controllers
+     */
     public Collection<ApiController> getControllers()
     {
         return this.controllers.values();
     }
 
+    /**
+     * Returns a copy of the name-controller map
+     *
+     * return the name-controller map
+     */
     public Map<String, ApiController> getControllerMap()
     {
         return new HashMap<String, ApiController>(this.controllers);
     }
 
-    public void clearControllers()
+    /**
+     * Clears the controllers
+     *
+     * @return fluent interface
+     */
+    public ApiManager clearControllers()
     {
         this.controllers.clear();
+        return this;
     }
 
+    /**
+     * Checks whether there is a serializer with the given name
+     *
+     * @return true if there is one
+     */
     public boolean isSerializerRegistered(String name)
     {
         if (name == null)
@@ -156,17 +222,27 @@ public final class ApiManager
         return this.responseSerializers.containsKey(name.toLowerCase());
     }
 
+    /**
+     * Registeres a serializer
+     *
+     * @return fluent interface
+     */
     public ApiManager registerSerializer(ApiResponseSerializer serializer)
     {
-        ResponseSerializer formatAnnotation = serializer.getClass().getAnnotation(ResponseSerializer.class);
-        if (formatAnnotation == null)
+        ResponseSerializer annotation = serializer.getClass().getAnnotation(ResponseSerializer.class);
+        if (annotation == null)
         {
             throw new IllegalArgumentException("The class of serializer must be annotated with @ResponseSerializer");
         }
-        this.registerSerializer(formatAnnotation.name().toLowerCase(), serializer);
+        this.registerSerializer(annotation.name().toLowerCase(), serializer);
         return this;
     }
 
+    /**
+     * Registeres a serializer with the given name
+     *
+     * @return fluent interface
+     */
     public ApiManager registerSerializer(String name, ApiResponseSerializer serializer)
     {
         if (name != null && serializer != null)
@@ -176,6 +252,11 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * Unregisteres a serializer by name
+     *
+     * @return fluent interface
+     */
     public ApiManager unregisterSerializer(String name)
     {
         if (name != null)
@@ -185,22 +266,42 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * Clears al serializers
+     *
+     * @return fluent interface
+     */
     public ApiManager clearSerializers()
     {
         this.responseSerializers.clear();
         return this;
     }
 
+    /**
+     * Gets a serializer by name
+     *
+     * @return the serializer or null if it does not exist
+     */
     public ApiResponseSerializer getSerializer(String name)
     {
         return this.responseSerializers.get(name);
     }
 
+    /**
+     * Returns the default serializer
+     * 
+     * @return the serializer
+     */
     public ApiResponseSerializer getDefaultSerializer()
     {
         return this.defaultSerializer;
     }
 
+    /**
+     * Sets the default serializer
+     *
+     * @return fluent interface
+     */
     public ApiManager setDefaultSerializer(ApiResponseSerializer serializer)
     {
         if (serializer == null)
@@ -211,17 +312,32 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * Returns whether whitelisting is enabled
+     *
+     * @return true if enabled
+     */
     public boolean isWhitelistEnabled()
     {
         return this.whitelistEnabled;
     }
 
+    /**
+     * Sets the enabled state of the whitelisting
+     *
+     * @return fluent interface
+     */
     public ApiManager setWhitelistEnabled(boolean state)
     {
         this.whitelistEnabled = state;
         return this;
     }
 
+    /**
+     * Sets the whitelist
+     *
+     * @return fluent interface
+     */
     public ApiManager setWhitelist(Collection whitelist)
     {
         this.whitelist.clear();
@@ -229,16 +345,31 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * Checks whether an InetSocketAddress is whitelisted
+     *
+     * @return true if it is
+     */
     public boolean isWhitelisted(InetSocketAddress ip)
     {
         return this.isWhitelisted(ip.getAddress());
     }
 
+    /**
+     * Checks whether an InetAddress is whitelisted
+     *
+     * @return true if it is
+     */
     public boolean isWhitelisted(InetAddress ip)
     {
         return this.isWhitelisted(ip.getHostAddress());
     }
 
+    /**
+     * Checks whether an string representation of an IP is whitelisted
+     *
+     * @return true if it is
+     */
     public boolean isWhitelisted(String ip)
     {
         if (this.whitelistEnabled)
@@ -251,17 +382,32 @@ public final class ApiManager
         }
     }
 
+    /**
+     * Sets the enabled state of the blacklisting
+     *
+     * @return fluent interface
+     */
     public ApiManager setBlacklistEnabled(boolean state)
     {
         this.blacklistEnabled = state;
         return this;
     }
 
+    /**
+     * Returns whether blacklisting is enabled
+     *
+     * @return true if it is
+     */
     public boolean isBlacklistEnabled()
     {
         return this.blacklistEnabled;
     }
 
+    /**
+     * Sets the blacklist
+     *
+     * @return fluent interface
+     */
     public ApiManager setBlacklist(Collection blacklist)
     {
         this.blacklist.clear();
@@ -269,16 +415,31 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * Checks whether an InetSocketAddress is blacklisted
+     *
+     * @return true if it is
+     */
     public boolean isBlacklisted(InetSocketAddress ip)
     {
         return this.isBlacklisted(ip.getAddress());
     }
 
+    /**
+     * Checks whether an InetAddress is blacklisted
+     *
+     * @return true if it is
+     */
     public boolean isBlacklisted(InetAddress ip)
     {
         return this.isBlacklisted(ip.getHostAddress());
     }
 
+    /**
+     * Checks whether a string representation of an IP is blacklisted
+     *
+     * @return true if it is
+     */
     public boolean isBlacklisted(String ip)
     {
         if (this.blacklistEnabled)
@@ -291,6 +452,11 @@ public final class ApiManager
         }
     }
 
+    /**
+     * 
+     *
+     * @return fluent interface
+     */
     public ApiManager setDisabledActions(Map<String, Collection<String>> disabledActions)
     {
         this.disabledActions.clear();
@@ -298,6 +464,9 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * 
+     */
     public boolean isActionDisabled(String controller, String action)
     {
         Collection<String> actions = this.disabledActions.get(controller);
@@ -307,7 +476,12 @@ public final class ApiManager
         }
         return (actions.contains(action) || actions.contains("*"));
     }
-    
+
+    /**
+     * 
+     *
+     * @return fluent interface
+     */
     public ApiManager disableController(String controller)
     {
         Collection<String> actions = this.disabledActions.get(controller);
@@ -325,6 +499,11 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * 
+     *
+     * @return fluent interface
+     */
     public ApiManager disableAction(String controller, String action)
     {
         Collection<String> actions = this.disabledActions.get(controller);
@@ -344,12 +523,22 @@ public final class ApiManager
         return this;
     }
 
+    /**
+     * 
+     *
+     * @return fluent interface
+     */
     public ApiManager removeDisabledActions(String controller)
     {
         this.disabledActions.remove(controller);
         return this;
     }
 
+    /**
+     * 
+     *
+     * @return fluent interface
+     */
     public ApiManager removeDisabledAction(String controller, String action)
     {
         Collection<String> actions = this.disabledActions.get(controller);
