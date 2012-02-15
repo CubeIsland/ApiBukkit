@@ -1,5 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class ApiConfiguration
     public final int port;
     public final String authKey;
     public final int maxContentLength;
-    public final Map<String, List<String>> disabledActions;
+    public final Map<String, Collection<String>> disabledActions;
     public final boolean blacklistEnabled;
     public final List<String> blacklist;
     public final boolean whitelistEnabled;
@@ -44,7 +45,7 @@ public class ApiConfiguration
         this.blacklist = (List<String>)config.getList("Blacklist.IPs");
         
         Map<String, Object> sectionValues = config.getConfigurationSection("DisabledActions").getValues(true);
-        this.disabledActions = new HashMap<String, List<String>>();
+        this.disabledActions = new HashMap<String, Collection<String>>();
         for (Map.Entry<String, Object> entry : sectionValues.entrySet())
         {
             if (entry.getValue() instanceof List)

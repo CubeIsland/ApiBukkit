@@ -182,6 +182,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                         {
                             if (!apiRequest.REQUEST.containsKey(param))
                             {
+                                ApiBukkit.error("Request had to few arguments!");
                                 return this.toResponse(ApiError.MISSING_PARAMETERS);
                             }
                         }

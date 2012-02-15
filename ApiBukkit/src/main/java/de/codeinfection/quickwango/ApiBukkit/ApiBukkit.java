@@ -10,7 +10,6 @@ import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -74,11 +73,18 @@ public class ApiBukkit extends JavaPlugin
 
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
 
+        this.pm.registerEvents(new PluginListener(), this);
+
         ApiManager.getInstance()
             .registerController(new ApibukkitController(this))
             .registerSerializer(new JsonSerializer())
             .registerSerializer(new XmlSerializer())
-            .registerSerializer(new RawSerializer());
+            .registerSerializer(new RawSerializer())
+            .setWhitelist(this.config.whitelist)
+            .setWhitelistEnabled(this.config.whitelistEnabled)
+            .setBlacklist(this.config.blacklist)
+            .setBlacklistEnabled(this.config.blacklistEnabled)
+            .setDisabledActions(this.config.disabledActions);
         
         try
         {
