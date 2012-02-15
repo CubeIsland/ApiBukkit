@@ -33,6 +33,8 @@ public final class ApiAction
         this.authNeeded = authNeeded;
         this.parameters = parameters;
         this.seriaizer = serializer;
+
+        this.method.setAccessable(true);
     }
 
     /**
@@ -56,13 +58,20 @@ public final class ApiAction
     }
 
     /**
+     * Returns an array of the required parameters
      *
+     * @return the required parameters
      */
     public String[] getParameters()
     {
         return this.parameters;
     }
 
+    /**
+     * Returns the name serializer this method prevers
+     *
+     * @return the name of the serializer
+     */
     public String getSerializer()
     {
         return this.seriaizer;
