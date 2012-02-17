@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * this class wrapps the data which will be send to the client
  *
- * @author CodeInfection
+ * @author Phillip Schichtel
+ * @since 1.0.0
  */
 public final class ApiResponse
 {
@@ -13,12 +15,24 @@ public final class ApiResponse
     private ApiResponseSerializer serializer;
     private Object content;
 
-    public ApiResponse(ApiResponseSerializer format)
+    /**
+     * Initlaizes the the response with a default serializer
+     * 
+     * @param serializer the serializer instance
+     */
+    public ApiResponse(ApiResponseSerializer serializer)
     {
         this.headers = new HashMap<String, String>();
         this.content = null;
+        this.serializer = serializer;
     }
 
+    /**
+     * Returns an header
+     * 
+     * @param name the name of the header
+     * @return the value of the header
+     */
     public String getHeader(String name)
     {
         if (name != null)
@@ -28,6 +42,13 @@ public final class ApiResponse
         return null;
     }
 
+    /**
+     * Sets an header
+     * 
+     * @param name the name of the param
+     * @param value the value of the header
+     * @return fluent interface
+     */
     public ApiResponse setHeader(String name, String value)
     {
         if (name == null)
@@ -45,17 +66,33 @@ public final class ApiResponse
         return this;
     }
 
+    /**
+     * Returns a copy of the header map
+     * 
+     * @return the header map
+     */
     public Map<String, String> getHeaders()
     {
         return new HashMap<String, String>(this.headers);
     }
 
+    /**
+     * Clears the headers
+     * 
+     * @return fluent interface
+     */
     public ApiResponse clearHeaders()
     {
         this.headers.clear();
         return this;
     }
 
+    /**
+     * Sets the whole header map
+     * 
+     * @param headers the header map
+     * @return fluent interface
+     */
     public ApiResponse setHeaders(Map<String, String> headers)
     {
         if (headers != null)
@@ -68,11 +105,22 @@ public final class ApiResponse
         return this;
     }
 
+    /**
+     * Returns the serialier
+     * 
+     * @return the serializer
+     */
     public ApiResponseSerializer getSerializer()
     {
         return this.serializer;
     }
 
+    /**
+     * Sets the serializer
+     * 
+     * @param serializer the serialzer instance
+     * €return fluent interface
+     */
     public ApiResponse setSerializer(ApiResponseSerializer serializer)
     {
         if (serializer == null)
@@ -83,11 +131,22 @@ public final class ApiResponse
         return this;
     }
 
+    /**
+     * Returns the content of the response
+     * 
+     * @return the response object
+     */
     public Object getContent()
     {
         return this.content;
     }
 
+    /**
+     * Sets the response content#
+     * 
+     * @param content an object which will per serialized
+     * @return fluent interface
+     */
     public ApiResponse setContent(Object content)
     {
         this.content = content;
