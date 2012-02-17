@@ -37,6 +37,8 @@ public enum ApiError
     
     /**
      * Returns the error code of the ApiError instance
+     * 
+     * @return the code
      */
     public int getCode()
     {
@@ -45,6 +47,8 @@ public enum ApiError
 
     /**
      * Returns the HttpResponseStatus of the ApiError instance
+     * 
+     * @return the response status
      */
     public HttpResponseStatus getRepsonseStatus()
     {
