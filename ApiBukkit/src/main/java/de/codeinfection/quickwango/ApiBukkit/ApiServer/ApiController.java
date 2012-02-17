@@ -8,8 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.plugin.Plugin;
 
 /**
+ * The ApiController is the base class for all controllers
+ * The extending class must at least call the super contructor with a Plugin instance.
+ * To be able to register the controller, the class also needs to be annotated with the @Controller annotation
  *
- * @author CodeInfection
+ * @author Phillip Schichtel
+ * @since 1.0.0
  */
 public abstract class ApiController
 {
