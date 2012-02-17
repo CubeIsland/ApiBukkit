@@ -62,6 +62,7 @@ public final class ApiManager
     /**
      * Checks whether there is a controller with the given name
      *
+     * @param controller the name of the controller
      * return true if it exists
      */
     public boolean isControllerRegistered(String controller)
@@ -76,6 +77,7 @@ public final class ApiManager
     /**
      * checks whether the given controller is registered
      *
+     * @param controller the controller instance
      * @return true if it is registered
      */
     public boolean isControllerRegistered(ApiController controller)
@@ -90,6 +92,7 @@ public final class ApiManager
     /**
      * Registeres a controller
      *
+     * @param controller the controller instance
      * @return fluent interface
      */
     public ApiManager registerController(ApiController controller)
@@ -106,6 +109,7 @@ public final class ApiManager
     /**
      * Unregisteres a controller by name
      *
+     * @param controller the name of the controller
      * @return fluent interface
      */
     public ApiManager unregisterController(String controller)
@@ -117,6 +121,7 @@ public final class ApiManager
     /**
      * Unregisteres a controller
      *
+     * @param controller the controller instance
      * @return fluent interface
      */
     public ApiManager unregisterController(ApiController controller)
@@ -131,6 +136,7 @@ public final class ApiManager
     /**
      * Unregisteres all controllers of the given plugin
      *
+     * @param plugin the plugin instance that registeres the controllers
      * @return fluent interface
      */
     public ApiManager unregisterControllers(Plugin plugin)
@@ -148,6 +154,7 @@ public final class ApiManager
     /**
      * Gets a controller by name
      *
+     * @param name the name of the controller
      * @return the registered controller or null if it does not exist
      */
     public ApiController getController(String name)
@@ -162,6 +169,7 @@ public final class ApiManager
     /**
      * Gets all controllers of a plugin
      * 
+     * @param plugin the instance of the plugin which registered the controllers
      * @return a collection of all the controllers
      */
     public Collection<ApiController> getControllers(Plugin plugin)
@@ -211,6 +219,7 @@ public final class ApiManager
     /**
      * Checks whether there is a serializer with the given name
      *
+     * @param name the name of the serializer
      * @return true if there is one
      */
     public boolean isSerializerRegistered(String name)
@@ -225,6 +234,7 @@ public final class ApiManager
     /**
      * Registeres a serializer
      *
+     * @param serializer the instance of the serializer
      * @return fluent interface
      */
     public ApiManager registerSerializer(ApiResponseSerializer serializer)
@@ -241,6 +251,8 @@ public final class ApiManager
     /**
      * Registeres a serializer with the given name
      *
+     * @param name the name of the serializer
+     * @param serializer the instance of the serializer
      * @return fluent interface
      */
     public ApiManager registerSerializer(String name, ApiResponseSerializer serializer)
@@ -255,6 +267,7 @@ public final class ApiManager
     /**
      * Unregisteres a serializer by name
      *
+     * @param name the name of the serializer
      * @return fluent interface
      */
     public ApiManager unregisterSerializer(String name)
@@ -280,6 +293,7 @@ public final class ApiManager
     /**
      * Gets a serializer by name
      *
+     * @param name the name of the serializer
      * @return the serializer or null if it does not exist
      */
     public ApiResponseSerializer getSerializer(String name)
@@ -300,6 +314,7 @@ public final class ApiManager
     /**
      * Sets the default serializer
      *
+     * @return serializer the instance if the serializer
      * @return fluent interface
      */
     public ApiManager setDefaultSerializer(ApiResponseSerializer serializer)
@@ -325,6 +340,7 @@ public final class ApiManager
     /**
      * Sets the enabled state of the whitelisting
      *
+     * @param state true to enable, false to disable
      * @return fluent interface
      */
     public ApiManager setWhitelistEnabled(boolean state)
@@ -336,9 +352,10 @@ public final class ApiManager
     /**
      * Sets the whitelist
      *
+     * @param whitelist the whitelist as a string collection
      * @return fluent interface
      */
-    public ApiManager setWhitelist(Collection whitelist)
+    public ApiManager setWhitelist(Collection<String> whitelist)
     {
         this.whitelist.clear();
         this.whitelist.addAll(whitelist);
@@ -348,6 +365,7 @@ public final class ApiManager
     /**
      * Checks whether an InetSocketAddress is whitelisted
      *
+     * @param ip the IP
      * @return true if it is
      */
     public boolean isWhitelisted(InetSocketAddress ip)
@@ -358,6 +376,7 @@ public final class ApiManager
     /**
      * Checks whether an InetAddress is whitelisted
      *
+     * @param ip the IP
      * @return true if it is
      */
     public boolean isWhitelisted(InetAddress ip)
@@ -368,6 +387,7 @@ public final class ApiManager
     /**
      * Checks whether an string representation of an IP is whitelisted
      *
+     * @param ip the IP
      * @return true if it is
      */
     public boolean isWhitelisted(String ip)
@@ -385,6 +405,7 @@ public final class ApiManager
     /**
      * Sets the enabled state of the blacklisting
      *
+     * @param state true to enable, false to disable
      * @return fluent interface
      */
     public ApiManager setBlacklistEnabled(boolean state)
@@ -406,9 +427,10 @@ public final class ApiManager
     /**
      * Sets the blacklist
      *
+     * @param blacklist the blacklist as a string collection
      * @return fluent interface
      */
-    public ApiManager setBlacklist(Collection blacklist)
+    public ApiManager setBlacklist(Collection<String> blacklist)
     {
         this.blacklist.clear();
         this.blacklist.addAll(blacklist);
@@ -418,6 +440,7 @@ public final class ApiManager
     /**
      * Checks whether an InetSocketAddress is blacklisted
      *
+     * @param ip the IP
      * @return true if it is
      */
     public boolean isBlacklisted(InetSocketAddress ip)
@@ -428,6 +451,7 @@ public final class ApiManager
     /**
      * Checks whether an InetAddress is blacklisted
      *
+     * @param ip the IP
      * @return true if it is
      */
     public boolean isBlacklisted(InetAddress ip)
@@ -438,6 +462,7 @@ public final class ApiManager
     /**
      * Checks whether a string representation of an IP is blacklisted
      *
+     * @param ip the IP
      * @return true if it is
      */
     public boolean isBlacklisted(String ip)
@@ -453,8 +478,9 @@ public final class ApiManager
     }
 
     /**
-     * 
+     * Sets the disabled actions
      *
+     * @param disabledActions the disabled actions as a controller-actions map
      * @return fluent interface
      */
     public ApiManager setDisabledActions(Map<String, Collection<String>> disabledActions)
@@ -465,7 +491,11 @@ public final class ApiManager
     }
 
     /**
+     * Checks whether the given action of the given controller is disabled
      * 
+     * @param controller the name of the controller
+     * @param action the name of the action
+     * @return true if it is
      */
     public boolean isActionDisabled(String controller, String action)
     {
@@ -478,8 +508,9 @@ public final class ApiManager
     }
 
     /**
-     * 
+     * Disables a controller by setting the wiildcard action "*"
      *
+     * @param controller the name of the controller
      * @return fluent interface
      */
     public ApiManager disableController(String controller)
@@ -500,8 +531,10 @@ public final class ApiManager
     }
 
     /**
-     * 
+     * Disables the given action of the given controller
      *
+     * @param controller the controller name
+     * @param action the action name
      * @return fluent interface
      */
     public ApiManager disableAction(String controller, String action)
@@ -524,8 +557,9 @@ public final class ApiManager
     }
 
     /**
-     * 
+     * Removes all disabled actions of a controller
      *
+     * @param controller the controller name
      * @return fluent interface
      */
     public ApiManager removeDisabledActions(String controller)
@@ -535,8 +569,10 @@ public final class ApiManager
     }
 
     /**
-     * 
+     * Removes the given disabled action of the given controller
      *
+     * @param controller the controller name
+     * @param action the action name
      * @return fluent interface
      */
     public ApiManager removeDisabledAction(String controller, String action)
