@@ -40,6 +40,8 @@ public class ApiRequestException extends RuntimeException
     
     /**
      * Returns the error code
+     * 
+     *  @return the error code
      */
     public int getErrCode()
     {
