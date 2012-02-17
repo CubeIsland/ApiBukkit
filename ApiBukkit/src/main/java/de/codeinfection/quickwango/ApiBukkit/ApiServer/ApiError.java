@@ -4,8 +4,11 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
 
 /**
+ * This enum contains the different API errors which get return by the server if something goes wrong
+ * while processing the request
  *
- * @author CodeInfection
+ * @author Phillip Schichtel
+ * @since 1.0.0
  */
 public enum ApiError
 {
@@ -23,17 +26,26 @@ public enum ApiError
     private final int errorCode;
     private final HttpResponseStatus responseStatus;
     
+    /**
+     * initializes the ApiError with an error code and an HttpResponseStatus
+     */
     private ApiError(int errorCode, HttpResponseStatus responseStatus)
     {
         this.errorCode = errorCode;
         this.responseStatus = responseStatus;
     }
     
+    /**
+     * Returns the error code of the ApiError instance
+     */
     public int getCode()
     {
         return this.errorCode;
     }
 
+    /**
+     * Returns the HttpResponseStatus of the ApiError instance
+     */
     public HttpResponseStatus getRepsonseStatus()
     {
         return this.responseStatus;
