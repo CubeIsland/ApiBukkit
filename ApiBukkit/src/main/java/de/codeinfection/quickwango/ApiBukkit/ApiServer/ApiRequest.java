@@ -5,8 +5,12 @@ import java.util.Map;
 import org.bukkit.Server;
 
 /**
- *
- * @author CodeInfection
+ * This class contains all the information of the API request.
+ * It is only used to pass the information the to executing action, nothing more.
+ * 
+ * @author Phillip Schichtel
+ * @since 1.0.0
+ * @todo rename vars
  */
 public final class ApiRequest
 {
@@ -17,6 +21,9 @@ public final class ApiRequest
     public final Map<String, String> headers;
     public final Server server;
 
+    /**
+     * Initializes the ApiRequest with an Server instance
+     */
     public ApiRequest(Server server)
     {
         this.GET = new Parameters();
