@@ -1,8 +1,10 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 /**
+ * This interface must be implemented by response serializers
  *
- * @author CodeInfection
+ * @author Philllip Schichtel
+ * @since 1.0.0
  */
 public interface ApiResponseSerializer
 {
