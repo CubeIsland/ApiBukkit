@@ -6,6 +6,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 import org.jboss.netty.bootstrap.ServerBootstrap;
+import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 /**
@@ -14,7 +16,7 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
  * @author Phillip Schichtel
  * @since 1.0.0
  */
-public final class ApiServer implements Runnable
+public final class ApiServer
 {
     private static ApiServer instance = null;
 
@@ -23,9 +25,9 @@ public final class ApiServer implements Runnable
     private String authenticationKey;
     private InetAddress ip;
 
+    private Channel channel;
+    private ChannelFactory channelFactory;
     private ServerBootstrap bootstrap;
-    private Thread executionThread;
-    private boolean started;
 
     private ApiServer()
     {
@@ -41,8 +43,8 @@ public final class ApiServer implements Runnable
         }
 
         this.bootstrap = null;
-        this.executionThread = null;
-        this.started = false;
+        this.channel = null;
+        this.channelFactory = null;
     }
 
     /**
@@ -66,14 +68,7 @@ public final class ApiServer implements Runnable
      */
     public boolean isRunning()
     {
-        if (this.started)
-        {
-            if (this.executionThread != null)
-            {
-                return this.executionThread.isAlive();
-            }
-        }
-        return false;
+        return (this.channel != null);
     }
 
     /**
@@ -176,9 +171,13 @@ public final class ApiServer implements Runnable
     {
         if (!this.isRunning())
         {
-            this.executionThread = new Thread(this);
-            this.executionThread.start();
-            this.started = true;
+            this.channelFactory = new NioServerSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
+
+
+            this.bootstrap = new ServerBootstrap(this.channelFactory);
+            this.bootstrap.setPipelineFactory(new ApiServerPipelineFactory());
+
+            this.channel = bootstrap.bind(new InetSocketAddress(this.ip, this.port));
         }
         return this;
     }
@@ -192,23 +191,21 @@ public final class ApiServer implements Runnable
     {
         if (this.isRunning())
         {
+            try
+            {
+                this.channel.close().await(5000);
+            }
+            catch (InterruptedException e)
+            {
+                error("Shutting down the server was interrupted!");
+                error("Cleaning up as much as possible...");
+            }
+            this.channel = null;
+            this.channelFactory.releaseExternalResources();
+            this.channelFactory = null;
             this.bootstrap.releaseExternalResources();
-            this.executionThread.interrupt();
             this.bootstrap = null;
-            this.executionThread = null;
-            this.started = false;
         }
         return this;
-    }
-
-    /**
-     * This is invoked from the execution thread of the server
-     */
-    public void run()
-    {
-        this.bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
-        bootstrap.setPipelineFactory(new ApiServerPipelineFactory());
-
-        bootstrap.bind(new InetSocketAddress(this.ip, port));
     }
 }
