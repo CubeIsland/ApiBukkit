@@ -105,7 +105,8 @@ public class BasicApi extends JavaPlugin
             .registerController(new BanController(this))
             .registerController(new WhitelistController(this))
             .registerController(new OperatorController(this))
-            .registerController(new ConfigurationController(this, this.config.configFiles));
+            .registerController(new ConfigurationController(this, this.config.configFiles))
+            .registerController(new PermissionController(this));
         
         log("Version " + this.pdf.getVersion() + " enabled!");
     }
