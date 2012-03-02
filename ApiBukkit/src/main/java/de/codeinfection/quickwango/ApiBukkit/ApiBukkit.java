@@ -34,6 +34,7 @@ public class ApiBukkit extends JavaPlugin
         instance = this;
     }
 
+    @Override
     public void onEnable()
     {
         logger = this.getLogger();
@@ -46,6 +47,7 @@ public class ApiBukkit extends JavaPlugin
             this.dataFolder.mkdirs();
         }
 
+        this.reloadConfig();
         Configuration configFile = this.getConfig();
         configFile.options().copyDefaults(true);
 
@@ -113,6 +115,7 @@ public class ApiBukkit extends JavaPlugin
         log(String.format("Version %s is now enabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
     }
 
+    @Override
     public void onDisable()
     {
         this.onDisable(true);

@@ -1,48 +1,62 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
 import java.net.InetSocketAddress;
-import java.util.*;
-import org.bukkit.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import org.bukkit.Achievement;
+import org.bukkit.Effect;
+import org.bukkit.EntityEffect;
+import org.bukkit.GameMode;
+import org.bukkit.Instrument;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.Server;
+import org.bukkit.Statistic;
+import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.InventoryView.Property;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
 
 /**
  *
  * @author CodeInfection
  */
-public abstract class ApiPlayer implements Player
+public class ApiPlayer extends ApiCommandSender implements Player
 {
-    private final String name;
     private String displayName;
     private String listName;
-    private final Server server;
 
     public ApiPlayer(final String name, final Server server)
     {
-        this.name = name;
+        super(name, server);
         this.displayName = name;
         this.listName = name;
-        this.server = server;
-    }
-
-    public String getName()
-    {
-        return this.name;
-    }
-
-    public Server getServer()
-    {
-        return this.server;
     }
 
     public String getDisplayName()
@@ -74,7 +88,7 @@ public abstract class ApiPlayer implements Player
     {
         Map<String, Object> result = new LinkedHashMap<String, Object>();
 
-        result.put("name", this.name);
+        result.put("name", this.getName());
 
         return result;
     }
@@ -82,10 +96,8 @@ public abstract class ApiPlayer implements Player
     @Override
     public String toString()
     {
-        return "ApiPlayer{" + "name=" + this.name + '}';
+        return "ApiPlayer{" + "name=" + this.getName() + '}';
     }
-
-    /**************************************************************************/
 
     public void setCompassTarget(Location lctn) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -159,6 +171,10 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public <T> void playEffect(Location lctn, Effect effect, T t) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public void sendBlockChange(Location lctn, Material mtrl, byte b) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -175,7 +191,6 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Deprecated
     public void updateInventory() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -220,13 +235,15 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Deprecated
-    public int getExperience() {
+    public void giveExp(int i) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Deprecated
-    public void setExperience(int i) {
+    public float getExp() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setExp(float f) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -274,7 +291,59 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public void setBedSpawnLocation(Location lctn) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean getAllowFlight() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setAllowFlight(boolean bln) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void hidePlayer(Player player) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void showPlayer(Player player) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean canSee(Player player) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public PlayerInventory getInventory() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean setWindowProperty(Property prprt, int i) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public InventoryView getOpenInventory() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public InventoryView openInventory(Inventory invntr) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public InventoryView openWorkbench(Location lctn, boolean bln) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public InventoryView openEnchanting(Location lctn, boolean bln) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void openInventory(InventoryView iv) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void closeInventory() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -283,6 +352,14 @@ public abstract class ApiPlayer implements Player
     }
 
     public void setItemInHand(ItemStack is) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public ItemStack getItemOnCursor() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setItemOnCursor(ItemStack is) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -350,15 +427,7 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isInsideVehicle() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean leaveVehicle() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Vehicle getVehicle() {
+    public <T extends Projectile> T launchProjectile(Class<? extends T> type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -410,6 +479,34 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public Player getKiller() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean addPotionEffect(PotionEffect pe) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean addPotionEffect(PotionEffect pe, boolean bln) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean addPotionEffects(Collection<PotionEffect> clctn) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean hasPotionEffect(PotionEffectType pet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removePotionEffect(PotionEffectType pet) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Collection<PotionEffect> getActivePotionEffects() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public Location getLocation() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -430,7 +527,15 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public boolean teleport(Location lctn, TeleportCause tc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public boolean teleport(Entity entity) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean teleport(Entity entity, TeleportCause tc) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -506,6 +611,58 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public void playEffect(EntityEffect ee) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public EntityType getType() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isInsideVehicle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean leaveVehicle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Entity getVehicle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setMetadata(String string, MetadataValue mv) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<MetadataValue> getMetadata(String string) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean hasMetadata(String string) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeMetadata(String string, Plugin plugin) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isConversing() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void acceptConversationInput(String string) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean beginConversation(Conversation c) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void abandonConversation(Conversation c) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public boolean isOnline() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -526,86 +683,6 @@ public abstract class ApiPlayer implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isPermissionSet(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean isPermissionSet(Permission prmsn) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean hasPermission(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean hasPermission(Permission prmsn) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public PermissionAttachment addAttachment(Plugin plugin, String string, boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public PermissionAttachment addAttachment(Plugin plugin) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public PermissionAttachment addAttachment(Plugin plugin, String string, boolean bln, int i) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public PermissionAttachment addAttachment(Plugin plugin, int i) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void removeAttachment(PermissionAttachment pa) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void recalculatePermissions() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean isOp() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setOp(boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void sendMessage(String string) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void giveExp(int amount) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public float getExp() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setExp(float exp) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Player getKiller() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean teleport(Location location, TeleportCause cause) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean teleport(Entity destination, TeleportCause cause) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public long getFirstPlayed() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -617,5 +694,15 @@ public abstract class ApiPlayer implements Player
     public boolean hasPlayedBefore() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public void sendPluginMessage(Plugin plugin, String string, byte[] bytes) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Set<String> getListeningPluginChannels() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**************************************************************************/
 
 }

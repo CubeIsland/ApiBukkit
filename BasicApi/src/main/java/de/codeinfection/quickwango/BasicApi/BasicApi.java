@@ -61,6 +61,7 @@ public class BasicApi extends JavaPlugin
         }
     }
 
+    @Override
     public void onEnable()
     {
         this.server = this.getServer();
@@ -87,6 +88,7 @@ public class BasicApi extends JavaPlugin
 
         debugMode = (this.api.getApiConfig().logLevel.level >= ApiLogLevel.DEBUG.level);
 
+        this.reloadConfig();
         Configuration configFile = this.getConfig();
         configFile.options().copyDefaults(true);
 
@@ -108,6 +110,7 @@ public class BasicApi extends JavaPlugin
         log("Version " + this.pdf.getVersion() + " enabled!");
     }
 
+    @Override
     public void onDisable()
     {
         log("Version " + this.pdf.getVersion() + " disabled!");

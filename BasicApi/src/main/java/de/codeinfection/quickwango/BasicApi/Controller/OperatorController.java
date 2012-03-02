@@ -75,7 +75,7 @@ public class OperatorController extends ApiController
         }
     }
 
-    @Action
+    @Action(serializer = "json")
     public Object get(ApiRequest request, ApiResponse response)
     {
         List<String> operators = new ArrayList<String>();

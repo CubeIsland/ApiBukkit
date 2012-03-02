@@ -412,7 +412,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters = {"player"})
+    @Action(parameters = {"player"}, serializer = "json")
     public void inventory(ApiRequest request, ApiResponse response)
     {
         String playerParam = request.REQUEST.getString("player");

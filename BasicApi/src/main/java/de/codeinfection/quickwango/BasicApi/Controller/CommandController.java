@@ -16,7 +16,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-@Controller(name = "command")
+@Controller(name = "command", serializer = "json")
 public class CommandController extends ApiController
 {
     private ApiCommandSender commandSender;

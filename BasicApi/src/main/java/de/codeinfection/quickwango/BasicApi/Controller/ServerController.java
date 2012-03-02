@@ -39,13 +39,13 @@ public class ServerController extends ApiController
         }
     }
     
-    @Action(authenticate = false)
+    @Action(serializer = "json", authenticate = false)
     public Object maxplayers(ApiRequest request, ApiResponse response)
     {
         return request.server.getMaxPlayers();
     }
-    
-    @Action
+
+    @Action(serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
         Runtime runtime = Runtime.getRuntime();
@@ -87,13 +87,13 @@ public class ServerController extends ApiController
         response.setContent(data);
     }
 
-    @Action(authenticate = false)
+    @Action(serializer = "json", authenticate = false)
     public void online(ApiRequest request, ApiResponse response)
     {
         response.setContent(request.server.getOnlinePlayers().length);
     }
 
-    @Action(authenticate = false)
+    @Action(serializer = "json", authenticate = false)
     public void version(ApiRequest request, ApiResponse response)
     {
         response.setContent(request.server.getVersion());
@@ -145,8 +145,8 @@ public class ServerController extends ApiController
         request.server.reload();
         return null;
     }
-    
-    @Action
+
+    @Action(serializer = "json")
     public void console(ApiRequest request, ApiResponse response)
     {
         try
@@ -188,7 +188,7 @@ public class ServerController extends ApiController
         }
     }
 
-    @Action
+    @Action(serializer = "json")
     public void offlineplayers(ApiRequest request, ApiResponse response)
     {
         OfflinePlayer[] players = request.server.getOfflinePlayers();

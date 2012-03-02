@@ -3,6 +3,7 @@ package de.codeinfection.quickwango.ApiBukkit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
@@ -16,15 +17,23 @@ import org.bukkit.plugin.Plugin;
  */
 public class ApiCommandSender implements CommandSender
 {
-    protected boolean active;
-    protected final Server server;
-    protected final List<String> messages;
+    private final String name;
+    private final Server server;
+    private final List<String> messages;
+
+    private boolean active;
 
     public ApiCommandSender(final Server server)
     {
-        this.active = false;
+        this("ApiCommandSender", server);
+    }
+
+    public ApiCommandSender(final String name, final Server server)
+    {
+        this.name = name;
         this.server = server;
         this.messages = new ArrayList<String>();
+        this.active = false;
     }
 
     public void toggleActive()
@@ -42,7 +51,7 @@ public class ApiCommandSender implements CommandSender
 
     public String getName()
     {
-        return "ApiCommandSender";
+        return this.name;
     }
 
     public void sendMessage(String message)
@@ -50,7 +59,15 @@ public class ApiCommandSender implements CommandSender
         ApiBukkit.log(message);
         if (active)
         {
-            this.messages.add(message.replaceAll("\u00A7([a-f0-9])", "&$1"));
+            this.messages.add(message.replaceAll("(?i)" + ChatColor.COLOR_CHAR + "([a-fk0-9])", "&$1"));
+        }
+    }
+
+    public void sendMessage(String[] strings)
+    {
+        for (String string : strings)
+        {
+            this.sendMessage(string);
         }
     }
 

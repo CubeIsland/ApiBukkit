@@ -383,4 +383,14 @@ public class WorldController extends ApiController
             throw new ApiRequestException("Given world not found!", 1);
         }
     }
+
+    @Action
+    public void saveall(ApiRequest request, ApiResponse response)
+    {
+        for (World world : request.server.getWorlds())
+        {
+            world.save();
+        }
+    }
 }
+

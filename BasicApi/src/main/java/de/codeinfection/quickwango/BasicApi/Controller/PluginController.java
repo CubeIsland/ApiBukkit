@@ -24,7 +24,7 @@ public class PluginController extends ApiController
         super(plugin);
     }
 
-    @Action
+    @Action(serializer = "json")
     public void list(ApiRequest request, ApiResponse response)
     {
         ArrayList<String> data = new ArrayList<String>();
@@ -63,7 +63,7 @@ public class PluginController extends ApiController
         }
     }
 
-    @Action(parameters = {"plugin"})
+    @Action(parameters = {"plugin"}, serializer = "json")
     public void available(ApiRequest request, ApiResponse response)
     {
         response.setContent(request.server.getPluginManager().getPlugin(request.REQUEST.getString("plugin")) != null);

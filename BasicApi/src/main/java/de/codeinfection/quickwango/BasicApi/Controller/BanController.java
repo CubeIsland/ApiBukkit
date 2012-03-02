@@ -86,8 +86,8 @@ public class BanController extends ApiController
             throw new ApiRequestException("The given player is not banned!", 3);
         }
     }
-    
-    @Action
+
+    @Action(serializer = "json")
     public Object get(ApiRequest request, ApiResponse response)
     {
         Map<String, Object> data = new HashMap<String, Object>();
