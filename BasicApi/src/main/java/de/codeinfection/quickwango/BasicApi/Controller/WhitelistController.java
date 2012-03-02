@@ -25,7 +25,7 @@ public class WhitelistController extends ApiController
     @Action(parameters = {"player"})
     public void add(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         OfflinePlayer player = request.server.getOfflinePlayer(playerName);
         if (!player.isWhitelisted())
         {
@@ -40,7 +40,7 @@ public class WhitelistController extends ApiController
     @Action(parameters = {"player"})
     public void remove(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         OfflinePlayer player = request.server.getOfflinePlayer(playerName);
         if (player.isWhitelisted())
         {
@@ -55,7 +55,7 @@ public class WhitelistController extends ApiController
     @Action(parameters = {"player"})
     public void is(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         
         response.setContent(request.server.getOfflinePlayer(playerName).isWhitelisted());
     }

@@ -35,7 +35,7 @@ public class WorldController extends ApiController
     @Action(parameters = {"world"}, serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world != null)
         {
@@ -81,11 +81,11 @@ public class WorldController extends ApiController
     @Action(parameters = {"world", "environment"})
     public void create(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world == null)
         {
-            String environmentParam = request.REQUEST.getString("environment");
+            String environmentParam = request.params.getString("environment");
             Environment env = null;
             try
             {
@@ -100,7 +100,7 @@ public class WorldController extends ApiController
             }
 
             ChunkGenerator generator = null;
-            String generatorParam = request.REQUEST.getString("generator");
+            String generatorParam = request.params.getString("generator");
             if (generatorParam != null)
             {
                 generatorParam = generatorParam.trim();
@@ -123,7 +123,7 @@ public class WorldController extends ApiController
             }
 
             long seed;
-            String seedParam = request.REQUEST.getString("seed");
+            String seedParam = request.params.getString("seed");
             if (seedParam != null)
             {
                 if (seedParam.matches("/^\\d+$/"))
@@ -152,11 +152,11 @@ public class WorldController extends ApiController
     @Action(parameters = {"world", "time"})
     public void time(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world != null)
         {
-            String timeParam = request.REQUEST.getString("time");
+            String timeParam = request.params.getString("time");
             try
             {
                 long time = Long.valueOf(timeParam);
@@ -176,11 +176,11 @@ public class WorldController extends ApiController
     @Action(parameters = {"world"})
     public void pvp(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world != null)
         {
-            String state = request.REQUEST.getString("state");
+            String state = request.params.getString("state");
             if (state != null)
             {
                 if (state.equalsIgnoreCase("1"))
@@ -210,11 +210,11 @@ public class WorldController extends ApiController
     @Action(parameters = {"world", "state"})
     public void storm(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world != null)
         {
-            String state = request.REQUEST.getString("state");
+            String state = request.params.getString("state");
             if (state.equalsIgnoreCase("1"))
             {
                 world.setStorm(true);
@@ -240,12 +240,12 @@ public class WorldController extends ApiController
     @Action(parameters = {"world"})
     public Object spawn(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world != null)
         {
-            String locationParam = request.REQUEST.getString("location");
-            String playerName = request.REQUEST.getString("player");
+            String locationParam = request.params.getString("location");
+            String playerName = request.params.getString("player");
             if (locationParam != null)
             {
                 String[] locationParts = locationParam.split(",");
@@ -308,7 +308,7 @@ public class WorldController extends ApiController
     @Action(parameters = {"world"}, serializer = "json")
     public void players(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world != null)
         {
@@ -328,14 +328,14 @@ public class WorldController extends ApiController
     @Action(parameters = {"world"})
     public Object spawnflags(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world != null)
         {
             boolean monsters = world.getAllowMonsters();
             boolean animals = world.getAllowAnimals();
 
-            String state = request.REQUEST.getString("monsters");
+            String state = request.params.getString("monsters");
             if (state != null)
             {
                 if (state.equals("1"))
@@ -347,7 +347,7 @@ public class WorldController extends ApiController
                     monsters = false;
                 }
             }
-            state = request.REQUEST.getString("animals");
+            state = request.params.getString("animals");
             if (state != null)
             {
                 if (state.equals("1"))
@@ -372,7 +372,7 @@ public class WorldController extends ApiController
     @Action(parameters = {"world"})
     public void save(ApiRequest request, ApiResponse response)
     {
-        String worldName = request.REQUEST.getString("world");
+        String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
         if (world != null)
         {

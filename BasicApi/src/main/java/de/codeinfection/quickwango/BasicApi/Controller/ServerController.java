@@ -134,7 +134,7 @@ public class ServerController extends ApiController
     @Action(parameters = {"message"})
     public void broadcast(ApiRequest request, ApiResponse response)
     {
-        String message = request.REQUEST.getString("message");
+        String message = request.params.getString("message");
         request.server.broadcastMessage(message.replaceAll("&([0-9a-f])", "§$1"));
         BasicApi.log("broadcasted message '" + message + "'");
     }
@@ -152,7 +152,7 @@ public class ServerController extends ApiController
         try
         {
             long lineCount = 100L;
-            String linesParam = request.REQUEST.getString("lines");
+            String linesParam = request.params.getString("lines");
             if (linesParam != null)
             try
             {

@@ -48,7 +48,7 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player"}, serializer = "json")
     public Object info(ApiRequest request, ApiResponse response)
     {
-        final String playerName = request.REQUEST.getString("player");
+        final String playerName = request.params.getString("player");
         final Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
@@ -134,7 +134,7 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player"})
     public void kill(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
@@ -150,12 +150,12 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player"})
     public void burn(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
             int seconds = 5;
-            String duration = request.REQUEST.getString("duration");
+            String duration = request.params.getString("duration");
             if (duration != null)
             {
                 try
@@ -179,12 +179,12 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player"})
     public void teleport(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
             World world;
-            String worldName = request.REQUEST.getString("world");
+            String worldName = request.params.getString("world");
             if (worldName != null)
             {
                 world = request.server.getWorld(worldName);
@@ -200,7 +200,7 @@ public class PlayerController extends ApiController
 
 
             Location targetLocation = null;
-            String targetPlayerName = request.REQUEST.getString("targetplayer");
+            String targetPlayerName = request.params.getString("targetplayer");
             if (targetPlayerName != null)
             {
                 Player targetPlayer = request.server.getPlayerExact(targetPlayerName);
@@ -211,7 +211,7 @@ public class PlayerController extends ApiController
             }
             if (targetLocation == null)
             {
-                String locationParam = request.REQUEST.getString("location");
+                String locationParam = request.params.getString("location");
                 if (locationParam != null)
                 {
                     try
@@ -263,7 +263,7 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player"})
     public void heal(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
@@ -279,11 +279,11 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player", "itemid"})
     public void give(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
-            String itemidParam = request.REQUEST.getString("itemid");
+            String itemidParam = request.params.getString("itemid");
             int item = 0;
             try
             {
@@ -294,7 +294,7 @@ public class PlayerController extends ApiController
                 throw new ApiRequestException("Invalid item ID '" + itemidParam + "' given!", 2);
             }
             short data = 0;
-            String dataParam = request.REQUEST.getString("data");
+            String dataParam = request.params.getString("data");
             if (dataParam != null)
             {
                 try
@@ -308,7 +308,7 @@ public class PlayerController extends ApiController
             }
 
             int amount = 1;
-            String amountParam = request.REQUEST.getString("amount");
+            String amountParam = request.params.getString("amount");
             if (amountParam != null)
             {
                 try
@@ -345,11 +345,11 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player"})
     public void kick(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
-            player.kickPlayer(request.REQUEST.getString("reason"));
+            player.kickPlayer(request.params.getString("reason"));
             BasicApi.log("kicked player " + playerName);
         }
         else
@@ -361,11 +361,11 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player", "message"})
     public void tell(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
-            String message = request.REQUEST.getString("message");
+            String message = request.params.getString("message");
             if (message.length() > 100)
             {
                 message = message.substring(0, 99);
@@ -382,7 +382,7 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player"})
     public void clearinventory(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
@@ -398,11 +398,11 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player", "displayname"})
     public void displayname(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerName);
         if (player != null)
         {
-            String displayname = request.REQUEST.getString("displayname");
+            String displayname = request.params.getString("displayname");
             player.setDisplayName(displayname);
             BasicApi.log("changed the display name of player " + playerName + "to '" + displayname + "' !");
         }
@@ -415,7 +415,7 @@ public class PlayerController extends ApiController
     @Action(parameters = {"player"}, serializer = "json")
     public void inventory(ApiRequest request, ApiResponse response)
     {
-        String playerParam = request.REQUEST.getString("player");
+        String playerParam = request.params.getString("player");
         Player player = request.server.getPlayerExact(playerParam);
         if (player != null)
         {

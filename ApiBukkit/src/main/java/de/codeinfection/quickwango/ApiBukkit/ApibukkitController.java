@@ -32,7 +32,7 @@ public class ApibukkitController extends ApiController
     public void combined(ApiRequest request, ApiResponse response)
     {
         HashMap<String, Object> responses;
-        Parameters routes = request.REQUEST.getParameters("routes");
+        Parameters routes = request.params.getParameters("routes");
         if (routes != null)
         {
             responses = new HashMap<String, Object>();
@@ -66,7 +66,7 @@ public class ApibukkitController extends ApiController
                     Object routeParameters = entry.getValue();
                     if (routeParameters != null && routeParameters instanceof Parameters)
                     {
-                        apiRequest.REQUEST.putAll((Parameters)entry.getValue());
+                        apiRequest.params.putAll((Parameters)entry.getValue());
                     }
                     try
                     {
@@ -107,6 +107,6 @@ public class ApibukkitController extends ApiController
     public void testing(ApiRequest request, ApiResponse response)
     {
         response.setSerializer(ApiManager.getInstance().getSerializer("json"));
-        response.setContent(request.REQUEST);
+        response.setContent(request.params);
     }
 }

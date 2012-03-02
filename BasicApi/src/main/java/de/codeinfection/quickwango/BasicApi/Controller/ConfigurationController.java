@@ -32,9 +32,9 @@ public class ConfigurationController extends ApiController
     @Action(parameters = {"file", "data"})
     public void write(ApiRequest request, ApiResponse response)
     {
-        String fileParam = request.REQUEST.getString("file");
-        String appendParam = request.REQUEST.getString("append");
-        String dataParam = request.REQUEST.getString("data");
+        String fileParam = request.params.getString("file");
+        String appendParam = request.params.getString("append");
+        String dataParam = request.params.getString("data");
         if (availableConfigs.contains(fileParam))
         {
             try
@@ -70,7 +70,7 @@ public class ConfigurationController extends ApiController
     @Action(parameters = {"file"}, serializer = "raw")
     public void read(ApiRequest request, ApiResponse response)
     {
-        String fileParam = request.REQUEST.getString("file");
+        String fileParam = request.params.getString("file");
         if (availableConfigs.contains(fileParam))
         {
             File file = new File(fileParam);
@@ -108,7 +108,7 @@ public class ConfigurationController extends ApiController
     @Action(parameters = {"file"})
     public void remove(ApiRequest request, ApiResponse response)
     {
-        String fileParam = request.REQUEST.getString("file");
+        String fileParam = request.params.getString("file");
         if (availableConfigs.contains(fileParam))
         {
             (new File(fileParam)).delete();
@@ -122,7 +122,7 @@ public class ConfigurationController extends ApiController
     @Action(parameters = {"file"})
     public void exists(ApiRequest request, ApiResponse response)
     {
-        String fileParam = request.REQUEST.getString("file");
+        String fileParam = request.params.getString("file");
         if (availableConfigs.contains(fileParam))
         {
             response.setContent(new File(fileParam).exists());

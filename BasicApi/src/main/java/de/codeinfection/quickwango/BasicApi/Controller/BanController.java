@@ -30,7 +30,7 @@ public class BanController extends ApiController
     @Action(parameters = {"ip"})
     public void addip(ApiRequest request, ApiResponse response)
     {
-        String ip = request.REQUEST.getString("ip");
+        String ip = request.params.getString("ip");
         request.server.banIP(ip);
         BasicApi.log("banned ip " + ip);
     }
@@ -38,7 +38,7 @@ public class BanController extends ApiController
     @Action(parameters = {"player"})
     public void addplayer(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         OfflinePlayer offlinePlayer = request.server.getOfflinePlayer(playerName);
         if (!offlinePlayer.isBanned())
         {
@@ -47,7 +47,7 @@ public class BanController extends ApiController
             Player player = offlinePlayer.getPlayer();
             if (player != null)
             {
-                player.kickPlayer(request.REQUEST.getString("reason", "You got banned from this server!"));
+                player.kickPlayer(request.params.getString("reason", "You got banned from this server!"));
             }
         }
         else
@@ -59,7 +59,7 @@ public class BanController extends ApiController
     @Action(parameters = {"ip"})
     public void removeip(ApiRequest request, ApiResponse response)
     {
-        String IP = request.REQUEST.getString("ip");
+        String IP = request.params.getString("ip");
         if (request.server.getIPBans().contains(IP))
         {
             request.server.unbanIP(IP);
@@ -74,7 +74,7 @@ public class BanController extends ApiController
     @Action(parameters = {"player"})
     public void removeplayer(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         OfflinePlayer player = request.server.getOfflinePlayer(playerName);
         if (player.isBanned())
         {

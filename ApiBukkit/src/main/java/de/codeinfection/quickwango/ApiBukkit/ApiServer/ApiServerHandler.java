@@ -88,12 +88,12 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 headers.put(entry.getKey().toLowerCase(), entry.getValue());
             }
 
-            parseQueryString(queryString, apiRequest.REQUEST);
+            parseQueryString(queryString, apiRequest.params);
 
             ChannelBuffer content = request.getContent();
             if (content.readable())
             {
-                parseQueryString(content.toString(), apiRequest.REQUEST);
+                parseQueryString(content.toString(), apiRequest.params);
             }
 
 
@@ -134,7 +134,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             }
             
             ApiResponseSerializer serializer = null, actionSerializer;
-            String formatParam = apiRequest.REQUEST.getString("format");
+            String formatParam = apiRequest.params.getString("format");
             if (formatParam != null)
             {
                 serializer = manager.getSerializer(formatParam);
@@ -157,11 +157,11 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 {
                     final String AUTHKEY_PARAM_NAME = "authkey";
                     String authKey = null;
-                    if (apiRequest.REQUEST.containsKey(AUTHKEY_PARAM_NAME))
+                    if (apiRequest.params.containsKey(AUTHKEY_PARAM_NAME))
                     {
-                        authKey = apiRequest.REQUEST.getString(AUTHKEY_PARAM_NAME);
+                        authKey = apiRequest.params.getString(AUTHKEY_PARAM_NAME);
                     }
-                    apiRequest.REQUEST.remove(AUTHKEY_PARAM_NAME);
+                    apiRequest.params.remove(AUTHKEY_PARAM_NAME);
 
                     ApiAction action = controller.getAction(actionName);
                     if (manager.isActionDisabled(controllerName, actionName))
@@ -175,7 +175,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 
                         for (String param : action.getParameters())
                         {
-                            if (!apiRequest.REQUEST.containsKey(param))
+                            if (!apiRequest.params.containsKey(param))
                             {
                                 ApiBukkit.error("Request had to few arguments!");
                                 return this.toResponse(ApiError.MISSING_PARAMETERS);

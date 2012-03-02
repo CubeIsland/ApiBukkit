@@ -35,7 +35,7 @@ public class PermissionController extends ApiController
     @Action(parameters = {"node"}, serializer = "json")
     public void getdefault(ApiRequest request, ApiResponse response)
     {
-        Permission permission = request.server.getPluginManager().getPermission(request.REQUEST.getString("node"));
+        Permission permission = request.server.getPluginManager().getPermission(request.params.getString("node"));
         if (permission != null)
         {
             response.setContent(permission.getDefault().toString());
@@ -49,7 +49,7 @@ public class PermissionController extends ApiController
     @Action(parameters = {"player"}, serializer = "json")
     public void getplayerpermissions(ApiRequest request, ApiResponse response)
     {
-        Permissible permissible = request.server.getPlayerExact(request.REQUEST.getString("player"));
+        Permissible permissible = request.server.getPlayerExact(request.params.getString("player"));
         if (permissible != null)
         {
             Set<PermissionAttachmentInfo> permissionInfo = permissible.getEffectivePermissions();
@@ -71,16 +71,16 @@ public class PermissionController extends ApiController
     @Action(parameters = {"player", "permission", "value", "ticks"})
     public void setplayerpermissions(ApiRequest request, ApiResponse response)
     {
-        Permissible permissible = request.server.getPlayerExact(request.REQUEST.getString("player"));
+        Permissible permissible = request.server.getPlayerExact(request.params.getString("player"));
         if (permissible != null)
         {
             try
             {
                 permissible.addAttachment(
                     getPlugin(),
-                    request.REQUEST.getString("permission"),
-                    Boolean.parseBoolean(request.REQUEST.getString("value")),
-                    Math.abs(Integer.parseInt(request.REQUEST.getString("ticks")))
+                    request.params.getString("permission"),
+                    Boolean.parseBoolean(request.params.getString("value")),
+                    Math.abs(Integer.parseInt(request.params.getString("ticks")))
                 );
             }
             catch (NumberFormatException e)

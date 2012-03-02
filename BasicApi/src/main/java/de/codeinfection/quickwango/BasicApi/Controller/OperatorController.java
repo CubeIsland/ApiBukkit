@@ -27,7 +27,7 @@ public class OperatorController extends ApiController
     @Action(parameters = {"player"})
     public void add(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         if (playerName != null)
         {
             OfflinePlayer player = request.server.getOfflinePlayer(playerName);
@@ -49,7 +49,7 @@ public class OperatorController extends ApiController
     @Action(parameters = {"player"})
     public void remove(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         OfflinePlayer player = request.server.getOfflinePlayer(playerName);
         if (player.isOp())
         {
@@ -64,7 +64,7 @@ public class OperatorController extends ApiController
     @Action(parameters = {"player"})
     public void is(ApiRequest request, ApiResponse response)
     {
-        String playerName = request.REQUEST.getString("player");
+        String playerName = request.params.getString("player");
         if (playerName != null)
         {
             response.setContent(request.server.getOfflinePlayer(playerName).isOp());

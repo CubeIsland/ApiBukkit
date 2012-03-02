@@ -39,7 +39,7 @@ public class PluginController extends ApiController
     @Action(parameters = {"plugin"}, serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
-        String pluginName = request.REQUEST.getString("plugin");
+        String pluginName = request.params.getString("plugin");
         Plugin targetPlugin = request.server.getPluginManager().getPlugin(pluginName);
         if (targetPlugin != null)
         {
@@ -66,6 +66,6 @@ public class PluginController extends ApiController
     @Action(parameters = {"plugin"}, serializer = "json")
     public void available(ApiRequest request, ApiResponse response)
     {
-        response.setContent(request.server.getPluginManager().getPlugin(request.REQUEST.getString("plugin")) != null);
+        response.setContent(request.server.getPluginManager().getPlugin(request.params.getString("plugin")) != null);
     }
 }
