@@ -88,16 +88,13 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 headers.put(entry.getKey().toLowerCase(), entry.getValue());
             }
 
-            parseQueryString(queryString, apiRequest.GET);
+            parseQueryString(queryString, apiRequest.REQUEST);
 
             ChannelBuffer content = request.getContent();
             if (content.readable())
             {
-                parseQueryString(content.toString(), apiRequest.POST);
+                parseQueryString(content.toString(), apiRequest.REQUEST);
             }
-
-            apiRequest.REQUEST.putAll(apiRequest.GET);
-            apiRequest.REQUEST.putAll(apiRequest.POST);
 
 
             apiRequest.SERVER.put("REQUEST_PATH", requestUri);
@@ -162,10 +159,8 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                     String authKey = null;
                     if (apiRequest.REQUEST.containsKey(AUTHKEY_PARAM_NAME))
                     {
-                        authKey = apiRequest.GET.getString(AUTHKEY_PARAM_NAME);
+                        authKey = apiRequest.REQUEST.getString(AUTHKEY_PARAM_NAME);
                     }
-                    apiRequest.GET.remove(AUTHKEY_PARAM_NAME);
-                    apiRequest.POST.remove(AUTHKEY_PARAM_NAME);
                     apiRequest.REQUEST.remove(AUTHKEY_PARAM_NAME);
 
                     ApiAction action = controller.getAction(actionName);
