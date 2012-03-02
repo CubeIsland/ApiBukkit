@@ -28,6 +28,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.name}</finalName>
         <resources>
             <resource>
                 <targetPath>.</targetPath>
