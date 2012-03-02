@@ -33,7 +33,7 @@ public class PlayerController extends ApiController
     }
 
     @Action(authenticate = false)
-    public Object list(ApiRequest request, ApiResponse response)
+    public void list(ApiRequest request, ApiResponse response)
     {
         Player[] online = request.server.getOnlinePlayers();
         List<String> players = new ArrayList<String>();
@@ -42,11 +42,11 @@ public class PlayerController extends ApiController
             players.add(player.getName());
         }
 
-        return players;
+        response.setContent(players);
     }
     
     @Action(parameters = {"player"}, serializer = "json")
-    public Object info(ApiRequest request, ApiResponse response)
+    public void info(ApiRequest request, ApiResponse response)
     {
         final String playerName = request.params.getString("player");
         final Player player = request.server.getPlayerExact(playerName);
@@ -123,7 +123,7 @@ public class PlayerController extends ApiController
             orientation.put("cardinalDirection", Utils.getCardinalDirection(playerLoc.getYaw()));
             data.put("orientation", orientation);
 
-            return data;
+            response.setContent(data);
         }
         else
         {

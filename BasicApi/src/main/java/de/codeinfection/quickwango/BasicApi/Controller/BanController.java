@@ -88,7 +88,7 @@ public class BanController extends ApiController
     }
 
     @Action(serializer = "json")
-    public Object get(ApiRequest request, ApiResponse response)
+    public void get(ApiRequest request, ApiResponse response)
     {
         Map<String, Object> data = new HashMap<String, Object>();
         List<String> bannedPlayers = new ArrayList<String>();
@@ -98,6 +98,6 @@ public class BanController extends ApiController
         }
         data.put("player", bannedPlayers);
         data.put("ip", request.server.getIPBans());
-        return data;
+        response.setContent(data);
     }
 }

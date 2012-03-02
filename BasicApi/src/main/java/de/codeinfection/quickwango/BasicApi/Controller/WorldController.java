@@ -326,7 +326,7 @@ public class WorldController extends ApiController
     }
 
     @Action(parameters = {"world"})
-    public Object spawnflags(ApiRequest request, ApiResponse response)
+    public void spawnflags(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
         World world = request.server.getWorld(worldName);
@@ -361,7 +361,6 @@ public class WorldController extends ApiController
             }
 
             world.setSpawnFlags(monsters, animals);
-            return null;
         }
         else
         {
