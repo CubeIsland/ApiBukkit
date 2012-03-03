@@ -191,6 +191,7 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Deprecated
     public void updateInventory() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -415,14 +416,17 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Deprecated
     public Egg throwEgg() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Deprecated
     public Snowball throwSnowball() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Deprecated
     public Arrow shootArrow() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
