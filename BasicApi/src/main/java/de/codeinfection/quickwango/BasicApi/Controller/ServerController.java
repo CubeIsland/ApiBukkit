@@ -192,10 +192,33 @@ public class ServerController extends ApiController
     public void offlineplayers(ApiRequest request, ApiResponse response)
     {
         OfflinePlayer[] players = request.server.getOfflinePlayers();
-        List<String> data = new ArrayList<String>(players.length);
-        for (OfflinePlayer player : players)
+        List<String> data;
+        if (request.params.containsKey("minlastplayed"))
         {
-            data.add(player.getName());
+            try
+            {
+                long minLastPlayed = Long.parseLong(request.params.getString("minlastplayed"));
+                data = new ArrayList<String>();
+                for (OfflinePlayer player : players)
+                {
+                    if (player.getLastPlayed() >= minLastPlayed)
+                    {
+                        data.add(player.getName());
+                    }
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                throw new ApiRequestException("No valid number given for minlastplayed", 1);
+            }
+        }
+        else
+        {
+            data = new ArrayList<String>(players.length);
+            for (OfflinePlayer player : players)
+            {
+                data.add(player.getName());
+            }
         }
         response.setContent(data);
     }
