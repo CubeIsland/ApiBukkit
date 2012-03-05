@@ -185,7 +185,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                         actionSerializer = manager.getSerializer(action.getSerializer());
                         if (actionSerializer != null)
                         {
-                            apiResponse.setSerializer(serializer);
+                            apiResponse.setSerializer(actionSerializer);
                         }
 
                         ApiBukkit.debug("Running action '" + actionName + "'");
@@ -198,7 +198,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                         actionSerializer = manager.getSerializer(controller.getSerializer());
                         if (actionSerializer != null)
                         {
-                            apiResponse.setSerializer(serializer);
+                            apiResponse.setSerializer(actionSerializer);
                         }
 
                         ApiBukkit.debug("Runnung default action");
