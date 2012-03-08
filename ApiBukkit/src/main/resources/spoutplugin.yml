@@ -1,0 +1,7 @@
+name: ApiBukkit
+platform: SERVER
+main: de.codeinfection.quickwango.ApiBukkit.ApiBukkit
+version: ${project.version}
+author: Quick_Wango
+description: Provides an API to mak Web APIs.
+website: http://parallel-universe.de
