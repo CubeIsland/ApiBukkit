@@ -44,15 +44,17 @@ public class JsonSerializer implements ApiResponseSerializer
             int dataSize = data.size();
             int counter = 0;
             buffer.append("{");
+            Object value;
+            String name;
             for (Map.Entry entry : data.entrySet())
             {
                 counter++;
-                String name = "";
+                name = "";
                 if (entry.getKey() != null)
                 {
                     name = entry.getKey().toString();
                 }
-                Object value = entry.getValue();
+                value = entry.getValue();
                 buffer.append("\"").append(name).append("\":");
                 this.serialize(buffer, value);
                 if (counter < dataSize)
@@ -67,9 +69,10 @@ public class JsonSerializer implements ApiResponseSerializer
             Iterable<Object> data = (Iterable<Object>) o;
             Iterator iter = data.iterator();
             buffer.append("[");
+            Object value;
             while (iter.hasNext())
             {
-                Object value = iter.next();
+                value = iter.next();
                 this.serialize(buffer, value);
                 if (iter.hasNext())
                 {

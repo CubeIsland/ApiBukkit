@@ -16,6 +16,7 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
@@ -34,6 +35,13 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 {
     private final static ApiServer server = ApiServer.getInstance();
     private final static ApiManager manager = ApiManager.getInstance();
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext context, ExceptionEvent event)
+    {
+        ApiBukkit.logException(event.getCause());
+        context.getChannel().write(this.toResponse(ApiError.UNKNONW_ERROR)).addListener(ChannelFutureListener.CLOSE);
+    }
 
     @Override
     public void messageReceived(ChannelHandlerContext context, MessageEvent message) throws Exception
@@ -132,23 +140,12 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 ApiBukkit.error("Invalid route requested!");
                 return this.toResponse(ApiError.INVALID_PATH);
             }
-            
-            ApiResponseSerializer serializer = null, actionSerializer;
-            String formatParam = apiRequest.params.getString("format");
-            if (formatParam != null)
-            {
-                serializer = manager.getSerializer(formatParam);
-            }
-            if (serializer == null)
-            {
-                serializer = manager.getDefaultSerializer();
-            }
 
             debug("Controllername: " + controllerName);
             debug("Actionname: " + actionName);
 
             ApiController controller = manager.getController(controllerName);
-            ApiResponse apiResponse = new ApiResponse(serializer);
+            ApiResponse apiResponse = new ApiResponse(manager.getDefaultSerializer());
             if (controller != null)
             {
                 ApiBukkit.debug("Selected controller '" + controller.getClass().getSimpleName() + "'");
@@ -182,12 +179,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                             }
                         }
 
-                        actionSerializer = manager.getSerializer(action.getSerializer());
-                        if (actionSerializer != null)
-                        {
-                            apiResponse.setSerializer(actionSerializer);
-                        }
-
+                        apiResponse.setSerializer(this.getSerializer(apiRequest, action.getSerializer()));
                         ApiBukkit.debug("Running action '" + actionName + "'");
                         action.execute(apiRequest, apiResponse);
                     }
@@ -195,12 +187,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                     {
                         this.authorized(authKey, controller);
 
-                        actionSerializer = manager.getSerializer(controller.getSerializer());
-                        if (actionSerializer != null)
-                        {
-                            apiResponse.setSerializer(actionSerializer);
-                        }
-
+                        apiResponse.setSerializer(this.getSerializer(apiRequest, controller.getSerializer()));
                         ApiBukkit.debug("Runnung default action");
                         controller.defaultAction(actionName, apiRequest, apiResponse);
                     }
@@ -256,6 +243,35 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         {
             throw new UnauthorizedRequestException();
         }
+    }
+
+    /**
+     * This methods determines the response serializer to use
+     *
+     * Order:
+     *  format-parameter
+     *  action serializer
+     *  default serializer
+     *
+     * @param request
+     * @param acion
+     * @param def
+     * @return
+     */
+    private ApiResponseSerializer getSerializer(ApiRequest request, String acionSerializer)
+    {
+        ApiResponseSerializer serializer = manager.getSerializer(request.params.getProperty("format"));
+
+        if (serializer == null)
+        {
+             serializer = manager.getSerializer(acionSerializer);
+        }
+
+        if (serializer == null)
+        {
+            serializer = manager.getDefaultSerializer();
+        }
+        return serializer;
     }
 
     private HttpResponse toResponse(ApiResponse response)

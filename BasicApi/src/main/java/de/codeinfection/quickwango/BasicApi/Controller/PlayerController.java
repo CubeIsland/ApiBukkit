@@ -32,7 +32,7 @@ public class PlayerController extends ApiController
         super(plugin);
     }
 
-    @Action(authenticate = false)
+    @Action(authenticate = false, serializer = "json")
     public void list(ApiRequest request, ApiResponse response)
     {
         Player[] online = request.server.getOnlinePlayers();
