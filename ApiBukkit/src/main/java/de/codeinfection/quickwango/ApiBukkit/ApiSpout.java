@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
 import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit.BukkitConfigration;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout.SpoutConfiguration;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.JsonSerializer;
@@ -12,19 +12,20 @@ import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
-import org.bukkit.Server;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.spout.api.Server;
+import org.spout.api.command.CommandRegistrationsFactory;
+import org.spout.api.command.annotated.AnnotatedCommandRegistrationFactory;
+import org.spout.api.command.annotated.SimpleAnnotatedCommandExecutorFactory;
+import org.spout.api.command.annotated.SimpleInjector;
+import org.spout.api.event.Listener;
+import org.spout.api.plugin.CommonPlugin;
+import org.spout.api.plugin.PluginDescriptionFile;
+import org.spout.api.plugin.PluginManager;
 
-public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
+public class ApiSpout extends CommonPlugin implements ApiPlugin, Listener
 {
     private static Logger logger = null;
-    private static ApiBukkit instance = null;
+    private static ApiSpout instance = null;
 
     private Server server;
     private PluginManager pm;
@@ -34,7 +35,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     private ApiConfiguration apiConfig;
     private static ApiLogLevel logLevel = ApiLogLevel.DEFAULT;
 
-    public ApiBukkit()
+    public ApiSpout()
     {
         instance = this;
     }
@@ -44,15 +45,14 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     {
         logger = this.getLogger();
         this.pdf = this.getDescription();
-        this.server = this.getServer();
+        this.server = (Server)this.getGame();
         this.pm = this.server.getPluginManager();
         this.dataFolder = this.getDataFolder().getAbsoluteFile();
         if (!this.dataFolder.exists())
         {
             this.dataFolder.mkdirs();
         }
-
-        this.config = new BukkitConfigration(new File(dataFolder, "config.yml"), this.getConfig());
+        this.config = new SpoutConfiguration(new org.spout.api.util.config.Configuration(new File(this.dataFolder, "config.yml")));
         this.config.load();
 
         try
@@ -66,23 +66,27 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
         {
             error("#################################");
             error("Failed to generate an auth key!", e);
-            error("Staying in a zombie state...");
+            error("Disabling...");
             error("#################################");
             this.disable();
             return;
         }
+        
+        this.config.save();
 
         this.apiConfig = new ApiConfiguration(this.config);
 
         logLevel = this.apiConfig.logLevel;
 
-        this.config.save();
+        ApiSpout.log("Log level is: " + this.apiConfig.logLevel.name(), ApiLogLevel.INFO);
 
-        ApiBukkit.log("Log level is: " + this.apiConfig.logLevel.name(), ApiLogLevel.INFO);
 
+        CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
+
+        this.server.getRootCommand().addSubCommands(this, AdministrationCommands.class, commandRegFactory);
         this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
 
-        this.pm.registerEvents(this, this);
+        this.server.getEventManager().registerEvents(this, this);
 
         ApiManager.getInstance()
             .registerController(new ApibukkitController(this))
@@ -102,7 +106,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
             log(String.format("with a maximum of %s parallel sessions!", this.apiConfig.maxContentLength));
             
             ApiServer.getInstance()
-                .setIp(InetAddress.getByName(this.server.getIp()))
+                .setIp(InetAddress.getByName(this.server.getAddress()))
                 .setPort(this.apiConfig.port)
                 .setAuthenticationKey(this.apiConfig.authKey)
                 .setMaxContentLength(this.apiConfig.maxContentLength)
@@ -113,7 +117,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
         catch (Throwable t)
         {
             error("Failed to start the web server!", t);
-            error("Staying in a zombie state...");
+            error("Disabling...");
             this.disable();
             return;
         }
@@ -141,7 +145,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     {
         MessageDigest hasher = MessageDigest.getInstance("SHA1");
         hasher.reset();
-        byte[] byteBuffer = (this.server.getServerName() + this.server.getVersion() + System.currentTimeMillis()).getBytes();
+        byte[] byteBuffer = (this.server.getName() + this.server.getVersion() + System.currentTimeMillis()).getBytes();
         hasher.update(byteBuffer);
         byteBuffer = hasher.digest();
         StringBuilder hash = new StringBuilder();
@@ -157,7 +161,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
      *
      * @return the instance of ApiBukkit or null
      */
-    public static ApiBukkit getInstance()
+    public static ApiSpout getInstance()
     {
         return instance;
     }
@@ -166,12 +170,12 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     {
         return this.apiConfig;
     }
-    
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void unregisterControllers(PluginDisableEvent event)
-    {
-        ApiManager.getInstance().unregisterControllers(event.getPlugin());
-    }
+
+//    @EventHandler(order = Order.MONITOR)
+//    public void unregisterControllers(PluginDisableEvent event)
+//    {
+//        ApiManager.getInstance().unregisterControllers(event.getPlugin());
+//    }
 
     /*
      * Logging
@@ -224,26 +228,27 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
 
     public void enable()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.pm.enablePlugin(this);
     }
 
     public void disable()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.pm.disablePlugin(this);
     }
 
     public void reload()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.disable();
+        this.enable();
     }
 
     public Configuration getConfiguration()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.config;
     }
 
     public ApiConfiguration getApiConfiguration()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.apiConfig;
     }
 }

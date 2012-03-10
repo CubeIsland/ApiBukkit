@@ -1,10 +1,10 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.configuration.Configuration;
 
 /**
  *
@@ -27,26 +27,26 @@ public class ApiConfiguration
         ApiLogLevel tmpLogLevel = ApiLogLevel.DEFAULT;
         try
         {
-            tmpLogLevel = ApiLogLevel.getLogLevel(config.getString("General.logLevel"));
+            tmpLogLevel = ApiLogLevel.getLogLevel(config.<String>get("General.logLevel"));
         }
         catch (Exception e)
         {
             ApiBukkit.logException(e);
         }
         this.logLevel = tmpLogLevel;
-        this.port = config.getInt("Network.port");
-        this.authKey = config.getString("Network.authKey");
-        this.maxContentLength = config.getInt("Network.maxContentLength");
+        this.port = config.<Integer>get("Network.port");
+        this.authKey = config.<String>get("Network.authKey");
+        this.maxContentLength = config.<Integer>get("Network.maxContentLength");
 
-        this.whitelistEnabled = config.getBoolean("Whitelist.enabled", this.whitelistEnabled);
-        this.whitelist = (List<String>)config.getList("Whitelist.IPs");
+        this.whitelistEnabled = config.<Boolean>get("Whitelist.enabled", this.whitelistEnabled);
+        this.whitelist = config.<String>getList("Whitelist.IPs");
 
-        this.blacklistEnabled = config.getBoolean("Blacklist.enabled");
-        this.blacklist = (List<String>)config.getList("Blacklist.IPs");
+        this.blacklistEnabled = config.<Boolean>get("Blacklist.enabled");
+        this.blacklist = config.<String>getList("Blacklist.IPs");
         
-        Map<String, Object> sectionValues = config.getConfigurationSection("DisabledActions").getValues(true);
+        Map<String, Object> map = config.getMap("DisabledActions");
         this.disabledActions = new HashMap<String, Collection<String>>();
-        for (Map.Entry<String, Object> entry : sectionValues.entrySet())
+        for (Map.Entry<String, Object> entry : map.entrySet())
         {
             if (entry.getValue() instanceof List)
             {

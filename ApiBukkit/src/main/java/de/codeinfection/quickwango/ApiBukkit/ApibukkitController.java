@@ -22,7 +22,7 @@ public class ApibukkitController extends ApiController
 {
     ApiManager manager;
 
-    public ApibukkitController(ApiBukkit plugin)
+    public ApibukkitController(ApiPlugin plugin)
     {
         super(plugin);
         this.manager = ApiManager.getInstance();

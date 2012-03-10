@@ -1,10 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configration;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
 import java.io.File;
 import org.spout.api.plugin.Plugin;
 import org.spout.api.plugin.PluginDescriptionFile;
-import org.spout.api.util.config.Configuration;
 
 /**
  *
@@ -14,13 +13,23 @@ public class SpoutPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstra
 {
     private final Plugin plugin;
     private final PluginDescriptionFile pdf;
-    private final Configration config;
+    private final Configuration config;
 
     public SpoutPlugin(Plugin plugin)
     {
+        this(plugin, null);
+    }
+
+    public Plugin getPlugin()
+    {
+        return this.plugin;
+    }
+
+    public SpoutPlugin(Plugin plugin, Configuration config)
+    {
         this.plugin = plugin;
         this.pdf = plugin.getDescription();
-        this.config = new SpoutConfiguration(new Configuration(new File(plugin.getDataFolder(), "config.yml")));
+        this.config = config;
     }
 
     public String getName()
@@ -43,7 +52,7 @@ public class SpoutPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstra
         this.plugin.getGame().getPluginManager().disablePlugin(this.plugin);
     }
 
-    public void relead()
+    public void reload()
     {
         this.disable();
         this.enable();
@@ -54,7 +63,7 @@ public class SpoutPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstra
         return this.plugin.getDataFolder();
     }
 
-    public Configration getConfig()
+    public Configuration getConfiguration()
     {
         return this.config;
     }

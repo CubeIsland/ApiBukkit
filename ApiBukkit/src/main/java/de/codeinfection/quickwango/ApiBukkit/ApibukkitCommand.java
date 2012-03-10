@@ -12,11 +12,13 @@ import org.bukkit.entity.Player;
  */
 public class ApibukkitCommand implements CommandExecutor
 {
-    protected final ApiBukkit plugin;
+    private final ApiPlugin plugin;
+    private final ApiConfiguration config;
 
-    public ApibukkitCommand(ApiBukkit plugin)
+    public ApibukkitCommand(ApiPlugin plugin)
     {
         this.plugin = plugin;
+        this.config = plugin.getApiConfiguration();
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -39,20 +41,13 @@ public class ApibukkitCommand implements CommandExecutor
             }
             else if (action.equalsIgnoreCase("info"))
             {
-                if (!this.plugin.isZombie())
-                {
-                    sender.sendMessage("API Port:    " + this.plugin.getApiConfig().port);
-                    sender.sendMessage("API Authkey: " + this.plugin.getApiConfig().authKey);
-                }
-                else
-                {
-                    sender.sendMessage("The API is currenty in a zombie state. Check your log for errors and try to reload the plugin and/or the server.");
-                }
+                sender.sendMessage("API Port:    " + this.config.port);
+                sender.sendMessage("API Authkey: " + this.config.authKey);
             }
             else if (action.equalsIgnoreCase("reload"))
             {
-                this.plugin.onDisable(false);
-                this.plugin.onEnable();
+                this.plugin.disable();
+                this.plugin.enable();
             }
             else
             {

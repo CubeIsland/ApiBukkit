@@ -13,6 +13,6 @@ public interface Plugin
     public File getDataFolder();
     public void enable();
     public void disable();
-    public void relead();
-    public Configration getConfig();
+    public void reload();
+    public Configuration getConfiguration();
 }

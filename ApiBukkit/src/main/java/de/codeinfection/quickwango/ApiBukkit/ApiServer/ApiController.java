@@ -1,11 +1,11 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.error;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.bukkit.plugin.Plugin;
 
 /**
  * The ApiController is the base class for all controllers

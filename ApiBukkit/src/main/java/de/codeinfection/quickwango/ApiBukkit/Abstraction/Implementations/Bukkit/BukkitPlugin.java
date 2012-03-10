@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configration;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
 import java.io.File;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -13,13 +13,18 @@ public class BukkitPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstr
 {
     private final Plugin plugin;
     private final PluginDescriptionFile pdf;
-    private final Configration config;
+    private final Configuration config;
 
     public BukkitPlugin(Plugin plugin)
     {
         this.plugin = plugin;
         this.pdf = plugin.getDescription();
         this.config = new BukkitConfigration(plugin.getConfig());
+    }
+
+    public Plugin getPlugin()
+    {
+        return this.plugin;
     }
 
     public String getName()
@@ -42,7 +47,7 @@ public class BukkitPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstr
         this.plugin.getServer().getPluginManager().disablePlugin(this.plugin);
     }
 
-    public void relead()
+    public void reload()
     {
         this.disable();
         this.enable();
@@ -53,7 +58,7 @@ public class BukkitPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstr
         return this.plugin.getDataFolder();
     }
 
-    public Configration getConfig()
+    public Configuration getConfiguration()
     {
         return this.config;
     }

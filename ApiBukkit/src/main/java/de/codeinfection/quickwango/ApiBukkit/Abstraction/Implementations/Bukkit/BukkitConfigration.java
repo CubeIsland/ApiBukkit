@@ -1,27 +1,48 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  *
  * @author CodeInfection
  */
-public class BukkitConfigration implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Configration
+public class BukkitConfigration implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration
 {
+    private final File file;
     private final Configuration config;
+
+    public BukkitConfigration(File file)
+    {
+        this(file, YamlConfiguration.loadConfiguration(file));
+    }
 
     public BukkitConfigration(Configuration config)
     {
+        this(null, config);
+    }
+
+    public BukkitConfigration(File file, Configuration config)
+    {
+        this.file = file;
         this.config = config;
     }
 
     public void set(String path, Object value)
     {
         this.config.set(path, value);
+    }
+
+    public Map<String, Object> getMap(String path)
+    {
+        return this.getMap(path, null);
     }
 
     private static Map<String, Object> mapFromSection(ConfigurationSection section)
@@ -58,6 +79,11 @@ public class BukkitConfigration implements de.codeinfection.quickwango.ApiBukkit
         }
     }
 
+    public <T> List<T> getList(String path)
+    {
+        return this.<T>getList(path, null);
+    }
+
     public <T> List<T> getList(String path, List<T> def)
     {
         List<T> list = (List<T>)this.config.getList(path);
@@ -69,6 +95,11 @@ public class BukkitConfigration implements de.codeinfection.quickwango.ApiBukkit
         {
             return list;
         }
+    }
+
+    public <T> T get(String path)
+    {
+        return this.<T>get(path, null);
     }
 
     public <T> T get(String path, T def)
@@ -84,11 +115,54 @@ public class BukkitConfigration implements de.codeinfection.quickwango.ApiBukkit
         }
     }
 
-    public boolean save() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean load()
+    {
+        if (this.file != null)
+        {
+            try
+            {
+                FileConfiguration fileConfig;
+                if (this.config instanceof FileConfiguration)
+                {
+                    fileConfig = (FileConfiguration)this.config;
+                }
+                else
+                {
+                    fileConfig = YamlConfiguration.loadConfiguration(this.file);
+                    fileConfig.setDefaults(this.config);
+                }
+                fileConfig.load(this.file);
+                return true;
+            }
+            catch (Exception e)
+            {}
+        }
+        return false;
     }
 
-    public boolean reload() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean save()
+    {
+        if (file != null)
+        {
+            try
+            {
+                FileConfiguration fileConfig;
+                if (this.config instanceof FileConfiguration)
+                {
+                    fileConfig = (FileConfiguration)this.config;
+                }
+                else
+                {
+                    fileConfig = YamlConfiguration.loadConfiguration(this.file);
+                    fileConfig.setDefaults(this.config);
+                }
+                fileConfig.options().copyDefaults(true);
+                fileConfig.save(this.file);
+                return true;
+            }
+            catch (IOException e)
+            {}
+        }
+        return false;
     }
 }
