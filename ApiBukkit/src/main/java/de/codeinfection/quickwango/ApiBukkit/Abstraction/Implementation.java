@@ -6,10 +6,11 @@ import java.io.File;
  *
  * @author CodeInfection
  */
-public interface ImplementationProvider
+public interface Implementation
 {
     public String getImplementationName();
     public Server getServer();
     public PluginManager getPluginManager();
+    public Scheduler getScheduler();
     public Configuration loadConfiguration(File file);
 }

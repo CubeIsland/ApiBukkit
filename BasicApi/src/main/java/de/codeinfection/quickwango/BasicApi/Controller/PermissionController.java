@@ -1,5 +1,7 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit.BukkitPlugin;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -12,7 +14,6 @@ import java.util.Set;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -77,7 +78,7 @@ public class PermissionController extends ApiController
             try
             {
                 permissible.addAttachment(
-                    getPlugin(),
+                    ((BukkitPlugin)getPlugin()).getHandle(),
                     request.params.getString("permission"),
                     Boolean.parseBoolean(request.params.getString("value")),
                     Math.abs(Integer.parseInt(request.params.getString("ticks")))

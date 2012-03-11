@@ -1,5 +1,8 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Abstraction;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit.BukkitPlugin;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -18,7 +21,6 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -108,7 +110,7 @@ public class WorldController extends ApiController
                 {
                     String[] split = generatorParam.split(":", 2);
                     String id = (split.length > 1) ? split[1] : null;
-                    Plugin plugin = request.server.getPluginManager().getPlugin(split[0]);
+                    Plugin plugin = Abstraction.getPluginManager().getPlugin(split[0]);
 
                     if (plugin == null || !plugin.isEnabled())
                     {
@@ -117,7 +119,7 @@ public class WorldController extends ApiController
                     }
                     else
                     {
-                        generator = plugin.getDefaultWorldGenerator(worldName, id);
+                        generator = ((BukkitPlugin)plugin).getHandle().getDefaultWorldGenerator(worldName, id);
                     }
                 }
             }

@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
 
 import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginDescription;
 import java.io.File;
 import org.spout.api.plugin.Plugin;
-import org.spout.api.plugin.PluginDescriptionFile;
 
 /**
  *
@@ -12,7 +12,7 @@ import org.spout.api.plugin.PluginDescriptionFile;
 public class SpoutPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin
 {
     private final Plugin plugin;
-    private final PluginDescriptionFile pdf;
+    private final PluginDescription desc;
     private final Configuration config;
 
     public SpoutPlugin(Plugin plugin)
@@ -20,7 +20,7 @@ public class SpoutPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstra
         this(plugin, null);
     }
 
-    public Plugin getPlugin()
+    public Plugin getHandle()
     {
         return this.plugin;
     }
@@ -28,18 +28,18 @@ public class SpoutPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstra
     public SpoutPlugin(Plugin plugin, Configuration config)
     {
         this.plugin = plugin;
-        this.pdf = plugin.getDescription();
+        this.desc = new SpoutPluginDescription(plugin.getDescription());
         this.config = config;
     }
 
     public String getName()
     {
-        return this.pdf.getName();
+        return this.desc.getName();
     }
 
     public String getVersion()
     {
-        return this.pdf.getVersion();
+        return this.desc.getVersion();
     }
 
     public void enable()
@@ -68,4 +68,13 @@ public class SpoutPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstra
         return this.config;
     }
 
+    public boolean isEnabled()
+    {
+        return this.plugin.isEnabled();
+    }
+
+    public PluginDescription getDescription()
+    {
+        return this.desc;
+    }
 }

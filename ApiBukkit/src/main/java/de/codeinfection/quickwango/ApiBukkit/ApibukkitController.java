@@ -1,5 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiAction;
@@ -22,7 +23,7 @@ public class ApibukkitController extends ApiController
 {
     ApiManager manager;
 
-    public ApibukkitController(ApiPlugin plugin)
+    public ApibukkitController(Plugin plugin)
     {
         super(plugin);
         this.manager = ApiManager.getInstance();

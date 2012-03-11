@@ -1,5 +1,6 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -9,7 +10,6 @@ import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.plugin.Plugin;
 
 /**
  *

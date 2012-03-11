@@ -1,5 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,13 +13,13 @@ import org.bukkit.entity.Player;
  */
 public class ApibukkitCommand implements CommandExecutor
 {
-    private final ApiPlugin plugin;
+    private final Plugin plugin;
     private final ApiConfiguration config;
 
-    public ApibukkitCommand(ApiPlugin plugin)
+    public ApibukkitCommand(Plugin plugin)
     {
         this.plugin = plugin;
-        this.config = plugin.getApiConfiguration();
+        this.config = ApiBukkit.getInstance().getApiConfiguration();
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)

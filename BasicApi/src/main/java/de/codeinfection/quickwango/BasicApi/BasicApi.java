@@ -1,5 +1,7 @@
 package de.codeinfection.quickwango.BasicApi;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Abstraction;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
@@ -76,13 +78,8 @@ public class BasicApi extends JavaPlugin
         this.api = (ApiBukkit)this.pm.getPlugin("ApiBukkit");
         if (this.api == null)
         {
-            error("Could not hook into ApiBukkit! Staying inactive...");
-            return;
-        }
-        if (this.api.isZombie())
-        {
-            error("ApiBukkit seems to be a zombie...");
-            error("I think it infected me.");
+            error("Could not hook into ApiBukkit! Disabling myself...");
+            this.pm.disablePlugin(this);
             return;
         }
 
@@ -94,19 +91,20 @@ public class BasicApi extends JavaPlugin
 
         this.config = new BasicApiConfiguration(configFile);
         this.saveConfig();
-        
+
+        Plugin wrappedThis = Abstraction.getPluginManager().getPlugin(this.getName());
         ApiManager.getInstance()
-            .registerController(new CommandController(this))
-            .registerController(new CompatController(this))
-            .registerController(new PluginController(this))
-            .registerController(new ServerController(this))
-            .registerController(new PlayerController(this))
-            .registerController(new WorldController(this))
-            .registerController(new BanController(this))
-            .registerController(new WhitelistController(this))
-            .registerController(new OperatorController(this))
-            .registerController(new ConfigurationController(this, this.config.configFiles))
-            .registerController(new PermissionController(this));
+            .registerController(new CommandController(wrappedThis))
+            .registerController(new CompatController(wrappedThis))
+            .registerController(new PluginController(wrappedThis))
+            .registerController(new ServerController(wrappedThis))
+            .registerController(new PlayerController(wrappedThis))
+            .registerController(new WorldController(wrappedThis))
+            .registerController(new BanController(wrappedThis))
+            .registerController(new WhitelistController(wrappedThis))
+            .registerController(new OperatorController(wrappedThis))
+            .registerController(new ConfigurationController(wrappedThis, this.config.configFiles))
+            .registerController(new PermissionController(wrappedThis));
         
         log("Version " + this.pdf.getVersion() + " enabled!");
     }

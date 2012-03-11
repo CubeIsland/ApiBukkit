@@ -1,5 +1,7 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Abstraction;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
@@ -18,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -79,7 +80,7 @@ public class ServerController extends ApiController
         versions.put("bukkit", request.server.getBukkitVersion());
         versions.put("server", request.server.getVersion());
         versions.put("apibukkit", ApiBukkit.getInstance().getDescription().getVersion());
-        versions.put("basicapi", getPlugin().getDescription().getVersion());
+        versions.put("basicapi", getPlugin().getVersion());
 
         data.put("versions",            versions);
         data.put("os",                  Utils.getPropertiesByPrefix("os."));
@@ -102,7 +103,7 @@ public class ServerController extends ApiController
     @Action
     public void garbagecollect(ApiRequest request, ApiResponse response)
     {
-        request.server.getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable() {
+        Abstraction.getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable() {
             public void run() {
                 Runtime runtime = Runtime.getRuntime();
                 long free = runtime.freeMemory();

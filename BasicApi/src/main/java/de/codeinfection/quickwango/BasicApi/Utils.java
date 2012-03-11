@@ -1,18 +1,18 @@
 package de.codeinfection.quickwango.BasicApi;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Abstraction;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.bukkit.Server;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -166,9 +166,8 @@ public class Utils
     public static void createWorldSync(final Plugin plugin, final String name, final Environment env, final long seed, final ChunkGenerator generator)
     {
         final Thread executionThread = Thread.currentThread();
-        final Server server = plugin.getServer();
         
-        if (server.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+        if (Abstraction.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
             public void run()
             {
                 try

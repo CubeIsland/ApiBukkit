@@ -1,33 +1,45 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction;
 
+import java.io.File;
+
 /**
  *
  * @author CodeInfection
  */
 public class Abstraction
 {
-    private static ImplementationProvider implementationProvider = null;
+    private static Implementation implementation = null;
 
-    public static void initialize(ImplementationProvider provider)
+    public static void initialize(Implementation impl)
     {
-        if (implementationProvider == null && provider != null)
+        if (implementation == null && impl != null)
         {
-            implementationProvider = provider;
+            implementation = impl;
         }
     }
 
     public static String getImplementationName()
     {
-        return implementationProvider.getImplementationName();
+        return implementation.getImplementationName();
     }
 
     public static Server getServer()
     {
-        return implementationProvider.getServer();
+        return implementation.getServer();
     }
 
     public static PluginManager getPluginManager()
     {
-        return implementationProvider.getPluginManager();
+        return implementation.getPluginManager();
+    }
+
+    public static Scheduler getScheduler()
+    {
+        return implementation.getScheduler();
+    }
+
+    public static Configuration loadConfiguration(File file)
+    {
+        return implementation.loadConfiguration(file);
     }
 }

@@ -1,7 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Abstraction;
 import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit.BukkitConfigration;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit.BukkitImplementation;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.JsonSerializer;
@@ -42,6 +44,8 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     @Override
     public void onEnable()
     {
+        Abstraction.initialize(new BukkitImplementation());
+        Plugin wrappedThis = Abstraction.getPluginManager().getPlugin(this.getName());
         logger = this.getLogger();
         this.pdf = this.getDescription();
         this.server = this.getServer();
@@ -52,7 +56,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
             this.dataFolder.mkdirs();
         }
 
-        this.config = new BukkitConfigration(new File(dataFolder, "config.yml"), this.getConfig());
+        this.config = Abstraction.loadConfiguration(new File(dataFolder, "config.yml"));
         this.config.load();
 
         try
@@ -68,7 +72,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
             error("Failed to generate an auth key!", e);
             error("Staying in a zombie state...");
             error("#################################");
-            this.disable();
+            wrappedThis.disable();
             return;
         }
 
@@ -80,12 +84,12 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
 
         ApiBukkit.log("Log level is: " + this.apiConfig.logLevel.name(), ApiLogLevel.INFO);
 
-        this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
+        this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(wrappedThis));
 
         this.pm.registerEvents(this, this);
 
         ApiManager.getInstance()
-            .registerController(new ApibukkitController(this))
+            .registerController(new ApibukkitController(wrappedThis))
             .registerSerializer(new JsonSerializer())
             .registerSerializer(new XmlSerializer())
             .registerSerializer(new RawSerializer())
@@ -114,7 +118,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
         {
             error("Failed to start the web server!", t);
             error("Staying in a zombie state...");
-            this.disable();
+            wrappedThis.disable();
             return;
         }
         
@@ -217,33 +221,8 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
         t.printStackTrace(System.err);
     }
 
-    public String getVersion()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void enable()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void disable()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void reload()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Configuration getConfiguration()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public ApiConfiguration getApiConfiguration()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.apiConfig;
     }
 }

@@ -1,7 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Abstraction;
 import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout.SpoutConfiguration;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout.SpoutImplementation;
+import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.JsonSerializer;
@@ -43,6 +45,8 @@ public class ApiSpout extends CommonPlugin implements ApiPlugin, Listener
     @Override
     public void onEnable()
     {
+        Abstraction.initialize(new SpoutImplementation());
+        Plugin wrappedThis = Abstraction.getPluginManager().getPlugin(this.getName());
         logger = this.getLogger();
         this.pdf = this.getDescription();
         this.server = (Server)this.getGame();
@@ -52,7 +56,7 @@ public class ApiSpout extends CommonPlugin implements ApiPlugin, Listener
         {
             this.dataFolder.mkdirs();
         }
-        this.config = new SpoutConfiguration(new org.spout.api.util.config.Configuration(new File(this.dataFolder, "config.yml")));
+        this.config = Abstraction.loadConfiguration(new File(dataFolder, "config.yml"));
         this.config.load();
 
         try
@@ -83,13 +87,14 @@ public class ApiSpout extends CommonPlugin implements ApiPlugin, Listener
 
         CommandRegistrationsFactory<Class<?>> commandRegFactory = new AnnotatedCommandRegistrationFactory(new SimpleInjector(this), new SimpleAnnotatedCommandExecutorFactory());
 
-        this.server.getRootCommand().addSubCommands(this, AdministrationCommands.class, commandRegFactory);
-        this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
+        this.server.getRootCommand().addSubCommand(this, "test").setExecutor(null);
+//        this.server.getRootCommand().addSubCommands(this, AdministrationCommands.class, commandRegFactory);
+//        this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
 
         this.server.getEventManager().registerEvents(this, this);
 
         ApiManager.getInstance()
-            .registerController(new ApibukkitController(this))
+            .registerController(new ApibukkitController(wrappedThis))
             .registerSerializer(new JsonSerializer())
             .registerSerializer(new XmlSerializer())
             .registerSerializer(new RawSerializer())

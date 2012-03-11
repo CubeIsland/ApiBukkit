@@ -21,6 +21,7 @@ import org.bukkit.Statistic;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
@@ -704,6 +705,11 @@ public class ApiPlayer extends ApiCommandSender implements Player
     }
 
     public Set<String> getListeningPluginChannels() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void abandonConversation(Conversation conversation, ConversationAbandonedEvent details)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
