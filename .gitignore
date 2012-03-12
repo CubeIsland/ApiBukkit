@@ -2,4 +2,3 @@ build/
 dist/
 nbproject/
 target/
-nb*.xml
