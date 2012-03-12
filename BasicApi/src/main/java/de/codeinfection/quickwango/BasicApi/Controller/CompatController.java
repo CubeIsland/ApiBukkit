@@ -69,7 +69,7 @@ public class CompatController extends ApiController
 
         response.setContent(data);
     }
-    
+
     @Action
     public void maxplayers(ApiRequest request, ApiResponse response)
     {

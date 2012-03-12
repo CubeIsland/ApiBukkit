@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 public class CommandController extends ApiController
 {
     private ApiCommandSender commandSender;
-    
+
     public CommandController(Plugin plugin)
     {
         super(plugin);
@@ -35,21 +35,21 @@ public class CommandController extends ApiController
         if (action != null)
         {
             BasicApi.log("Command " + action + " requested");
-            
+
             String commandLine = action;
             String paramsParam = request.params.getString("params");
             if (paramsParam != null)
             {
                 commandLine += " " + BasicApi.implode(" ", Arrays.asList(paramsParam.split(",")));
             }
-            
+
             Player player = null;
             String senderParam = request.params.getString("sender");
             if (senderParam != null)
             {
                 player = request.server.getPlayerExact(senderParam);
             }
-            
+
             BasicApi.debug("Commandline: " + commandLine);
             boolean commandSuccessful;
             if (player != null)

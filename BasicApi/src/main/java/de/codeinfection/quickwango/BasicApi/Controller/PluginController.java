@@ -39,7 +39,10 @@ public class PluginController extends ApiController
         response.setContent(data);
     }
 
-    @Action(parameters = {"plugin"}, serializer = "json")
+    @Action(parameters =
+    {
+        "plugin"
+    }, serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
         String pluginName = request.params.getString("plugin");
@@ -48,17 +51,17 @@ public class PluginController extends ApiController
         {
             Map<String, Object> data = new HashMap<String, Object>();
             PluginDescription description = targetPlugin.getDescription();
-            data.put("name",        description.getName());
-            data.put("fullName",    description.getFullName());
-            data.put("version",     description.getVersion());
+            data.put("name", description.getName());
+            data.put("fullName", description.getFullName());
+            data.put("version", description.getVersion());
             data.put("description", description.getDescription());
-            data.put("website",     description.getWebsite());
-            data.put("authors",     description.getAuthors());
-            data.put("depend",      description.getDepends());
+            data.put("website", description.getWebsite());
+            data.put("authors", description.getAuthors());
+            data.put("depend", description.getDepends());
             // TODO add abstraction to get commands
-            data.put("commands",    ((BukkitPluginDescription)description).getHandle().getCommands());
-            data.put("enabled",     targetPlugin.isEnabled());
-            data.put("dataFolder",  targetPlugin.getDataFolder().getAbsolutePath());
+            data.put("commands", ((BukkitPluginDescription)description).getHandle().getCommands());
+            data.put("enabled", targetPlugin.isEnabled());
+            data.put("dataFolder", targetPlugin.getDataFolder().getAbsolutePath());
             response.setContent(data);
         }
         else
@@ -67,7 +70,10 @@ public class PluginController extends ApiController
         }
     }
 
-    @Action(parameters = {"plugin"}, serializer = "json")
+    @Action(parameters =
+    {
+        "plugin"
+    }, serializer = "json")
     public void available(ApiRequest request, ApiResponse response)
     {
         response.setContent(request.server.getPluginManager().getPlugin(request.params.getString("plugin")) != null);

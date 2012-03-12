@@ -21,9 +21,12 @@ import org.bukkit.inventory.PlayerInventory;
 public class Utils
 {
     private Utils()
-    {}
-
-    private static final double armorPoints[] = {3, 6, 8, 3};
+    {
+    }
+    private static final double armorPoints[] =
+    {
+        3, 6, 8, 3
+    };
 
     public static int getArmorPoints(Player player)
     {
@@ -38,7 +41,7 @@ public class Utils
         armorItems[3] = inventory.getHelmet();
         for (int i = 0; i < 4; ++i)
         {
-            if(armorItems[i] == null)
+            if (armorItems[i] == null)
             {
                 continue;
             }
@@ -50,11 +53,15 @@ public class Utils
             }
             if (i == 2)
             {
-                max = max + 1; /* Always 1 too low for chestplate */
+                max = max + 1; /*
+                 * Always 1 too low for chestplate
+                 */
             }
             else
             {
-                max = max - 3; /* Always 3 too high, versus how client calculates it */
+                max = max - 3; /*
+                 * Always 3 too high, versus how client calculates it
+                 */
             }
             baseDurability += max;
             currentDurability += max - dur;
@@ -135,13 +142,12 @@ public class Utils
 
         return properties;
     }
-
-
     private static final Set<Map.Entry<String, String>> colorReplacements;
+
     static
     {
         Map<String, String> tmp = new HashMap<String, String>();
-        tmp.put("\033[0m",  "&0");
+        tmp.put("\033[0m", "&0");
         tmp.put("\033[34m", "&1");
         tmp.put("\033[32m", "&2");
         tmp.put("\033[36m", "&3");
@@ -152,7 +158,7 @@ public class Utils
 
         colorReplacements = tmp.entrySet();
     }
-    
+
     public static String reverseChatColors(String string)
     {
         for (Map.Entry<String, String> entry : colorReplacements)
@@ -161,23 +167,20 @@ public class Utils
         }
         return string;
     }
-
     private static Throwable worldCreationException = null;
+
     public static void createWorldSync(final Plugin plugin, final String name, final Environment env, final long seed, final ChunkGenerator generator)
     {
         final Thread executionThread = Thread.currentThread();
-        
-        if (Abstraction.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+        if (Abstraction.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
             public void run()
             {
                 try
                 {
                     WorldCreator creator = new WorldCreator(name);
-                    creator
-                        .environment(env)
-                        .seed(seed)
-                        .generator(generator)
-                            .createWorld();
+                    creator.environment(env).seed(seed).generator(generator).createWorld();
                 }
                 catch (Throwable t)
                 {

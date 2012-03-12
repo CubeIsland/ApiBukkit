@@ -29,17 +29,17 @@ import org.bukkit.World;
 public class ServerController extends ApiController
 {
     protected static Long timeStamp = null;
-    
+
     public ServerController(Plugin plugin)
     {
         super(plugin);
-        
+
         if (timeStamp == null)
         {
             timeStamp = System.currentTimeMillis() / 1000;
         }
     }
-    
+
     @Action(serializer = "json", authenticate = false)
     public Object maxplayers(ApiRequest request, ApiResponse response)
     {
@@ -52,29 +52,29 @@ public class ServerController extends ApiController
         Runtime runtime = Runtime.getRuntime();
         Map<String, Object> data = new HashMap<String, Object>();
 
-        data.put("id",                  request.server.getServerId());
-        data.put("name",                request.server.getServerName());
-        data.put("ip",                  request.server.getIp());
-        data.put("port",                request.server.getPort());
-        data.put("players",             request.server.getOnlinePlayers().length);
-        data.put("maxplayers",          request.server.getMaxPlayers());
-        data.put("worlds",              request.server.getWorlds().size());
-        data.put("plugins",             request.server.getPluginManager().getPlugins().length);
-        data.put("uptime",              (System.currentTimeMillis() / 1000) - timeStamp);
-        data.put("onlinemode",          request.server.getOnlineMode());
-        data.put("whitelisted",         request.server.hasWhitelist());
-        data.put("spawnRadius",         request.server.getSpawnRadius());
-        data.put("viewDistance",        request.server.getViewDistance());
-        data.put("defaultGamemode",     request.server.getDefaultGameMode().getValue());
-        data.put("allowEnd",            request.server.getAllowEnd());
-        data.put("allowNether",         request.server.getAllowNether());
-        data.put("allowFlight",         request.server.getAllowFlight());
-        data.put("allowNether",         request.server.getAllowNether());
-        data.put("worldContainer",      request.server.getWorldContainer().toString());
-        data.put("updateFolder",        request.server.getUpdateFolderFile().toString());
+        data.put("id", request.server.getServerId());
+        data.put("name", request.server.getServerName());
+        data.put("ip", request.server.getIp());
+        data.put("port", request.server.getPort());
+        data.put("players", request.server.getOnlinePlayers().length);
+        data.put("maxplayers", request.server.getMaxPlayers());
+        data.put("worlds", request.server.getWorlds().size());
+        data.put("plugins", request.server.getPluginManager().getPlugins().length);
+        data.put("uptime", (System.currentTimeMillis() / 1000) - timeStamp);
+        data.put("onlinemode", request.server.getOnlineMode());
+        data.put("whitelisted", request.server.hasWhitelist());
+        data.put("spawnRadius", request.server.getSpawnRadius());
+        data.put("viewDistance", request.server.getViewDistance());
+        data.put("defaultGamemode", request.server.getDefaultGameMode().getValue());
+        data.put("allowEnd", request.server.getAllowEnd());
+        data.put("allowNether", request.server.getAllowNether());
+        data.put("allowFlight", request.server.getAllowFlight());
+        data.put("allowNether", request.server.getAllowNether());
+        data.put("worldContainer", request.server.getWorldContainer().toString());
+        data.put("updateFolder", request.server.getUpdateFolderFile().toString());
 
-        data.put("maxmemory",           runtime.maxMemory());
-        data.put("freememory",          runtime.freeMemory());
+        data.put("maxmemory", runtime.maxMemory());
+        data.put("freememory", runtime.freeMemory());
 
         Map<String, Object> versions = new HashMap<String, Object>();
         versions.put("bukkit", request.server.getBukkitVersion());
@@ -82,8 +82,8 @@ public class ServerController extends ApiController
         versions.put("apibukkit", ApiBukkit.getInstance().getDescription().getVersion());
         versions.put("basicapi", getPlugin().getVersion());
 
-        data.put("versions",            versions);
-        data.put("os",                  Utils.getPropertiesByPrefix("os."));
+        data.put("versions", versions);
+        data.put("os", Utils.getPropertiesByPrefix("os."));
 
         response.setContent(data);
     }
@@ -99,12 +99,14 @@ public class ServerController extends ApiController
     {
         response.setContent(request.server.getVersion());
     }
-    
+
     @Action
     public void garbagecollect(ApiRequest request, ApiResponse response)
     {
-        Abstraction.getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable() {
-            public void run() {
+        Abstraction.getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable()
+        {
+            public void run()
+            {
                 Runtime runtime = Runtime.getRuntime();
                 long free = runtime.freeMemory();
                 runtime.gc();
@@ -113,7 +115,7 @@ public class ServerController extends ApiController
             }
         });
     }
-    
+
     @Action
     public Object kill(ApiRequest request, ApiResponse response)
     {
@@ -121,7 +123,7 @@ public class ServerController extends ApiController
         System.exit(0);
         return null;
     }
-    
+
     @Action
     public void stop(ApiRequest request, ApiResponse response)
     {
@@ -131,15 +133,18 @@ public class ServerController extends ApiController
         }
         request.server.shutdown();
     }
-    
-    @Action(parameters = {"message"})
+
+    @Action(parameters =
+    {
+        "message"
+    })
     public void broadcast(ApiRequest request, ApiResponse response)
     {
         String message = request.params.getString("message");
         request.server.broadcastMessage(message.replaceAll("&([0-9a-f])", "§$1"));
         BasicApi.log("broadcasted message '" + message + "'");
     }
-    
+
     @Action
     public Object reload(ApiRequest request, ApiResponse response)
     {
@@ -155,12 +160,15 @@ public class ServerController extends ApiController
             long lineCount = 100L;
             String linesParam = request.params.getString("lines");
             if (linesParam != null)
-            try
             {
-                lineCount = Long.valueOf(linesParam);
+                try
+                {
+                    lineCount = Long.valueOf(linesParam);
+                }
+                catch (NumberFormatException e)
+                {
+                }
             }
-            catch (NumberFormatException e)
-            {}
             File serverLog = new File("server.log");
             RandomAccessFile file = new RandomAccessFile(serverLog, "r");
 

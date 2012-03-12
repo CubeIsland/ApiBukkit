@@ -27,7 +27,10 @@ public class BanController extends ApiController
         super(plugin);
     }
 
-    @Action(parameters = {"ip"})
+    @Action(parameters =
+    {
+        "ip"
+    })
     public void addip(ApiRequest request, ApiResponse response)
     {
         String ip = request.params.getString("ip");
@@ -35,7 +38,10 @@ public class BanController extends ApiController
         BasicApi.log("banned ip " + ip);
     }
 
-    @Action(parameters = {"player"})
+    @Action(parameters =
+    {
+        "player"
+    })
     public void addplayer(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -56,7 +62,10 @@ public class BanController extends ApiController
         }
     }
 
-    @Action(parameters = {"ip"})
+    @Action(parameters =
+    {
+        "ip"
+    })
     public void removeip(ApiRequest request, ApiResponse response)
     {
         String IP = request.params.getString("ip");
@@ -71,7 +80,10 @@ public class BanController extends ApiController
         }
     }
 
-    @Action(parameters = {"player"})
+    @Action(parameters =
+    {
+        "player"
+    })
     public void removeplayer(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");

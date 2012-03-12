@@ -32,13 +32,13 @@ public class BasicApi extends JavaPlugin
     protected PluginDescriptionFile pdf;
     protected File dataFolder;
     protected BasicApiConfiguration config;
-
     public static boolean debugMode = false;
 
     public static String implode(String delim, Object[] array)
     {
         return implode(delim, Arrays.asList(array));
     }
+
     public static String implode(String delim, Iterable<? extends Object> array)
     {
         if (array == null)
@@ -74,7 +74,7 @@ public class BasicApi extends JavaPlugin
         {
             this.dataFolder.mkdirs();
         }
-        
+
         this.api = (ApiBukkit)this.pm.getPlugin("ApiBukkit");
         if (this.api == null)
         {
@@ -93,19 +93,8 @@ public class BasicApi extends JavaPlugin
         this.saveConfig();
 
         Plugin wrappedThis = Abstraction.getPluginManager().getPlugin(this.getName());
-        ApiManager.getInstance()
-            .registerController(new CommandController(wrappedThis))
-            .registerController(new CompatController(wrappedThis))
-            .registerController(new PluginController(wrappedThis))
-            .registerController(new ServerController(wrappedThis))
-            .registerController(new PlayerController(wrappedThis))
-            .registerController(new WorldController(wrappedThis))
-            .registerController(new BanController(wrappedThis))
-            .registerController(new WhitelistController(wrappedThis))
-            .registerController(new OperatorController(wrappedThis))
-            .registerController(new ConfigurationController(wrappedThis, this.config.configFiles))
-            .registerController(new PermissionController(wrappedThis));
-        
+        ApiManager.getInstance().registerController(new CommandController(wrappedThis)).registerController(new CompatController(wrappedThis)).registerController(new PluginController(wrappedThis)).registerController(new ServerController(wrappedThis)).registerController(new PlayerController(wrappedThis)).registerController(new WorldController(wrappedThis)).registerController(new BanController(wrappedThis)).registerController(new WhitelistController(wrappedThis)).registerController(new OperatorController(wrappedThis)).registerController(new ConfigurationController(wrappedThis, this.config.configFiles)).registerController(new PermissionController(wrappedThis));
+
         log("Version " + this.pdf.getVersion() + " enabled!");
     }
 

@@ -33,8 +33,11 @@ public class ConfigurationController extends ApiController
 
         this.availableConfigs = paths;
     }
-    
-    @Action(parameters = {"file", "data"})
+
+    @Action(parameters =
+    {
+        "file", "data"
+    })
     public void write(ApiRequest request, ApiResponse response)
     {
         String fileParam = request.params.getString("file");
@@ -72,7 +75,10 @@ public class ConfigurationController extends ApiController
         }
     }
 
-    @Action(parameters = {"file"}, serializer = "raw")
+    @Action(parameters =
+    {
+        "file"
+    }, serializer = "raw")
     public void read(ApiRequest request, ApiResponse response)
     {
         String fileParam = request.params.getString("file");
@@ -110,7 +116,10 @@ public class ConfigurationController extends ApiController
         }
     }
 
-    @Action(parameters = {"file"})
+    @Action(parameters =
+    {
+        "file"
+    })
     public void remove(ApiRequest request, ApiResponse response)
     {
         String fileParam = request.params.getString("file");
@@ -124,7 +133,10 @@ public class ConfigurationController extends ApiController
         }
     }
 
-    @Action(parameters = {"file"})
+    @Action(parameters =
+    {
+        "file"
+    })
     public void exists(ApiRequest request, ApiResponse response)
     {
         String fileParam = request.params.getString("file");

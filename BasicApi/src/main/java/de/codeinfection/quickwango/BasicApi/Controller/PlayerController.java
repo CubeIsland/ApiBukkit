@@ -44,8 +44,11 @@ public class PlayerController extends ApiController
 
         response.setContent(players);
     }
-    
-    @Action(parameters = {"player"}, serializer = "json")
+
+    @Action(parameters =
+    {
+        "player"
+    }, serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
         final String playerName = request.params.getString("player");
@@ -54,67 +57,71 @@ public class PlayerController extends ApiController
         {
             Map<String, Object> data = new HashMap<String, Object>();
 
-            data.put("name",                player.getName());
-            data.put("displayName",         player.getDisplayName());
-            data.put("listName",            player.getPlayerListName());
-            data.put("health",              player.getHealth());
-            data.put("armor",               Utils.getArmorPoints(player));
-            data.put("ip",                  player.getAddress().getAddress().getHostAddress());
-            data.put("operator",            player.isOp());
-            data.put("banned",              player.isBanned());
-            data.put("whitelisted",         player.isWhitelisted());
-            data.put("gamemode",            player.getGameMode().getValue());
-            data.put("experience",          player.getExp());
-            data.put("totalExperience",     player.getTotalExperience());
-            data.put("level",               player.getLevel());
-            data.put("foodLevel",           player.getFoodLevel());
-            data.put("remainingAir",        player.getRemainingAir());
-            data.put("velocity",            player.getVelocity());
-            data.put("exhaustion",          player.getExhaustion());
-            data.put("gamemode",            player.getGameMode().getValue());
-            data.put("heldItem",            player.getItemInHand().getType().getId());
-            data.put("heldItemSlot",        player.getInventory().getHeldItemSlot());
-            data.put("saturation",          player.getSaturation());
-            data.put("firstPlayed",         player.getFirstPlayed());
-            data.put("lastPlayed",          player.getLastPlayed());
-            data.put("playedBefore",        player.hasPlayedBefore());
+            data.put("name", player.getName());
+            data.put("displayName", player.getDisplayName());
+            data.put("listName", player.getPlayerListName());
+            data.put("health", player.getHealth());
+            data.put("armor", Utils.getArmorPoints(player));
+            data.put("ip", player.getAddress().getAddress().getHostAddress());
+            data.put("operator", player.isOp());
+            data.put("banned", player.isBanned());
+            data.put("whitelisted", player.isWhitelisted());
+            data.put("gamemode", player.getGameMode().getValue());
+            data.put("experience", player.getExp());
+            data.put("totalExperience", player.getTotalExperience());
+            data.put("level", player.getLevel());
+            data.put("foodLevel", player.getFoodLevel());
+            data.put("remainingAir", player.getRemainingAir());
+            data.put("velocity", player.getVelocity());
+            data.put("exhaustion", player.getExhaustion());
+            data.put("gamemode", player.getGameMode().getValue());
+            data.put("heldItem", player.getItemInHand().getType().getId());
+            data.put("heldItemSlot", player.getInventory().getHeldItemSlot());
+            data.put("saturation", player.getSaturation());
+            data.put("firstPlayed", player.getFirstPlayed());
+            data.put("lastPlayed", player.getLastPlayed());
+            data.put("playedBefore", player.hasPlayedBefore());
 
             Location playerLoc = player.getLocation();
             if (playerLoc != null)
             {
                 data.put("world", playerLoc.getWorld().getName());
-                data.put("position", new Double[] {
-                    playerLoc.getX(),
-                    playerLoc.getY(),
-                    playerLoc.getZ()
-                });
-                data.put("blockPosition", new Integer[] {
-                    playerLoc.getBlockX(),
-                    playerLoc.getBlockY(),
-                    playerLoc.getBlockZ()
-                });
+                data.put("position", new Double[]
+                    {
+                        playerLoc.getX(),
+                        playerLoc.getY(),
+                        playerLoc.getZ()
+                    });
+                data.put("blockPosition", new Integer[]
+                    {
+                        playerLoc.getBlockX(),
+                        playerLoc.getBlockY(),
+                        playerLoc.getBlockZ()
+                    });
             }
 
             Location compassTarget = player.getCompassTarget();
             if (compassTarget != null)
             {
-                data.put("compassTarget", new Object[] {
-                    compassTarget.getWorld().getName(),
-                    compassTarget.getX(),
-                    compassTarget.getY(),
-                    compassTarget.getZ()
-                });
+                data.put("compassTarget", new Object[]
+                    {
+                        compassTarget.getWorld().getName(),
+                        compassTarget.getX(),
+                        compassTarget.getY(),
+                        compassTarget.getZ()
+                    });
             }
 
             Location bedSpawnLocation = player.getBedSpawnLocation();
             if (bedSpawnLocation != null)
             {
-                data.put("bedSpawnLocation", new Object[] {
-                    bedSpawnLocation.getWorld().getName(),
-                    bedSpawnLocation.getX(),
-                    bedSpawnLocation.getY(),
-                    bedSpawnLocation.getZ()
-                });
+                data.put("bedSpawnLocation", new Object[]
+                    {
+                        bedSpawnLocation.getWorld().getName(),
+                        bedSpawnLocation.getX(),
+                        bedSpawnLocation.getY(),
+                        bedSpawnLocation.getZ()
+                    });
             }
 
             HashMap<String, Object> orientation = new HashMap<String, Object>();
@@ -130,8 +137,11 @@ public class PlayerController extends ApiController
             throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
         }
     }
-    
-    @Action(parameters = {"player"})
+
+    @Action(parameters =
+    {
+        "player"
+    })
     public void kill(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -146,8 +156,11 @@ public class PlayerController extends ApiController
             throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
         }
     }
-    
-    @Action(parameters = {"player"})
+
+    @Action(parameters =
+    {
+        "player"
+    })
     public void burn(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -175,8 +188,11 @@ public class PlayerController extends ApiController
             throw new ApiRequestException("Player '" + playerName + "' not found!", 1);
         }
     }
-    
-    @Action(parameters = {"player"})
+
+    @Action(parameters =
+    {
+        "player"
+    })
     public void teleport(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -223,8 +239,7 @@ public class PlayerController extends ApiController
                                 world,
                                 Double.valueOf(locationParts[0]),
                                 Double.valueOf(locationParts[1]),
-                                Double.valueOf(locationParts[2])
-                            );
+                                Double.valueOf(locationParts[2]));
                             if (locationParts.length > 3)
                             {
                                 BasicApi.debug("String to convert to Float: " + locationParts[3]);
@@ -251,16 +266,18 @@ public class PlayerController extends ApiController
                 targetLocation.getX(),
                 targetLocation.getY(),
                 targetLocation.getZ(),
-                worldName
-            ));
+                worldName));
         }
         else
         {
             throw new ApiRequestException("Player '" + playerName + "' not found!", 2);
         }
     }
-    
-    @Action(parameters = {"player"})
+
+    @Action(parameters =
+    {
+        "player"
+    })
     public void heal(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -276,7 +293,10 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters = {"player", "itemid"})
+    @Action(parameters =
+    {
+        "player", "itemid"
+    })
     public void give(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -341,8 +361,11 @@ public class PlayerController extends ApiController
             throw new ApiRequestException("Player '" + playerName + "' not found!", 1);
         }
     }
-    
-    @Action(parameters = {"player"})
+
+    @Action(parameters =
+    {
+        "player"
+    })
     public void kick(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -358,7 +381,10 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters = {"player", "message"})
+    @Action(parameters =
+    {
+        "player", "message"
+    })
     public void tell(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -378,8 +404,11 @@ public class PlayerController extends ApiController
             throw new ApiRequestException("Player '" + playerName + "' not found!", 1);
         }
     }
-    
-    @Action(parameters = {"player"})
+
+    @Action(parameters =
+    {
+        "player"
+    })
     public void clearinventory(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -394,8 +423,11 @@ public class PlayerController extends ApiController
             throw new ApiRequestException("Player '" + playerName + "' not found!", 1);
         }
     }
-    
-    @Action(parameters = {"player", "displayname"})
+
+    @Action(parameters =
+    {
+        "player", "displayname"
+    })
     public void displayname(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -412,7 +444,10 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters = {"player"}, serializer = "json")
+    @Action(parameters =
+    {
+        "player"
+    }, serializer = "json")
     public void inventory(ApiRequest request, ApiResponse response)
     {
         String playerParam = request.params.getString("player");
