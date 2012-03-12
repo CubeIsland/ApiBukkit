@@ -27,7 +27,6 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
 {
     private static Logger logger = null;
     private static ApiBukkit instance = null;
-
     private Server server;
     private PluginManager pm;
     private PluginDescriptionFile pdf;
@@ -88,29 +87,15 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
 
         this.pm.registerEvents(this, this);
 
-        ApiManager.getInstance()
-            .registerController(new ApibukkitController(wrappedThis))
-            .registerSerializer(new JsonSerializer())
-            .registerSerializer(new XmlSerializer())
-            .registerSerializer(new RawSerializer())
-            .setWhitelist(this.apiConfig.whitelist)
-            .setWhitelistEnabled(this.apiConfig.whitelistEnabled)
-            .setBlacklist(this.apiConfig.blacklist)
-            .setBlacklistEnabled(this.apiConfig.blacklistEnabled)
-            .setDisabledActions(this.apiConfig.disabledActions);
-        
+        ApiManager.getInstance().registerController(new ApibukkitController(wrappedThis)).registerSerializer(new JsonSerializer()).registerSerializer(new XmlSerializer()).registerSerializer(new RawSerializer()).setWhitelist(this.apiConfig.whitelist).setWhitelistEnabled(this.apiConfig.whitelistEnabled).setBlacklist(this.apiConfig.blacklist).setBlacklistEnabled(this.apiConfig.blacklistEnabled).setDisabledActions(this.apiConfig.disabledActions);
+
         try
         {
             log(String.format("Starting the web server on port %s!", this.apiConfig.port));
             log(String.format("Using %s as the auth key", this.apiConfig.authKey));
             log(String.format("with a maximum of %s parallel sessions!", this.apiConfig.maxContentLength));
-            
-            ApiServer.getInstance()
-                .setIp(InetAddress.getByName(this.server.getIp()))
-                .setPort(this.apiConfig.port)
-                .setAuthenticationKey(this.apiConfig.authKey)
-                .setMaxContentLength(this.apiConfig.maxContentLength)
-                .start();
+
+            ApiServer.getInstance().setIp(InetAddress.getByName(this.server.getIp())).setPort(this.apiConfig.port).setAuthenticationKey(this.apiConfig.authKey).setMaxContentLength(this.apiConfig.maxContentLength).start();
 
             log("Web server started!");
         }
@@ -121,7 +106,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
             wrappedThis.disable();
             return;
         }
-        
+
         log(String.format("Version %s is now enabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
     }
 
@@ -170,7 +155,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     {
         return this.apiConfig;
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void unregisterControllers(PluginDisableEvent event)
     {
@@ -189,7 +174,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     {
         log(message, null, requiredLogLevel);
     }
-    
+
     public static void log(String message, Throwable t, ApiLogLevel requiredLogLevel)
     {
         if (requiredLogLevel.level <= logLevel.level)
@@ -199,7 +184,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
             logger.log(requiredLogLevel.logLevel, message);
         }
     }
-    
+
     public static void error(String message)
     {
         log(message, ApiLogLevel.ERROR);
@@ -209,12 +194,12 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     {
         log(msg, t, ApiLogLevel.ERROR);
     }
-    
+
     public static void debug(String message)
     {
         log(message, ApiLogLevel.DEBUG);
     }
-    
+
     public static void logException(Throwable t)
     {
         error(t.getLocalizedMessage(), t);

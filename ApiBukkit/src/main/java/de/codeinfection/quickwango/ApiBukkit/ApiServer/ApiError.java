@@ -2,10 +2,9 @@ package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
-
 /**
- * This enum contains the different API errors which get return by the server if something goes wrong
- * while processing the request
+ * This enum contains the different API errors which get return by the server if
+ * something goes wrong while processing the request
  *
  * @author Phillip Schichtel
  * @since 1.0.0
@@ -21,11 +20,9 @@ public enum ApiError
     ACTION_DISABLED(6, HttpResponseStatus.FORBIDDEN),
     METHOD_NOT_ALLOWED(7, HttpResponseStatus.METHOD_NOT_ALLOWED),
     MISSING_PARAMETERS(8, HttpResponseStatus.BAD_REQUEST);
-    
-    
     private final int errorCode;
     private final HttpResponseStatus responseStatus;
-    
+
     /**
      * initializes the ApiError with an error code and an HttpResponseStatus
      */
@@ -34,10 +31,10 @@ public enum ApiError
         this.errorCode = errorCode;
         this.responseStatus = responseStatus;
     }
-    
+
     /**
      * Returns the error code of the ApiError instance
-     * 
+     *
      * @return the code
      */
     public int getCode()
@@ -47,14 +44,14 @@ public enum ApiError
 
     /**
      * Returns the HttpResponseStatus of the ApiError instance
-     * 
+     *
      * @return the response status
      */
     public HttpResponseStatus getRepsonseStatus()
     {
         return this.responseStatus;
     }
-    
+
     @Override
     public String toString()
     {

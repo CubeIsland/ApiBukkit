@@ -20,7 +20,6 @@ public class ApiCommandSender implements CommandSender
     private final String name;
     private final Server server;
     private final List<String> messages;
-
     private boolean active;
 
     public ApiCommandSender(final Server server)
@@ -131,10 +130,12 @@ public class ApiCommandSender implements CommandSender
     }
 
     public void removeAttachment(PermissionAttachment attachment)
-    {}
+    {
+    }
 
     public void recalculatePermissions()
-    {}
+    {
+    }
 
     public Set<PermissionAttachmentInfo> getEffectivePermissions()
     {
@@ -142,5 +143,6 @@ public class ApiCommandSender implements CommandSender
     }
 
     public void setOp(boolean value)
-    {}
+    {
+    }
 }

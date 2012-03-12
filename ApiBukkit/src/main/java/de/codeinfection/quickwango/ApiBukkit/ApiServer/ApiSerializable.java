@@ -1,7 +1,8 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 /**
- * Classes which implement this interface can be directly passed to the ApiResponse
+ * Classes which implement this interface can be directly passed to the
+ * ApiResponse
  *
  * @author Phillip Schichtel
  * @since 1.0.0
@@ -9,7 +10,8 @@ package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 public interface ApiSerializable
 {
     /**
-     * This method serialzes the object into a structure of Maps, Lists and primitive types like numbers and booleans
+     * This method serialzes the object into a structure of Maps, Lists and
+     * primitive types like numbers and booleans
      *
      * @return the serialized object
      */

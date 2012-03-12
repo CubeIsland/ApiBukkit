@@ -7,5 +7,6 @@ package de.codeinfection.quickwango.ApiBukkit.Abstraction;
 public interface Operator
 {
     public boolean isOp();
+
     public void setOp(boolean value);
 }

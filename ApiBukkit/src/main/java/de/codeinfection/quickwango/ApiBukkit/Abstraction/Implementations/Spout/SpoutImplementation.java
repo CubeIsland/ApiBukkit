@@ -24,6 +24,7 @@ public class SpoutImplementation implements Implementation
         this.pm = this.server.getPluginManager();
         this.scheduler = this.server.getScheduler();
     }
+
     public String getImplementationName()
     {
         return "Spout";

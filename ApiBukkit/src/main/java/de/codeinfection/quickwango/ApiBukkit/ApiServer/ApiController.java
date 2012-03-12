@@ -8,9 +8,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The ApiController is the base class for all controllers
- * The extending class must at least call the super contructor with a Plugin instance.
- * To be able to register the controller, the class also needs to be annotated with the @Controller annotation
+ * The ApiController is the base class for all controllers The extending class
+ * must at least call the super contructor with a Plugin instance. To be able to
+ * register the controller, the class also needs to be annotated with the
+ * @Controller annotation
  *
  * @author Phillip Schichtel
  * @since 1.0.0
@@ -27,15 +28,16 @@ public abstract class ApiController
      * Initializes the controllers
      *
      * @param plugin the plugin this controllers corresponds to
-     * @param authNeeded whether the controllers actions need authentication by default or not
+     * @param authNeeded whether the controllers actions need authentication by
+     * default or not
      */
     public ApiController(Plugin plugin)
     {
         this.plugin = plugin;
         this.authNeeded = true;
         this.actions = new ConcurrentHashMap<String, ApiAction>();
-        
-        
+
+
         Class<? extends ApiController> clazz = this.getClass();
         Controller controllerAnnotation = clazz.getAnnotation(Controller.class);
         if (controllerAnnotation == null)

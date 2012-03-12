@@ -44,5 +44,4 @@ public class SpoutServer implements de.codeinfection.quickwango.ApiBukkit.Abstra
     {
         return new SpoutScheduler(this.server.getScheduler());
     }
-
 }

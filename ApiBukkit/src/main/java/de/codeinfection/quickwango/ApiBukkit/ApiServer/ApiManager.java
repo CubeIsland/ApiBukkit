@@ -18,25 +18,22 @@ import org.bukkit.plugin.Plugin;
 public final class ApiManager
 {
     private static ApiManager instance = null;
-
     private final Map<String, ApiController> controllers;
     private final Map<String, ApiResponseSerializer> responseSerializers;
     private final Map<String, Collection<String>> disabledActions;
-
     private boolean whitelistEnabled;
     private final Collection<String> whitelist;
     private boolean blacklistEnabled;
     private final Collection<String> blacklist;
-
     private ApiResponseSerializer defaultSerializer;
 
     private ApiManager()
     {
-        this.controllers         = new ConcurrentHashMap<String, ApiController>();
+        this.controllers = new ConcurrentHashMap<String, ApiController>();
         this.responseSerializers = new ConcurrentHashMap<String, ApiResponseSerializer>();
-        this.disabledActions     = new ConcurrentHashMap<String, Collection<String>>();
-        this.whitelist           = Collections.synchronizedList(new ArrayList<String>());
-        this.blacklist           = Collections.synchronizedList(new ArrayList<String>());
+        this.disabledActions = new ConcurrentHashMap<String, Collection<String>>();
+        this.whitelist = Collections.synchronizedList(new ArrayList<String>());
+        this.blacklist = Collections.synchronizedList(new ArrayList<String>());
 
         this.whitelistEnabled = false;
         this.blacklistEnabled = false;
@@ -62,8 +59,7 @@ public final class ApiManager
     /**
      * Checks whether there is a controller with the given name
      *
-     * @param controller the name of the controller
-     * return true if it exists
+     * @param controller the name of the controller return true if it exists
      */
     public boolean isControllerRegistered(String controller)
     {
@@ -168,7 +164,7 @@ public final class ApiManager
 
     /**
      * Gets all controllers of a plugin
-     * 
+     *
      * @param plugin the instance of the plugin which registered the controllers
      * @return a collection of all the controllers
      */
@@ -303,7 +299,7 @@ public final class ApiManager
 
     /**
      * Returns the default serializer
-     * 
+     *
      * @return the serializer
      */
     public ApiResponseSerializer getDefaultSerializer()
@@ -492,7 +488,7 @@ public final class ApiManager
 
     /**
      * Checks whether the given action of the given controller is disabled
-     * 
+     *
      * @param controller the name of the controller
      * @param action the name of the action
      * @return true if it is

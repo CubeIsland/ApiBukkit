@@ -67,5 +67,4 @@ class BukkitScheduler implements Scheduler
     {
         this.scheduler.cancelAllTasks();
     }
-
 }

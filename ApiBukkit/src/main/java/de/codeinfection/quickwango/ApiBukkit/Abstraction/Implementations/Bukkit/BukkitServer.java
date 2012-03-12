@@ -15,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 class BukkitServer implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Server
 {
     private Server server;
-
     private PluginManager pm;
     private Scheduler scheduler;
 

@@ -18,13 +18,15 @@ import org.bukkit.OfflinePlayer;
 @Controller(name = "operator")
 public class OperatorController extends ApiController
 {
-
     public OperatorController(Plugin plugin)
     {
         super(plugin);
     }
 
-    @Action(parameters = {"player"})
+    @Action(parameters =
+    {
+        "player"
+    })
     public void add(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -46,7 +48,10 @@ public class OperatorController extends ApiController
         }
     }
 
-    @Action(parameters = {"player"})
+    @Action(parameters =
+    {
+        "player"
+    })
     public void remove(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -61,7 +66,10 @@ public class OperatorController extends ApiController
         }
     }
 
-    @Action(parameters = {"player"})
+    @Action(parameters =
+    {
+        "player"
+    })
     public void is(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");

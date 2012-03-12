@@ -9,8 +9,12 @@ import java.io.File;
 public interface Implementation
 {
     public String getImplementationName();
+
     public Server getServer();
+
     public PluginManager getPluginManager();
+
     public Scheduler getScheduler();
+
     public Configuration loadConfiguration(File file);
 }

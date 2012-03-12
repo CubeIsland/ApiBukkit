@@ -15,7 +15,6 @@ public enum MimeType
     GIF("image/gif"),
     JPEG("image/jpeg"),
     PNG("image/png");
-
     private final String typeString;
     private final static String CHARSET = "charset=utf-8";
 

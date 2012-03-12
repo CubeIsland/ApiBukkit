@@ -43,7 +43,7 @@ public class ApiConfiguration
 
         this.blacklistEnabled = config.<Boolean>get("Blacklist.enabled");
         this.blacklist = config.<String>getList("Blacklist.IPs");
-        
+
         Map<String, Object> map = config.getMap("DisabledActions");
         this.disabledActions = new HashMap<String, Collection<String>>();
         for (Map.Entry<String, Object> entry : map.entrySet())

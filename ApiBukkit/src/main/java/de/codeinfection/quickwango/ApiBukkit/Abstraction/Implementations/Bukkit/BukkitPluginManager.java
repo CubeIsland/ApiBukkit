@@ -55,5 +55,4 @@ class BukkitPluginManager implements de.codeinfection.quickwango.ApiBukkit.Abstr
     {
         plugin.reload();
     }
-
 }

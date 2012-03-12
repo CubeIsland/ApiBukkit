@@ -33,8 +33,11 @@ public class WorldController extends ApiController
     {
         super(plugin);
     }
-    
-    @Action(parameters = {"world"}, serializer = "json")
+
+    @Action(parameters =
+    {
+        "world"
+    }, serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -42,34 +45,35 @@ public class WorldController extends ApiController
         if (world != null)
         {
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put("name",                world.getName());
-            data.put("time",                world.getTime());
-            data.put("fullTime",            world.getFullTime());
-            data.put("seed",                world.getSeed());
-            data.put("pvp",                 world.getPVP());
-            data.put("environment",         world.getEnvironment().getId());
-            data.put("thunderDuration",     world.getThunderDuration());
-            data.put("weatherDuration",     world.getWeatherDuration());
-            data.put("allowAnimals",        world.getAllowAnimals());
-            data.put("allowMonsters",       world.getAllowMonsters());
-            data.put("keepSpawnInMemory",   world.getKeepSpawnInMemory());
-            data.put("entities",            world.getEntities().size());
-            data.put("livingEntities",      world.getLivingEntities().size());
-            data.put("difficulty",          world.getDifficulty().getValue());
-            data.put("loadedChunks",        world.getLoadedChunks().length);
-            data.put("players",             world.getPlayers().size());
-            data.put("players",             world.getPlayers().size());
-            data.put("maxHeight",           world.getMaxHeight());
-            data.put("seaLevel",            world.getSeaLevel());
-            data.put("seaLevel",            world.getSeaLevel());
-            data.put("worldFolder",         world.getWorldFolder().toString());
+            data.put("name", world.getName());
+            data.put("time", world.getTime());
+            data.put("fullTime", world.getFullTime());
+            data.put("seed", world.getSeed());
+            data.put("pvp", world.getPVP());
+            data.put("environment", world.getEnvironment().getId());
+            data.put("thunderDuration", world.getThunderDuration());
+            data.put("weatherDuration", world.getWeatherDuration());
+            data.put("allowAnimals", world.getAllowAnimals());
+            data.put("allowMonsters", world.getAllowMonsters());
+            data.put("keepSpawnInMemory", world.getKeepSpawnInMemory());
+            data.put("entities", world.getEntities().size());
+            data.put("livingEntities", world.getLivingEntities().size());
+            data.put("difficulty", world.getDifficulty().getValue());
+            data.put("loadedChunks", world.getLoadedChunks().length);
+            data.put("players", world.getPlayers().size());
+            data.put("players", world.getPlayers().size());
+            data.put("maxHeight", world.getMaxHeight());
+            data.put("seaLevel", world.getSeaLevel());
+            data.put("seaLevel", world.getSeaLevel());
+            data.put("worldFolder", world.getWorldFolder().toString());
 
             Location spawnLoc = world.getSpawnLocation();
-            data.put("spawnLocation", new Integer[] {
-                spawnLoc.getBlockX(),
-                spawnLoc.getBlockY(),
-                spawnLoc.getBlockZ()
-            });
+            data.put("spawnLocation", new Integer[]
+                {
+                    spawnLoc.getBlockX(),
+                    spawnLoc.getBlockY(),
+                    spawnLoc.getBlockZ()
+                });
             data.put("players", world.getPlayers().size());
 
             response.setContent(data);
@@ -79,8 +83,11 @@ public class WorldController extends ApiController
             throw new ApiRequestException("World not found!", 1);
         }
     }
-    
-    @Action(parameters = {"world", "environment"})
+
+    @Action(parameters =
+    {
+        "world", "environment"
+    })
     public void create(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -94,7 +101,8 @@ public class WorldController extends ApiController
                 env = World.Environment.getEnvironment(Integer.valueOf(environmentParam));
             }
             catch (NumberFormatException e)
-            {}
+            {
+            }
 
             if (env == null)
             {
@@ -151,7 +159,10 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters = {"world", "time"})
+    @Action(parameters =
+    {
+        "world", "time"
+    })
     public void time(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -174,8 +185,11 @@ public class WorldController extends ApiController
             throw new ApiRequestException("World not found!", 1);
         }
     }
-    
-    @Action(parameters = {"world"})
+
+    @Action(parameters =
+    {
+        "world"
+    })
     public void pvp(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -209,7 +223,10 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters = {"world", "state"})
+    @Action(parameters =
+    {
+        "world", "state"
+    })
     public void storm(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -239,7 +256,10 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters = {"world"})
+    @Action(parameters =
+    {
+        "world"
+    })
     public Object spawn(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -295,7 +315,7 @@ public class WorldController extends ApiController
         }
         return null;
     }
-    
+
     @Action(serializer = "json")
     public void list(ApiRequest request, ApiResponse response)
     {
@@ -306,8 +326,11 @@ public class WorldController extends ApiController
         }
         response.setContent(data);
     }
-    
-    @Action(parameters = {"world"}, serializer = "json")
+
+    @Action(parameters =
+    {
+        "world"
+    }, serializer = "json")
     public void players(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -327,7 +350,10 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters = {"world"})
+    @Action(parameters =
+    {
+        "world"
+    })
     public void spawnflags(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -370,7 +396,10 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters = {"world"})
+    @Action(parameters =
+    {
+        "world"
+    })
     public void save(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -394,4 +423,3 @@ public class WorldController extends ApiController
         }
     }
 }
-

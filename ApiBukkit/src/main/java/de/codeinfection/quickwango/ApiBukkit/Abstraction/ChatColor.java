@@ -30,10 +30,8 @@ public enum ChatColor
 
     public static final char COLOR_CHAR = '\u00A7';
     private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile(String.valueOf(COLOR_CHAR) + "[0-9A-FK]", Pattern.CASE_INSENSITIVE);
-    
     private final static Map<Byte, ChatColor> BY_CODE = new HashMap<Byte, ChatColor>(values().length);
     private final static Map<Character, ChatColor> BY_CHAR = new HashMap<Character, ChatColor>(values().length);
-
     private final char character;
     private final byte code;
     private final String string;
@@ -42,13 +40,17 @@ public enum ChatColor
     {
         this.character = character;
         this.code = (byte)code;
-        this.string = new String(new char[] {COLOR_CHAR, character});
+        this.string = new String(new char[]
+            {
+                COLOR_CHAR, character
+            });
     }
 
     public char getCharacter()
     {
         return this.character;
     }
+
     public byte getCode()
     {
         return this.code;

@@ -8,9 +8,7 @@ import de.codeinfection.quickwango.ApiBukkit.Abstraction.CommandSender;
  */
 class BukkitCommandSender implements CommandSender
 {
-
     public BukkitCommandSender(org.bukkit.command.CommandSender sender)
     {
     }
-
 }

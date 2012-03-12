@@ -61,7 +61,8 @@ public enum ApiLogLevel
             return getLogLevel(Integer.valueOf(level));
         }
         catch (NumberFormatException e)
-        {}
+        {
+        }
 
         ApiLogLevel logLevel = levelNameMap.get(level.toUpperCase());
         if (logLevel == null)

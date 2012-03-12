@@ -135,7 +135,8 @@ public class BukkitConfigration implements de.codeinfection.quickwango.ApiBukkit
                 return true;
             }
             catch (Exception e)
-            {}
+            {
+            }
         }
         return false;
     }
@@ -161,7 +162,8 @@ public class BukkitConfigration implements de.codeinfection.quickwango.ApiBukkit
                 return true;
             }
             catch (IOException e)
-            {}
+            {
+            }
         }
         return false;
     }

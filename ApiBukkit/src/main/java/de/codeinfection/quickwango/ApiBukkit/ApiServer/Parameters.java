@@ -11,14 +11,14 @@ import java.util.Map;
  */
 public class Parameters extends HashMap<String, Object>
 {
-
     public Parameters(Map<? extends String, ? extends Object> m)
     {
         super(m);
     }
 
     public Parameters()
-    {}
+    {
+    }
 
     public Parameters(int initialCapacity)
     {

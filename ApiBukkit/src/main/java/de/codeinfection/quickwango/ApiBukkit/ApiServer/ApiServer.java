@@ -11,7 +11,8 @@ import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 /**
- * This class represents the API server and provides methods to configure and controll it
+ * This class represents the API server and provides methods to configure and
+ * controll it
  *
  * @author Phillip Schichtel
  * @since 1.0.0
@@ -19,12 +20,10 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 public final class ApiServer
 {
     private static ApiServer instance = null;
-
     private int port;
     private int maxContentLength;
     private String authenticationKey;
     private InetAddress ip;
-
     private Channel channel;
     private ChannelFactory channelFactory;
     private ServerBootstrap bootstrap;
@@ -49,7 +48,7 @@ public final class ApiServer
 
     /**
      * Returns the singlton instance of the ApiServer
-     * 
+     *
      * @return the ApiServer instance
      */
     public static ApiServer getInstance()
@@ -63,7 +62,7 @@ public final class ApiServer
 
     /**
      * Returns whether the server is running or not
-     * 
+     *
      * @return true if it is running
      */
     public boolean isRunning()
@@ -73,7 +72,7 @@ public final class ApiServer
 
     /**
      * Returns the address the server is bound/will bind to
-     * 
+     *
      * @return the address
      */
     public InetAddress getIp()
@@ -83,7 +82,7 @@ public final class ApiServer
 
     /**
      * Sets the address the server will bind to on the next start
-     * 
+     *
      * @param ip the address
      * @return fluent interface
      */
@@ -98,7 +97,7 @@ public final class ApiServer
 
     /**
      * Returns the port the server is/will be listening on
-     * 
+     *
      * @return the post
      */
     public int getPort()
@@ -108,7 +107,7 @@ public final class ApiServer
 
     /**
      * Sets the port to listen on after the next start
-     * 
+     *
      * @param port the port
      * @return fluent interface
      */
@@ -120,7 +119,7 @@ public final class ApiServer
 
     /**
      * Returns the maximum content length the client may send
-     * 
+     *
      * @return the maximum content length
      */
     public int getMaxContentLength()
@@ -130,7 +129,7 @@ public final class ApiServer
 
     /**
      * Sets the maximum content length the clients may send after the next start
-     * 
+     *
      * @param maxContentLength the maximum content length
      * @return fluent interface
      */
@@ -142,7 +141,7 @@ public final class ApiServer
 
     /**
      * Returns the authentication key
-     * 
+     *
      * @return the key
      */
     public String getAuthenticationKey()
@@ -152,7 +151,7 @@ public final class ApiServer
 
     /**
      * Sets the authentication key which will be used instantly
-     * 
+     *
      * @param the key
      * @return fluent interface
      */
@@ -164,7 +163,7 @@ public final class ApiServer
 
     /**
      * Starts the server
-     * 
+     *
      * @return fluent interface
      */
     public ApiServer start()
@@ -184,7 +183,7 @@ public final class ApiServer
 
     /**
      * Stops the server
-     * 
+     *
      * @return fluent interface
      */
     public ApiServer stop()

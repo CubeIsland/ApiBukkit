@@ -17,7 +17,7 @@ public final class ApiResponse
 
     /**
      * Initlaizes the the response with a default serializer
-     * 
+     *
      * @param serializer the serializer instance
      */
     public ApiResponse(ApiResponseSerializer serializer)
@@ -29,7 +29,7 @@ public final class ApiResponse
 
     /**
      * Returns an header
-     * 
+     *
      * @param name the name of the header
      * @return the value of the header
      */
@@ -44,7 +44,7 @@ public final class ApiResponse
 
     /**
      * Sets an header
-     * 
+     *
      * @param name the name of the param
      * @param value the value of the header
      * @return fluent interface
@@ -68,7 +68,7 @@ public final class ApiResponse
 
     /**
      * Returns a copy of the header map
-     * 
+     *
      * @return the header map
      */
     public Map<String, String> getHeaders()
@@ -78,7 +78,7 @@ public final class ApiResponse
 
     /**
      * Clears the headers
-     * 
+     *
      * @return fluent interface
      */
     public ApiResponse clearHeaders()
@@ -89,7 +89,7 @@ public final class ApiResponse
 
     /**
      * Sets the whole header map
-     * 
+     *
      * @param headers the header map
      * @return fluent interface
      */
@@ -107,7 +107,7 @@ public final class ApiResponse
 
     /**
      * Returns the serialier
-     * 
+     *
      * @return the serializer
      */
     public ApiResponseSerializer getSerializer()
@@ -117,9 +117,8 @@ public final class ApiResponse
 
     /**
      * Sets the serializer
-     * 
-     * @param serializer the serialzer instance
-     * €return fluent interface
+     *
+     * @param serializer the serialzer instance €return fluent interface
      */
     public ApiResponse setSerializer(ApiResponseSerializer serializer)
     {
@@ -133,7 +132,7 @@ public final class ApiResponse
 
     /**
      * Returns the content of the response
-     * 
+     *
      * @return the response object
      */
     public Object getContent()
@@ -143,7 +142,7 @@ public final class ApiResponse
 
     /**
      * Sets the response content#
-     * 
+     *
      * @param content an object which will per serialized
      * @return fluent interface
      */

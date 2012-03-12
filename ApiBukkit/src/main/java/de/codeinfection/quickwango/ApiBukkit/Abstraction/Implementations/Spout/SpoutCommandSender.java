@@ -9,9 +9,7 @@ import org.spout.api.command.CommandSource;
  */
 class SpoutCommandSender implements CommandSender
 {
-
     public SpoutCommandSender(CommandSource source)
     {
     }
-
 }

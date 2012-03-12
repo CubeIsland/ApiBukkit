@@ -13,7 +13,7 @@ import org.spout.api.exception.CommandException;
 class SpoutCommandExecutor implements org.spout.api.command.CommandExecutor
 {
     private final CommandExecutor executor;
-    
+
     public SpoutCommandExecutor(CommandExecutor executor)
     {
         this.executor = executor;
@@ -21,6 +21,8 @@ class SpoutCommandExecutor implements org.spout.api.command.CommandExecutor
 
     public boolean processCommand(CommandSource source, Command command, CommandContext args) throws CommandException
     {
-        return this.executor.executeCommand(new SpoutCommandSender(source), new SpoutCommand(command), args.getCommand(), new String[]{});
+        return this.executor.executeCommand(new SpoutCommandSender(source), new SpoutCommand(command), args.getCommand(), new String[]
+            {
+            });
     }
 }

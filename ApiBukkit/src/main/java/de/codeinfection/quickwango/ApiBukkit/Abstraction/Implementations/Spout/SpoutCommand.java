@@ -14,5 +14,4 @@ class SpoutCommand implements Command
     {
         this.command = command;
     }
-
 }

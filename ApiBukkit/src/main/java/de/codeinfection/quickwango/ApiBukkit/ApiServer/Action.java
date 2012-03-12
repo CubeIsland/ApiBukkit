@@ -14,7 +14,12 @@ import java.lang.annotation.Target;
 public @interface Action
 {
     public String name() default "";
+
     public boolean authenticate() default true;
-    public String[] parameters() default {};
+
+    public String[] parameters() default
+    {
+    };
+
     public String serializer() default "plain";
 }

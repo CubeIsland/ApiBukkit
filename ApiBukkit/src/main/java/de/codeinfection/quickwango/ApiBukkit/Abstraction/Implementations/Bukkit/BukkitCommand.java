@@ -8,9 +8,7 @@ import de.codeinfection.quickwango.ApiBukkit.Abstraction.Command;
  */
 class BukkitCommand implements Command
 {
-
     public BukkitCommand(org.bukkit.command.Command command)
     {
     }
-
 }

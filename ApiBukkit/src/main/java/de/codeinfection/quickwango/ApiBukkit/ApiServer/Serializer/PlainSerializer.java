@@ -21,19 +21,20 @@ public class PlainSerializer implements ApiResponseSerializer
         this.serialize(buffer, o);
         return buffer.toString();
     }
-    
+
     @SuppressWarnings("unchecked")
     private void serialize(StringBuffer buffer, Object o)
     {
         if (o == null)
-        {} // null => nothing
+        {
+        } // null => nothing
         else if (o instanceof ApiSerializable)
         {
             this.serialize(buffer, ((ApiSerializable)o).serialize());
         }
         else if (o instanceof Map)
         {
-            Map<String, Object> data = (Map<String, Object>) o;
+            Map<String, Object> data = (Map<String, Object>)o;
             int dataSize = data.size();
             int counter = 0;
             for (Map.Entry entry : data.entrySet())
@@ -49,7 +50,7 @@ public class PlainSerializer implements ApiResponseSerializer
         }
         else if (o instanceof Iterable)
         {
-            Iterable<Object> data = (Iterable<Object>) o;
+            Iterable<Object> data = (Iterable<Object>)o;
             Iterator iter = data.iterator();
             while (iter.hasNext())
             {
@@ -63,7 +64,7 @@ public class PlainSerializer implements ApiResponseSerializer
         }
         else if (o.getClass().isArray())
         {
-            Object[] data = (Object[]) o;
+            Object[] data = (Object[])o;
             int end = data.length - 1;
             for (int i = 0; i < data.length; i++)
             {
@@ -79,7 +80,7 @@ public class PlainSerializer implements ApiResponseSerializer
             buffer.append(encode(String.valueOf(o)));
         }
     }
-    
+
     private static String encode(String string)
     {
         return string.replaceAll("%", "%25").replaceAll(",", "%2C");

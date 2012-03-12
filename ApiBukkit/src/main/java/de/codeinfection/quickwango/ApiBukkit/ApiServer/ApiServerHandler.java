@@ -89,9 +89,9 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
              */
             ApiRequest apiRequest = new ApiRequest(Bukkit.getServer());
             apiRequest.SERVER.put("REQUEST_URI", requestPath);
-            
+
             final Map<String, String> headers = new HashMap<String, String>();
-            for (Entry<String, String> entry :  request.getHeaders())
+            for (Entry<String, String> entry : request.getHeaders())
             {
                 headers.put(entry.getKey().toLowerCase(), entry.getValue());
             }
@@ -248,10 +248,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
     /**
      * This methods determines the response serializer to use
      *
-     * Order:
-     *  format-parameter
-     *  action serializer
-     *  default serializer
+     * Order: format-parameter action serializer default serializer
      *
      * @param request
      * @param acion
@@ -264,7 +261,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 
         if (serializer == null)
         {
-             serializer = manager.getSerializer(acionSerializer);
+            serializer = manager.getSerializer(acionSerializer);
         }
 
         if (serializer == null)
@@ -278,7 +275,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
     {
         final Object content = response.getContent();
         HttpResponseStatus status = (content == null ? HttpResponseStatus.NO_CONTENT : HttpResponseStatus.OK);
-        
+
         return this.toResponse(status, response.getHeaders(), response.getSerializer(), content);
     }
 
@@ -302,7 +299,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
     private HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, ApiResponseSerializer serializer, Object o)
     {
         headers.put("content-type", serializer.getMime().toString());
-        
+
         return this.toResponse(status, headers, serializer.serialize(o));
     }
 
@@ -321,16 +318,18 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         }
         else
         {
-            o = new Object[] {error.getCode(), minor};
+            o = new Object[]
+            {
+                error.getCode(), minor
+            };
         }
-        
+
         return this.toResponse(error.getRepsonseStatus(), new HashMap<String, String>(1), manager.getSerializer("plain"), o);
     }
 
-
     /**
-     * Decodes the percent encoding scheme. <br/>
-     * For example: "an+example%20string" -> "an example string"
+     * Decodes the percent encoding scheme. <br/> For example:
+     * "an+example%20string" -> "an example string"
      */
     private static String urlDecode(String string)
     {

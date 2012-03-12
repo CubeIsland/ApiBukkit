@@ -29,7 +29,10 @@ public class ApibukkitController extends ApiController
         this.manager = ApiManager.getInstance();
     }
 
-    @Action(authenticate = true, parameters = {"routes"})
+    @Action(authenticate = true, parameters =
+    {
+        "routes"
+    })
     public void combined(ApiRequest request, ApiResponse response)
     {
         HashMap<String, Object> responses;
@@ -60,7 +63,7 @@ public class ApibukkitController extends ApiController
                     debug("Got controller '" + controller.getClass().getSimpleName() + "'");
                     ApiAction action = controller.getAction(actionName);
 
-                    
+
                     apiRequest = new ApiRequest(request.server);
                     apiRequest.SERVER.putAll(request.SERVER);
 
@@ -83,9 +86,7 @@ public class ApibukkitController extends ApiController
                             controller.defaultAction(actionName, apiRequest, apiResponse);
                             responses.put(route, apiResponse.getContent());
                         }
-                        apiResponse
-                            .clearHeaders()
-                            .setContent(null);
+                        apiResponse.clearHeaders().setContent(null);
                     }
                     catch (ApiRequestException e)
                     {

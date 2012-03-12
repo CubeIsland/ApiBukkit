@@ -6,5 +6,4 @@ package de.codeinfection.quickwango.ApiBukkit.Abstraction;
  */
 public interface Player
 {
-
 }

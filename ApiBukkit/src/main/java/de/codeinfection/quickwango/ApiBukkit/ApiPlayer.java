@@ -43,7 +43,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-
 /**
  *
  * @author CodeInfection
@@ -100,611 +99,762 @@ public class ApiPlayer extends ApiCommandSender implements Player
         return "ApiPlayer{" + "name=" + this.getName() + '}';
     }
 
-    public void setCompassTarget(Location lctn) {
+    public void setCompassTarget(Location lctn)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Location getCompassTarget() {
+    public Location getCompassTarget()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public InetSocketAddress getAddress() {
+    public InetSocketAddress getAddress()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void sendRawMessage(String string) {
+    public void sendRawMessage(String string)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void kickPlayer(String string) {
+    public void kickPlayer(String string)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void chat(String string) {
+    public void chat(String string)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean performCommand(String string) {
+    public boolean performCommand(String string)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isSneaking() {
+    public boolean isSneaking()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setSneaking(boolean bln) {
+    public void setSneaking(boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isSprinting() {
+    public boolean isSprinting()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setSprinting(boolean bln) {
+    public void setSprinting(boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void saveData() {
+    public void saveData()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void loadData() {
+    public void loadData()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setSleepingIgnored(boolean bln) {
+    public void setSleepingIgnored(boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isSleepingIgnored() {
+    public boolean isSleepingIgnored()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void playNote(Location lctn, byte b, byte b1) {
+    public void playNote(Location lctn, byte b, byte b1)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void playNote(Location lctn, Instrument i, Note note) {
+    public void playNote(Location lctn, Instrument i, Note note)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void playEffect(Location lctn, Effect effect, int i) {
+    public void playEffect(Location lctn, Effect effect, int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public <T> void playEffect(Location lctn, Effect effect, T t) {
+    public <T> void playEffect(Location lctn, Effect effect, T t)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void sendBlockChange(Location lctn, Material mtrl, byte b) {
+    public void sendBlockChange(Location lctn, Material mtrl, byte b)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean sendChunkChange(Location lctn, int i, int i1, int i2, byte[] bytes) {
+    public boolean sendChunkChange(Location lctn, int i, int i1, int i2, byte[] bytes)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void sendBlockChange(Location lctn, int i, byte b) {
+    public void sendBlockChange(Location lctn, int i, byte b)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void sendMap(MapView mv) {
+    public void sendMap(MapView mv)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Deprecated
-    public void updateInventory() {
+    public void updateInventory()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void awardAchievement(Achievement a) {
+    public void awardAchievement(Achievement a)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void incrementStatistic(Statistic ststc) {
+    public void incrementStatistic(Statistic ststc)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void incrementStatistic(Statistic ststc, int i) {
+    public void incrementStatistic(Statistic ststc, int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void incrementStatistic(Statistic ststc, Material mtrl) {
+    public void incrementStatistic(Statistic ststc, Material mtrl)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void incrementStatistic(Statistic ststc, Material mtrl, int i) {
+    public void incrementStatistic(Statistic ststc, Material mtrl, int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setPlayerTime(long l, boolean bln) {
+    public void setPlayerTime(long l, boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public long getPlayerTime() {
+    public long getPlayerTime()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public long getPlayerTimeOffset() {
+    public long getPlayerTimeOffset()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isPlayerTimeRelative() {
+    public boolean isPlayerTimeRelative()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void resetPlayerTime() {
+    public void resetPlayerTime()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void giveExp(int i) {
+    public void giveExp(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public float getExp() {
+    public float getExp()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setExp(float f) {
+    public void setExp(float f)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getLevel() {
+    public int getLevel()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setLevel(int i) {
+    public void setLevel(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getTotalExperience() {
+    public int getTotalExperience()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setTotalExperience(int i) {
+    public void setTotalExperience(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public float getExhaustion() {
+    public float getExhaustion()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setExhaustion(float f) {
+    public void setExhaustion(float f)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public float getSaturation() {
+    public float getSaturation()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setSaturation(float f) {
+    public void setSaturation(float f)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getFoodLevel() {
+    public int getFoodLevel()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setFoodLevel(int i) {
+    public void setFoodLevel(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Location getBedSpawnLocation() {
+    public Location getBedSpawnLocation()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setBedSpawnLocation(Location lctn) {
+    public void setBedSpawnLocation(Location lctn)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean getAllowFlight() {
+    public boolean getAllowFlight()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setAllowFlight(boolean bln) {
+    public void setAllowFlight(boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void hidePlayer(Player player) {
+    public void hidePlayer(Player player)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void showPlayer(Player player) {
+    public void showPlayer(Player player)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean canSee(Player player) {
+    public boolean canSee(Player player)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public PlayerInventory getInventory() {
+    public PlayerInventory getInventory()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean setWindowProperty(Property prprt, int i) {
+    public boolean setWindowProperty(Property prprt, int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public InventoryView getOpenInventory() {
+    public InventoryView getOpenInventory()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public InventoryView openInventory(Inventory invntr) {
+    public InventoryView openInventory(Inventory invntr)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public InventoryView openWorkbench(Location lctn, boolean bln) {
+    public InventoryView openWorkbench(Location lctn, boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public InventoryView openEnchanting(Location lctn, boolean bln) {
+    public InventoryView openEnchanting(Location lctn, boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void openInventory(InventoryView iv) {
+    public void openInventory(InventoryView iv)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void closeInventory() {
+    public void closeInventory()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public ItemStack getItemInHand() {
+    public ItemStack getItemInHand()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setItemInHand(ItemStack is) {
+    public void setItemInHand(ItemStack is)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public ItemStack getItemOnCursor() {
+    public ItemStack getItemOnCursor()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setItemOnCursor(ItemStack is) {
+    public void setItemOnCursor(ItemStack is)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isSleeping() {
+    public boolean isSleeping()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getSleepTicks() {
+    public int getSleepTicks()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public GameMode getGameMode() {
+    public GameMode getGameMode()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setGameMode(GameMode gm) {
+    public void setGameMode(GameMode gm)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getHealth() {
+    public int getHealth()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setHealth(int i) {
+    public void setHealth(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getMaxHealth() {
+    public int getMaxHealth()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public double getEyeHeight() {
+    public double getEyeHeight()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public double getEyeHeight(boolean bln) {
+    public double getEyeHeight(boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Location getEyeLocation() {
+    public Location getEyeLocation()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public List<Block> getLineOfSight(HashSet<Byte> hs, int i) {
+    public List<Block> getLineOfSight(HashSet<Byte> hs, int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Block getTargetBlock(HashSet<Byte> hs, int i) {
+    public Block getTargetBlock(HashSet<Byte> hs, int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public List<Block> getLastTwoTargetBlocks(HashSet<Byte> hs, int i) {
+    public List<Block> getLastTwoTargetBlocks(HashSet<Byte> hs, int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Deprecated
-    public Egg throwEgg() {
+    public Egg throwEgg()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Deprecated
-    public Snowball throwSnowball() {
+    public Snowball throwSnowball()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Deprecated
-    public Arrow shootArrow() {
+    public Arrow shootArrow()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public <T extends Projectile> T launchProjectile(Class<? extends T> type) {
+    public <T extends Projectile> T launchProjectile(Class<? extends T> type)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getRemainingAir() {
+    public int getRemainingAir()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setRemainingAir(int i) {
+    public void setRemainingAir(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getMaximumAir() {
+    public int getMaximumAir()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setMaximumAir(int i) {
+    public void setMaximumAir(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void damage(int i) {
+    public void damage(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void damage(int i, Entity entity) {
+    public void damage(int i, Entity entity)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getMaximumNoDamageTicks() {
+    public int getMaximumNoDamageTicks()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setMaximumNoDamageTicks(int i) {
+    public void setMaximumNoDamageTicks(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getLastDamage() {
+    public int getLastDamage()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setLastDamage(int i) {
+    public void setLastDamage(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getNoDamageTicks() {
+    public int getNoDamageTicks()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setNoDamageTicks(int i) {
+    public void setNoDamageTicks(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Player getKiller() {
+    public Player getKiller()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean addPotionEffect(PotionEffect pe) {
+    public boolean addPotionEffect(PotionEffect pe)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean addPotionEffect(PotionEffect pe, boolean bln) {
+    public boolean addPotionEffect(PotionEffect pe, boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean addPotionEffects(Collection<PotionEffect> clctn) {
+    public boolean addPotionEffects(Collection<PotionEffect> clctn)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean hasPotionEffect(PotionEffectType pet) {
+    public boolean hasPotionEffect(PotionEffectType pet)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void removePotionEffect(PotionEffectType pet) {
+    public void removePotionEffect(PotionEffectType pet)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Collection<PotionEffect> getActivePotionEffects() {
+    public Collection<PotionEffect> getActivePotionEffects()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Location getLocation() {
+    public Location getLocation()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setVelocity(Vector vector) {
+    public void setVelocity(Vector vector)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Vector getVelocity() {
+    public Vector getVelocity()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public World getWorld() {
+    public World getWorld()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean teleport(Location lctn) {
+    public boolean teleport(Location lctn)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean teleport(Location lctn, TeleportCause tc) {
+    public boolean teleport(Location lctn, TeleportCause tc)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean teleport(Entity entity) {
+    public boolean teleport(Entity entity)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean teleport(Entity entity, TeleportCause tc) {
+    public boolean teleport(Entity entity, TeleportCause tc)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public List<Entity> getNearbyEntities(double d, double d1, double d2) {
+    public List<Entity> getNearbyEntities(double d, double d1, double d2)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getEntityId() {
+    public int getEntityId()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getFireTicks() {
+    public int getFireTicks()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getMaxFireTicks() {
+    public int getMaxFireTicks()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setFireTicks(int i) {
+    public void setFireTicks(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void remove() {
+    public void remove()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isDead() {
+    public boolean isDead()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Entity getPassenger() {
+    public Entity getPassenger()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean setPassenger(Entity entity) {
+    public boolean setPassenger(Entity entity)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isEmpty() {
+    public boolean isEmpty()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean eject() {
+    public boolean eject()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public float getFallDistance() {
+    public float getFallDistance()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setFallDistance(float f) {
+    public void setFallDistance(float f)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setLastDamageCause(EntityDamageEvent ede) {
+    public void setLastDamageCause(EntityDamageEvent ede)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public EntityDamageEvent getLastDamageCause() {
+    public EntityDamageEvent getLastDamageCause()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public UUID getUniqueId() {
+    public UUID getUniqueId()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getTicksLived() {
+    public int getTicksLived()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setTicksLived(int i) {
+    public void setTicksLived(int i)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void playEffect(EntityEffect ee) {
+    public void playEffect(EntityEffect ee)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public EntityType getType() {
+    public EntityType getType()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isInsideVehicle() {
+    public boolean isInsideVehicle()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean leaveVehicle() {
+    public boolean leaveVehicle()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Entity getVehicle() {
+    public Entity getVehicle()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setMetadata(String string, MetadataValue mv) {
+    public void setMetadata(String string, MetadataValue mv)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public List<MetadataValue> getMetadata(String string) {
+    public List<MetadataValue> getMetadata(String string)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean hasMetadata(String string) {
+    public boolean hasMetadata(String string)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void removeMetadata(String string, Plugin plugin) {
+    public void removeMetadata(String string, Plugin plugin)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isConversing() {
+    public boolean isConversing()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void acceptConversationInput(String string) {
+    public void acceptConversationInput(String string)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean beginConversation(Conversation c) {
+    public boolean beginConversation(Conversation c)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void abandonConversation(Conversation c) {
+    public void abandonConversation(Conversation c)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isOnline() {
+    public boolean isOnline()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isBanned() {
+    public boolean isBanned()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setBanned(boolean bln) {
+    public void setBanned(boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean isWhitelisted() {
+    public boolean isWhitelisted()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setWhitelisted(boolean bln) {
+    public void setWhitelisted(boolean bln)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public long getFirstPlayed() {
+    public long getFirstPlayed()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public long getLastPlayed() {
+    public long getLastPlayed()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean hasPlayedBefore() {
+    public boolean hasPlayedBefore()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void sendPluginMessage(Plugin plugin, String string, byte[] bytes) {
+    public void sendPluginMessage(Plugin plugin, String string, byte[] bytes)
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Set<String> getListeningPluginChannels() {
+    public Set<String> getListeningPluginChannels()
+    {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -712,7 +862,7 @@ public class ApiPlayer extends ApiCommandSender implements Player
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    /**************************************************************************/
-
+    /**
+     * ***********************************************************************
+     */
 }

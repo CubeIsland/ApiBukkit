@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * This class is a wrapper for the action methods to extract the information from the annotation
- *  and to link the method with its controller.
- * 
+ * This class is a wrapper for the action methods to extract the information
+ * from the annotation and to link the method with its controller.
+ *
  * This class is usually not needed by controller developers
  *
  * @author Phillip Schichtel
@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
 public final class ApiAction
 {
     private final ApiController controller;
-
     private final String name;
     private final Method method;
     private final boolean authNeeded;

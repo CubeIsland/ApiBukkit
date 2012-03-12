@@ -72,5 +72,4 @@ public class BukkitPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstr
     {
         return this.desc;
     }
-
 }

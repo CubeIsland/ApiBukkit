@@ -26,7 +26,7 @@ public class JsonSerializer implements ApiResponseSerializer
     {
         this.serialize(buffer, o, false);
     }
-    
+
     @SuppressWarnings("unchecked")
     private void serialize(StringBuilder buffer, Object o, boolean firstLevel)
     {
@@ -40,7 +40,7 @@ public class JsonSerializer implements ApiResponseSerializer
         }
         else if (o instanceof Map)
         {
-            Map<String, Object> data = (Map<String, Object>) o;
+            Map<String, Object> data = (Map<String, Object>)o;
             int dataSize = data.size();
             int counter = 0;
             buffer.append("{");
@@ -66,7 +66,7 @@ public class JsonSerializer implements ApiResponseSerializer
         }
         else if (o instanceof Iterable)
         {
-            Iterable<Object> data = (Iterable<Object>) o;
+            Iterable<Object> data = (Iterable<Object>)o;
             Iterator iter = data.iterator();
             buffer.append("[");
             Object value;
@@ -83,7 +83,7 @@ public class JsonSerializer implements ApiResponseSerializer
         }
         else if (o.getClass().isArray())
         {
-            Object[] data = (Object[]) o;
+            Object[] data = (Object[])o;
             int end = data.length - 1;
             buffer.append("[");
             for (int i = 0; i < data.length; i++)
@@ -127,10 +127,6 @@ public class JsonSerializer implements ApiResponseSerializer
 
     private static String escape(String string)
     {
-        return string.replace("\\", "\\\\")
-                     .replace("\"", "\\\"")
-                     .replace("\t", "\\t")
-                     .replace("\n", "\\n")
-                     .replace("\r", "\\r");
+        return string.replace("\\", "\\\\").replace("\"", "\\\"").replace("\t", "\\t").replace("\n", "\\n").replace("\r", "\\r");
     }
 }
