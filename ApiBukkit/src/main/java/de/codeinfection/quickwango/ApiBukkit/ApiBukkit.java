@@ -2,7 +2,7 @@ package de.codeinfection.quickwango.ApiBukkit;
 
 import de.codeinfection.quickwango.Abstraction.Abstraction;
 import de.codeinfection.quickwango.Abstraction.Configuration;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit.BukkitImplementation;
+import de.codeinfection.quickwango.Abstraction.Implementations.Bukkit.BukkitImplementation;
 import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;

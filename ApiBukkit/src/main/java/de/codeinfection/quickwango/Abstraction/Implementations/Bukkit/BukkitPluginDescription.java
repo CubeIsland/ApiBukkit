@@ -1,18 +1,18 @@
-package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
+package de.codeinfection.quickwango.Abstraction.Implementations.Bukkit;
 
 import de.codeinfection.quickwango.Abstraction.PluginDescription;
 import java.util.List;
-import org.spout.api.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginDescriptionFile;
 
 /**
  *
  * @author CodeInfection
  */
-public class SpoutPluginDescription implements PluginDescription
+public class BukkitPluginDescription implements PluginDescription
 {
     private final PluginDescriptionFile pdf;
 
-    public SpoutPluginDescription(PluginDescriptionFile pdf)
+    public BukkitPluginDescription(PluginDescriptionFile pdf)
     {
         this.pdf = pdf;
     }

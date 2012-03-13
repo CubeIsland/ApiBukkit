@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
+package de.codeinfection.quickwango.Abstraction.Implementations.Bukkit;
 
 import java.io.File;
 import java.io.IOException;

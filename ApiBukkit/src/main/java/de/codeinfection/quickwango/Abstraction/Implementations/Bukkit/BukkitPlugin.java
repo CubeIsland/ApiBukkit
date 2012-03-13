@@ -1,35 +1,30 @@
-package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
+package de.codeinfection.quickwango.Abstraction.Implementations.Bukkit;
 
 import de.codeinfection.quickwango.Abstraction.Configuration;
 import de.codeinfection.quickwango.Abstraction.PluginDescription;
 import java.io.File;
-import org.spout.api.plugin.Plugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
  * @author CodeInfection
  */
-public class SpoutPlugin implements de.codeinfection.quickwango.Abstraction.Plugin
+public class BukkitPlugin implements de.codeinfection.quickwango.Abstraction.Plugin
 {
     private final Plugin plugin;
-    private final PluginDescription desc;
     private final Configuration config;
+    private final PluginDescription desc;
 
-    public SpoutPlugin(Plugin plugin)
+    public BukkitPlugin(Plugin plugin)
     {
-        this(plugin, null);
+        this.plugin = plugin;
+        this.config = new BukkitConfigration(plugin.getConfig());
+        this.desc = new BukkitPluginDescription(plugin.getDescription());
     }
 
     public Plugin getHandle()
     {
         return this.plugin;
-    }
-
-    public SpoutPlugin(Plugin plugin, Configuration config)
-    {
-        this.plugin = plugin;
-        this.desc = new SpoutPluginDescription(plugin.getDescription());
-        this.config = config;
     }
 
     public String getName()
@@ -44,12 +39,12 @@ public class SpoutPlugin implements de.codeinfection.quickwango.Abstraction.Plug
 
     public void enable()
     {
-        this.plugin.getGame().getPluginManager().enablePlugin(this.plugin);
+        this.plugin.getServer().getPluginManager().enablePlugin(this.plugin);
     }
 
     public void disable()
     {
-        this.plugin.getGame().getPluginManager().disablePlugin(this.plugin);
+        this.plugin.getServer().getPluginManager().disablePlugin(this.plugin);
     }
 
     public void reload()

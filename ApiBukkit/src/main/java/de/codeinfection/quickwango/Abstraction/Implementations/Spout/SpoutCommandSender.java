@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
+package de.codeinfection.quickwango.Abstraction.Implementations.Spout;
 
 import de.codeinfection.quickwango.Abstraction.CommandSender;
 import org.spout.api.command.CommandSource;

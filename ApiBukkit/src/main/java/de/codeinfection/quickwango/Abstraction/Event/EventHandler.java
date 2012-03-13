@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Abstraction.Event;
+package de.codeinfection.quickwango.Abstraction.Event;
 
 /**
  *
