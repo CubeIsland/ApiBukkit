@@ -14,7 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  *
  * @author CodeInfection
  */
-public class BukkitConfigration implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration
+public class BukkitConfigration implements de.codeinfection.quickwango.Abstraction.Configuration
 {
     private final File file;
     private final Configuration config;

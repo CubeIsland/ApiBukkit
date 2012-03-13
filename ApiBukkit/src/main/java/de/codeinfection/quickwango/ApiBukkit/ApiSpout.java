@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Abstraction;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
+import de.codeinfection.quickwango.Abstraction.Abstraction;
+import de.codeinfection.quickwango.Abstraction.Configuration;
 import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout.SpoutImplementation;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.JsonSerializer;

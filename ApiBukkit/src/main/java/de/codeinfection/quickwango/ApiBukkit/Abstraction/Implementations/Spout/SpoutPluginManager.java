@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginManager;
+import de.codeinfection.quickwango.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.PluginManager;
 import java.util.HashSet;
 import java.util.Set;
 import org.spout.api.Spout;

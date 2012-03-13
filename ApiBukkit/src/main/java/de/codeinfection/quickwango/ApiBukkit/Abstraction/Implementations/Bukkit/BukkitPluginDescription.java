@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginDescription;
+import de.codeinfection.quickwango.Abstraction.PluginDescription;
 import java.util.List;
 import org.bukkit.plugin.PluginDescriptionFile;
 

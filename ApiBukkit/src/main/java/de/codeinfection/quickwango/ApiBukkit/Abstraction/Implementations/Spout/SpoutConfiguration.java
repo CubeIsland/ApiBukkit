@@ -8,7 +8,7 @@ import org.spout.api.util.config.Configuration;
  *
  * @author CodeInfection
  */
-public class SpoutConfiguration implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration
+public class SpoutConfiguration implements de.codeinfection.quickwango.Abstraction.Configuration
 {
     private final Configuration config;
 

@@ -1,10 +1,10 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementation;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginManager;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Scheduler;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Server;
+import de.codeinfection.quickwango.Abstraction.Configuration;
+import de.codeinfection.quickwango.Abstraction.Implementation;
+import de.codeinfection.quickwango.Abstraction.PluginManager;
+import de.codeinfection.quickwango.Abstraction.Scheduler;
+import de.codeinfection.quickwango.Abstraction.Server;
 import java.io.File;
 import org.spout.api.Spout;
 

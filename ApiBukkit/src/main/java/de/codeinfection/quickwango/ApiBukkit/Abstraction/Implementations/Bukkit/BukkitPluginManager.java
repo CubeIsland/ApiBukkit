@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.Plugin;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.plugin.PluginManager;
@@ -9,7 +9,7 @@ import org.bukkit.plugin.PluginManager;
  *
  * @author CodeInfection
  */
-class BukkitPluginManager implements de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginManager
+class BukkitPluginManager implements de.codeinfection.quickwango.Abstraction.PluginManager
 {
     private final PluginManager pm;
 

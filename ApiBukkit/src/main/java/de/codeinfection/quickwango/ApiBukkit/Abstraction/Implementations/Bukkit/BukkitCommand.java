@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Command;
+import de.codeinfection.quickwango.Abstraction.Command;
 
 /**
  *

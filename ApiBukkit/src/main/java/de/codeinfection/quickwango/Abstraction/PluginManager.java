@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Abstraction;
+package de.codeinfection.quickwango.Abstraction;
 
 import java.util.Set;
 

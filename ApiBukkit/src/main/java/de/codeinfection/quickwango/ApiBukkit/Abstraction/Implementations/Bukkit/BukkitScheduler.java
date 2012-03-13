@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Scheduler;
+import de.codeinfection.quickwango.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.Scheduler;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 

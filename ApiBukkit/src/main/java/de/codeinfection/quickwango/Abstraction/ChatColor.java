@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.ApiBukkit.Abstraction;
+package de.codeinfection.quickwango.Abstraction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,6 @@ public enum ChatColor
     YELLOW('e', 0xE),
     WHITE('f', 0xF),
     MAGIC('k', 0x10);
-
     public static final char COLOR_CHAR = '\u00A7';
     private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile(String.valueOf(COLOR_CHAR) + "[0-9A-FK]", Pattern.CASE_INSENSITIVE);
     private final static Map<Byte, ChatColor> BY_CODE = new HashMap<Byte, ChatColor>(values().length);

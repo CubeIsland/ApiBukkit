@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.CommandExecutor;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginManager;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Scheduler;
+import de.codeinfection.quickwango.Abstraction.CommandExecutor;
+import de.codeinfection.quickwango.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.PluginManager;
+import de.codeinfection.quickwango.Abstraction.Scheduler;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author CodeInfection
  */
-class BukkitServer implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Server
+class BukkitServer implements de.codeinfection.quickwango.Abstraction.Server
 {
     private Server server;
     private PluginManager pm;

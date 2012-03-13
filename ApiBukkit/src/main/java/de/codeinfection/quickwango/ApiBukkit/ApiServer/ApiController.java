@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.error;
 import java.lang.reflect.Method;

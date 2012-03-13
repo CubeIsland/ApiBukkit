@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.CommandExecutor;
+import de.codeinfection.quickwango.Abstraction.CommandExecutor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

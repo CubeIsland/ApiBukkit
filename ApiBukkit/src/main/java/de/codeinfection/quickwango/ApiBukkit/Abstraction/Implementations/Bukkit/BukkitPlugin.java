@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginDescription;
+import de.codeinfection.quickwango.Abstraction.Configuration;
+import de.codeinfection.quickwango.Abstraction.PluginDescription;
 import java.io.File;
 import org.bukkit.plugin.Plugin;
 
@@ -9,7 +9,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class BukkitPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin
+public class BukkitPlugin implements de.codeinfection.quickwango.Abstraction.Plugin
 {
     private final Plugin plugin;
     private final Configuration config;

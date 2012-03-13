@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.CommandExecutor;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginManager;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Scheduler;
+import de.codeinfection.quickwango.Abstraction.CommandExecutor;
+import de.codeinfection.quickwango.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.PluginManager;
+import de.codeinfection.quickwango.Abstraction.Scheduler;
 import org.spout.api.Game;
 import org.spout.api.Server;
 
@@ -11,7 +11,7 @@ import org.spout.api.Server;
  *
  * @author CodeInfection
  */
-public class SpoutServer implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Server
+public class SpoutServer implements de.codeinfection.quickwango.Abstraction.Server
 {
     private final Server server;
 

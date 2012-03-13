@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
+import de.codeinfection.quickwango.Abstraction.Configuration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;

@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginDescription;
+import de.codeinfection.quickwango.Abstraction.PluginDescription;
 import java.util.List;
 import org.spout.api.plugin.PluginDescriptionFile;
 

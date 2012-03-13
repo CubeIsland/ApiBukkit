@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Spout;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Configuration;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginDescription;
+import de.codeinfection.quickwango.Abstraction.Configuration;
+import de.codeinfection.quickwango.Abstraction.PluginDescription;
 import java.io.File;
 import org.spout.api.plugin.Plugin;
 
@@ -9,7 +9,7 @@ import org.spout.api.plugin.Plugin;
  *
  * @author CodeInfection
  */
-public class SpoutPlugin implements de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin
+public class SpoutPlugin implements de.codeinfection.quickwango.Abstraction.Plugin
 {
     private final Plugin plugin;
     private final PluginDescription desc;
