@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -45,7 +45,7 @@ public class CompatController extends ApiController
     @Action
     public void whois(ApiRequest request, ApiResponse response)
     {
-        String requestPath = (String)request.SERVER.get("REQUEST_PATH");
+        String requestPath = (String)request.meta.get("REQUEST_PATH");
         if (requestPath == null)
         {
             return;

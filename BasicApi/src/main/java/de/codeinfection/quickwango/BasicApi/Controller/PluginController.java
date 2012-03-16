@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Abstraction;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Implementations.Bukkit.BukkitPluginDescription;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.Plugin;
-import de.codeinfection.quickwango.ApiBukkit.Abstraction.PluginDescription;
+import de.codeinfection.quickwango.Abstraction.Abstraction;
+import de.codeinfection.quickwango.Abstraction.Implementations.Bukkit.BukkitPluginDescription;
+import de.codeinfection.quickwango.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.PluginDescription;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
