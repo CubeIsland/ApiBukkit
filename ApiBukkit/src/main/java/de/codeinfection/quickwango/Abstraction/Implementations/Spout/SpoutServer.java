@@ -14,10 +14,12 @@ import org.spout.api.Server;
 public class SpoutServer implements de.codeinfection.quickwango.Abstraction.Server
 {
     private final Server server;
+    private final PluginManager pm;
 
     public SpoutServer(Server server)
     {
         this.server = server;
+        this.pm = new SpoutPluginManager(this.server.getPluginManager());
     }
 
     public SpoutServer(Game game)
@@ -32,12 +34,12 @@ public class SpoutServer implements de.codeinfection.quickwango.Abstraction.Serv
 
     public String getVersion()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.server.getVersion();
     }
 
     public PluginManager getPluginManager()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.pm;
     }
 
     public Scheduler getScheduler()

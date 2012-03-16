@@ -862,7 +862,9 @@ public class ApiPlayer extends ApiCommandSender implements Player
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    /**
-     * ***********************************************************************
-     */
+
+    public boolean isBlocking()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

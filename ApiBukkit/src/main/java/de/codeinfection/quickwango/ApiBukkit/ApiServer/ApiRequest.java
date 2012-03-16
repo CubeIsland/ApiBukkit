@@ -14,7 +14,7 @@ import org.bukkit.Server;
 public final class ApiRequest
 {
     public final Parameters params;
-    public final Map<String, Object> SERVER;
+    public final Map<String, Object> meta;
     public final Map<String, String> headers;
     public final Server server;
 
@@ -24,7 +24,7 @@ public final class ApiRequest
     public ApiRequest(Server server)
     {
         this.params = new Parameters();
-        this.SERVER = new HashMap<String, Object>();
+        this.meta = new HashMap<String, Object>();
         this.headers = new HashMap<String, String>();
 
         this.server = server;

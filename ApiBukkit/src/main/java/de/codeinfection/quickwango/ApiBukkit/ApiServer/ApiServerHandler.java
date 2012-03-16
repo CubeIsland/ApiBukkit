@@ -88,7 +88,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
              * @TODO get rid of the direct bukkit dependency
              */
             ApiRequest apiRequest = new ApiRequest(Bukkit.getServer());
-            apiRequest.SERVER.put("REQUEST_URI", requestPath);
+            apiRequest.meta.put("REQUEST_URI", requestPath);
 
             final Map<String, String> headers = new HashMap<String, String>();
             for (Entry<String, String> entry : request.getHeaders())
@@ -105,14 +105,14 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             }
 
 
-            apiRequest.SERVER.put("REQUEST_PATH", requestUri);
-            apiRequest.SERVER.put("REQUEST_METHOD", method);
-            apiRequest.SERVER.put("REMOTE_ADDR", remoteAddress);
+            apiRequest.meta.put("REQUEST_PATH", requestUri);
+            apiRequest.meta.put("REQUEST_METHOD", method);
+            apiRequest.meta.put("REMOTE_ADDR", remoteAddress);
             ApiBukkit.log(String.format("'%s' requested '%s'", remoteAddress.getAddress().getHostAddress(), requestPath), ApiLogLevel.INFO);
             String useragent = apiRequest.headers.get("apibukkit-useragent");
             if (useragent != null)
             {
-                apiRequest.SERVER.put("HTTP_USER_AGENT", useragent);
+                apiRequest.meta.put("HTTP_USER_AGENT", useragent);
                 ApiBukkit.log("Useragent: " + useragent, ApiLogLevel.INFO);
             }
 

@@ -65,7 +65,7 @@ public class ApibukkitController extends ApiController
 
 
                     apiRequest = new ApiRequest(request.server);
-                    apiRequest.SERVER.putAll(request.SERVER);
+                    apiRequest.meta.putAll(request.meta);
 
                     Object routeParameters = entry.getValue();
                     if (routeParameters != null && routeParameters instanceof Parameters)
