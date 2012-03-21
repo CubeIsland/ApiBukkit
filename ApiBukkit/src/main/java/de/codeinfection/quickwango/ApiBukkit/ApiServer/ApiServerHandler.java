@@ -298,9 +298,10 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 
     private HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, ApiResponseSerializer serializer, Object contentObject)
     {
-        headers.put("content-type", serializer.getMime().toString());
         String contentString = serializer.serialize(contentObject);
+
         headers.put("Content-Length", String.valueOf(contentString.length()));
+        headers.put("Content-Type", serializer.getMime().toString());
 
         return this.toResponse(status, headers, contentString);
     }
@@ -310,23 +311,17 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return this.toResponse(error, null);
     }
 
-    private HttpResponse toResponse(ApiError error, Integer minor)
+    private HttpResponse toResponse(ApiError error, Integer reason)
     {
-        Object o;
+        Map data = new HashMap();
+        data.put("error", error);
 
-        if (minor == null)
+        if (reason != null)
         {
-            o = error.getCode();
-        }
-        else
-        {
-            o = new Object[]
-            {
-                error.getCode(), minor
-            };
+            data.put("reason", reason);
         }
 
-        return this.toResponse(error.getRepsonseStatus(), new HashMap<String, String>(1), manager.getSerializer("plain"), o);
+        return this.toResponse(error.getRepsonseStatus(), new HashMap<String, String>(1), manager.getDefaultSerializer(), data);
     }
 
     /**

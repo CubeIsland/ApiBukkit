@@ -39,7 +39,7 @@ public final class ApiManager
         this.blacklistEnabled = false;
 
         this.defaultSerializer = new PlainSerializer();
-        this.registerSerializer("plain", this.defaultSerializer);
+        this.registerSerializer("json", this.defaultSerializer);
     }
 
     /**
