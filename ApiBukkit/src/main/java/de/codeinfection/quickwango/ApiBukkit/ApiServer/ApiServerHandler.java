@@ -200,7 +200,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
                 catch (ApiRequestException e)
                 {
                     ApiBukkit.error("ControllerException: " + e.getMessage());
-                    return this.toResponse(ApiError.REQUEST_EXCEPTION, e.getErrCode());
+                    return this.toResponse(ApiError.REQUEST_EXCEPTION, e.getReason());
                 }
                 catch (UnsupportedOperationException e)
                 {
@@ -311,7 +311,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return this.toResponse(error, null);
     }
 
-    private HttpResponse toResponse(ApiError error, Integer reason)
+    private HttpResponse toResponse(ApiError error, Object reason)
     {
         Map data = new HashMap();
         data.put("error", error);

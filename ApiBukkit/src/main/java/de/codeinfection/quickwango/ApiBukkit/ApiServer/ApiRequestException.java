@@ -10,34 +10,34 @@ package de.codeinfection.quickwango.ApiBukkit.ApiServer;
  */
 public class ApiRequestException extends RuntimeException
 {
-    private int errCode;
+    private int reason;
 
     /**
-     * Initializes the exception with a message and an error code The given
+     * Initializes the exception with a message and a reason. The given
      * message won't be send to the client, it's just used to inform the console
      *
      * @param msg the message
-     * @param errCode the error code
+     * @param reason the reason for this error
      */
-    public ApiRequestException(String msg, int errCode)
+    public ApiRequestException(String msg, int reason)
     {
         super(msg);
-        this.errCode = errCode;
+        this.reason = reason;
     }
 
     /**
-     * Initializes the exception with a message and an error code and the cause
+     * Initializes the exception with a message, a reason and the cause
      * of the error The given message won't be send to the client, it's just
      * used to inform the console
      *
-     * @param msg the message
-     * @param errCode the error code
+     * @param message the message
+     * @param reason the reason for this error
      * @param cause the cause of te error
      */
-    public ApiRequestException(String msg, int errCode, Throwable cause)
+    public ApiRequestException(String message, int reason, Throwable cause)
     {
-        super(msg, cause);
-        this.errCode = errCode;
+        super(message, cause);
+        this.reason = reason;
     }
 
     /**
@@ -45,9 +45,9 @@ public class ApiRequestException extends RuntimeException
      *
      * @return the error code
      */
-    public int getErrCode()
+    public int getReason()
     {
-        return this.errCode;
+        return this.reason;
     }
 
     @Override
