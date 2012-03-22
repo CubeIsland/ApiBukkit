@@ -8,7 +8,6 @@ import de.codeinfection.quickwango.Abstraction.PluginManager;
 import de.codeinfection.quickwango.Abstraction.Scheduler;
 import de.codeinfection.quickwango.Abstraction.World;
 import java.io.File;
-import java.util.Set;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -79,7 +78,7 @@ public class BukkitServer implements de.codeinfection.quickwango.Abstraction.Ser
         return this.server.getPort();
     }
 
-    public Player[] getOnlinePlayer()
+    public Player[] getOnlinePlayers()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -89,14 +88,9 @@ public class BukkitServer implements de.codeinfection.quickwango.Abstraction.Ser
         return this.server.getMaxPlayers();
     }
 
-    public World getWorlds()
+    public World[] getWorlds()
     {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Set<Plugin> getPlugins()
-    {
-        return this.pm.getPlugins();
     }
 
     public boolean getOnlineMode()
@@ -142,5 +136,20 @@ public class BukkitServer implements de.codeinfection.quickwango.Abstraction.Ser
     public File getWorldContainer()
     {
         return this.server.getWorldContainer();
+    }
+
+    public File getUpdateFolder()
+    {
+        return this.server.getUpdateFolderFile();
+    }
+
+    public void shutdown()
+    {
+        this.server.shutdown();
+    }
+
+    public void broadcast(String message)
+    {
+        this.server.broadcastMessage(message);
     }
 }

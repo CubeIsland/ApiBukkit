@@ -2,6 +2,7 @@ package de.codeinfection.quickwango.BasicApi.Controller;
 
 import de.codeinfection.quickwango.Abstraction.Abstraction;
 import de.codeinfection.quickwango.Abstraction.Plugin;
+import de.codeinfection.quickwango.Abstraction.World;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
@@ -19,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 
 /**
  *
@@ -52,30 +52,30 @@ public class ServerController extends ApiController
         Runtime runtime = Runtime.getRuntime();
         Map<String, Object> data = new HashMap<String, Object>();
 
-        data.put("name", request.server.getServerName());
+        data.put("name", request.server.getName());
         data.put("ip", request.server.getIp());
         data.put("port", request.server.getPort());
         data.put("players", request.server.getOnlinePlayers().length);
         data.put("maxplayers", request.server.getMaxPlayers());
-        data.put("worlds", request.server.getWorlds().size());
-        data.put("plugins", request.server.getPluginManager().getPlugins().length);
+        data.put("worlds", request.server.getWorlds().length);
+        data.put("plugins", request.server.getPluginManager().getPlugins().size());
         data.put("uptime", (System.currentTimeMillis() / 1000) - timeStamp);
         data.put("onlinemode", request.server.getOnlineMode());
-        data.put("whitelisted", request.server.hasWhitelist());
+        data.put("whitelisted", request.server.isWhitelisted());
         data.put("spawnRadius", request.server.getSpawnRadius());
         data.put("viewDistance", request.server.getViewDistance());
         data.put("defaultGamemode", request.server.getDefaultGameMode().getValue());
-        data.put("allowEnd", request.server.getAllowEnd());
-        data.put("allowNether", request.server.getAllowNether());
-        data.put("allowFlight", request.server.getAllowFlight());
+        data.put("allowEnd", request.server.isEndAllwed());
+        data.put("allowNether", request.server.isNetherAllowed());
+        data.put("allowFlight", request.server.isFlyingAllowed());
         data.put("worldContainer", request.server.getWorldContainer().toString());
-        data.put("updateFolder", request.server.getUpdateFolderFile().toString());
+        data.put("updateFolder", request.server.getUpdateFolder().toString());
 
         data.put("maxmemory", runtime.maxMemory());
         data.put("freememory", runtime.freeMemory());
 
         Map<String, Object> versions = new HashMap<String, Object>();
-        versions.put("bukkit", request.server.getBukkitVersion());
+        versions.put("abstraction", Abstraction.getImplementationName());
         versions.put("server", request.server.getVersion());
         versions.put("apibukkit", ApiBukkit.getInstance().getDescription().getVersion());
         versions.put("basicapi", getPlugin().getVersion());
@@ -136,7 +136,7 @@ public class ServerController extends ApiController
     public void broadcast(ApiRequest request, ApiResponse response)
     {
         String message = request.params.getString("message");
-        request.server.broadcastMessage(message.replaceAll("&([0-9a-f])", "§$1"));
+        request.server.broadcast(message.replaceAll("&([0-9a-f])", "§$1"));
         BasicApi.log("broadcasted message '" + message + "'");
     }
 

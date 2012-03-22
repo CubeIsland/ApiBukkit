@@ -8,7 +8,6 @@ import de.codeinfection.quickwango.Abstraction.PluginManager;
 import de.codeinfection.quickwango.Abstraction.Scheduler;
 import de.codeinfection.quickwango.Abstraction.World;
 import java.io.File;
-import java.util.Set;
 import org.spout.api.Game;
 import org.spout.api.Server;
 
@@ -69,7 +68,7 @@ public class SpoutServer implements de.codeinfection.quickwango.Abstraction.Serv
         return Integer.parseInt(address.substring(address.indexOf(":") + 1));
     }
 
-    public Player[] getOnlinePlayer()
+    public Player[] getOnlinePlayers()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -79,14 +78,9 @@ public class SpoutServer implements de.codeinfection.quickwango.Abstraction.Serv
         return this.server.getMaxPlayers();
     }
 
-    public World getWorlds()
+    public World[] getWorlds()
     {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Set<Plugin> getPlugins()
-    {
-        return this.pm.getPlugins();
     }
 
     public boolean getOnlineMode()
@@ -132,5 +126,20 @@ public class SpoutServer implements de.codeinfection.quickwango.Abstraction.Serv
     public File getWorldContainer()
     {
         return this.server.getWorldFolder();
+    }
+
+    public File getUpdateFolder()
+    {
+        return this.server.getUpdateFolder();
+    }
+
+    public void shutdown()
+    {
+        this.server.stop();
+    }
+
+    public void broadcast(String message)
+    {
+        this.server.broadcastMessage(message);
     }
 }

@@ -6,5 +6,5 @@ package de.codeinfection.quickwango.Abstraction;
  */
 public interface World
 {
-
+    public void save();
 }

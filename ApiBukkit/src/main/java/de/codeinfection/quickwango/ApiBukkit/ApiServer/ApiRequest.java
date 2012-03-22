@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
 import de.codeinfection.quickwango.Abstraction.Abstraction;
-import de.codeinfection.quickwango.Abstraction.Implementations.Bukkit.BukkitServer;
+import de.codeinfection.quickwango.Abstraction.Server;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import org.bukkit.Server;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
@@ -118,7 +117,7 @@ public final class ApiRequest
         }
 
         // TODO remove bukkit dependency
-        this.server = ((BukkitServer)Abstraction.getServer()).getHandle();
+        this.server = Abstraction.getServer();
     }
 
     public String getMethod()

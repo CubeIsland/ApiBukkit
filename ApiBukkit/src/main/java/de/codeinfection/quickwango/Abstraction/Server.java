@@ -23,13 +23,11 @@ public interface Server
 
     public int getPort();
 
-    public Player[] getOnlinePlayer();
+    public Player[] getOnlinePlayers();
 
     public int getMaxPlayers();
 
-    public World getWorlds();
-
-    public Set<Plugin> getPlugins();
+    public World[] getWorlds();
 
     public boolean getOnlineMode();
 
@@ -49,5 +47,9 @@ public interface Server
 
     public File getWorldContainer();
 
+    public File getUpdateFolder();
 
+    public void shutdown();
+
+    public void broadcast(String message);
 }
