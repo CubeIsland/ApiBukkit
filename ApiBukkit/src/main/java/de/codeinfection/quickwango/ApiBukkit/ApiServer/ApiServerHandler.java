@@ -235,7 +235,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 
     private static HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, String content)
     {
-        return toResponse(HttpVersion.HTTP_1_0, status, headers, content);
+        return toResponse(HttpVersion.HTTP_1_1, status, headers, content);
     }
 
     private static HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, ApiResponseSerializer serializer, Object contentObject)
@@ -265,6 +265,6 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             data.put("description", reason.getMessage());
         }
 
-        return toResponse(error.getRepsonseStatus(), new HashMap<String, String>(1), manager.getDefaultSerializer(), data);
+        return toResponse(error.getRepsonseStatus(), new HashMap<String, String>(2), manager.getDefaultSerializer(), data);
     }
 }

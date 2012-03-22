@@ -3,6 +3,7 @@ package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.JsonSerializer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.RawSerializer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.XmlSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApibukkitController;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -103,6 +104,10 @@ public final class ApiManager
         if (controller == null)
         {
             throw new IllegalArgumentException("controller must not be null!");
+        }
+        if ("apibukkit".equals(controller.getName()) && controller.getClass() != ApibukkitController.class)
+        {
+            throw new IllegalArgumentException("apibukkit can only be registered with an instance of " + ApibukkitController.class.getName());
         }
         this.controllers.put(controller.getName(), controller);
 
