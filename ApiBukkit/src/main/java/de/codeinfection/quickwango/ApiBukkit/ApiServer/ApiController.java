@@ -23,6 +23,7 @@ public abstract class ApiController
     private final Map<String, ApiAction> actions;
     private final String name;
     private final String serializer;
+    private final boolean unknownToDefaultRouting;
 
     /**
      * Initializes the controllers
@@ -42,10 +43,11 @@ public abstract class ApiController
         Controller controllerAnnotation = clazz.getAnnotation(Controller.class);
         if (controllerAnnotation == null)
         {
-            throw new IllegalArgumentException("Missing annotation for controller " + clazz.getSimpleName());
+            throw new IllegalStateException("Missing annotation for controller " + clazz.getSimpleName());
         }
         this.name = controllerAnnotation.name().trim().toLowerCase();
         this.serializer = controllerAnnotation.serializer();
+        this.unknownToDefaultRouting = controllerAnnotation.unknownToDefault();
 
         for (final Method method : clazz.getDeclaredMethods())
         {
@@ -144,11 +146,11 @@ public abstract class ApiController
      */
     public final ApiAction getAction(String name)
     {
-        if (name != null)
+        if (name == null)
         {
-            return this.actions.get(name.toLowerCase());
+            return null;
         }
-        return null;
+        return this.actions.get(name.toLowerCase());
     }
 
     /**
@@ -164,13 +166,21 @@ public abstract class ApiController
     /**
      * This method will be called if the requested action was not found.
      *
-     * @param action the name of the action which was requested
-     * @param server a org.bukkit.Server instance
-     * @return the response as an Object
-     * @throws ApiRequestException
+     * @param request the request
+     * @param response the response
      */
-    public void defaultAction(String action, ApiRequest request, ApiResponse response)
+    public void defaultAction(ApiRequest request, ApiResponse response)
     {
         response.setContent(this.getActions().keySet());
+    }
+
+    /**
+     * Returns whether this controller allows to route unknown actions to the default action
+     *
+     * @return true if this controller allows to route unknown actions to the default action
+     */
+    public boolean isUnknownToDefaultRoutingAllowed()
+    {
+        return this.unknownToDefaultRouting;
     }
 }

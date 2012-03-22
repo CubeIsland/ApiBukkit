@@ -93,7 +93,17 @@ public class BasicApi extends JavaPlugin
         this.saveConfig();
 
         Plugin wrappedThis = Abstraction.getPluginManager().getPlugin(this.getName());
-        ApiManager.getInstance().registerController(new CommandController(wrappedThis)).registerController(new CompatController(wrappedThis)).registerController(new PluginController(wrappedThis)).registerController(new ServerController(wrappedThis)).registerController(new PlayerController(wrappedThis)).registerController(new WorldController(wrappedThis)).registerController(new BanController(wrappedThis)).registerController(new WhitelistController(wrappedThis)).registerController(new OperatorController(wrappedThis)).registerController(new ConfigurationController(wrappedThis, this.config.configFiles)).registerController(new PermissionController(wrappedThis));
+        ApiManager.getInstance()
+            .registerController(new CommandController(wrappedThis))
+            .registerController(new PluginController(wrappedThis))
+            .registerController(new ServerController(wrappedThis))
+            .registerController(new PlayerController(wrappedThis))
+            .registerController(new WorldController(wrappedThis))
+            .registerController(new BanController(wrappedThis))
+            .registerController(new WhitelistController(wrappedThis))
+            .registerController(new OperatorController(wrappedThis))
+            .registerController(new ConfigurationController(wrappedThis, this.config.configFiles))
+            .registerController(new PermissionController(wrappedThis));
 
         log("Version " + this.pdf.getVersion() + " enabled!");
     }

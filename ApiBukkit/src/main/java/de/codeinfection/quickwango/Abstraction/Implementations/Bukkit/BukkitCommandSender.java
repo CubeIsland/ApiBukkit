@@ -6,7 +6,7 @@ import de.codeinfection.quickwango.Abstraction.CommandSender;
  *
  * @author CodeInfection
  */
-class BukkitCommandSender implements CommandSender
+public class BukkitCommandSender implements CommandSender
 {
     public BukkitCommandSender(org.bukkit.command.CommandSender sender)
     {

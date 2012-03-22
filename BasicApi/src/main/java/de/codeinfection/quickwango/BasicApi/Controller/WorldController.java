@@ -6,9 +6,9 @@ import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import de.codeinfection.quickwango.BasicApi.Utils;
 import java.util.ArrayList;
@@ -34,10 +34,7 @@ public class WorldController extends ApiController
         super(plugin);
     }
 
-    @Action(parameters =
-    {
-        "world"
-    }, serializer = "json")
+    @Action(parameters = {"world"}, serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -68,12 +65,11 @@ public class WorldController extends ApiController
             data.put("worldFolder", world.getWorldFolder().toString());
 
             Location spawnLoc = world.getSpawnLocation();
-            data.put("spawnLocation", new Integer[]
-                {
+            data.put("spawnLocation", new Integer[] {
                     spawnLoc.getBlockX(),
                     spawnLoc.getBlockY(),
                     spawnLoc.getBlockZ()
-                });
+            });
             data.put("players", world.getPlayers().size());
 
             response.setContent(data);
@@ -84,10 +80,7 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "world", "environment"
-    })
+    @Action(parameters = {"world", "environment"})
     public void create(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -159,10 +152,7 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "world", "time"
-    })
+    @Action(parameters = {"world", "time"})
     public void time(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -186,10 +176,7 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "world"
-    })
+    @Action(parameters = {"world"})
     public void pvp(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -223,10 +210,7 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "world", "state"
-    })
+    @Action(parameters = {"world", "state"})
     public void storm(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -256,10 +240,7 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "world"
-    })
+    @Action(parameters = {"world"})
     public Object spawn(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -327,10 +308,7 @@ public class WorldController extends ApiController
         response.setContent(data);
     }
 
-    @Action(parameters =
-    {
-        "world"
-    }, serializer = "json")
+    @Action(parameters = {"world"}, serializer = "json")
     public void players(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -350,10 +328,7 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "world"
-    })
+    @Action(parameters = {"world"})
     public void spawnflags(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
@@ -396,10 +371,7 @@ public class WorldController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "world"
-    })
+    @Action(parameters = {"world"})
     public void save(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");

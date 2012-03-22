@@ -10,7 +10,7 @@ import org.spout.api.exception.CommandException;
  *
  * @author CodeInfection
  */
-class SpoutCommandExecutor implements org.spout.api.command.CommandExecutor
+public class SpoutCommandExecutor implements org.spout.api.command.CommandExecutor
 {
     private final CommandExecutor executor;
 

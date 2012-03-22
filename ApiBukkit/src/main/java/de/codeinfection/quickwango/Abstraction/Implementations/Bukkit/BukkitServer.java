@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author CodeInfection
  */
-class BukkitServer implements de.codeinfection.quickwango.Abstraction.Server
+public class BukkitServer implements de.codeinfection.quickwango.Abstraction.Server
 {
     private Server server;
     private PluginManager pm;
@@ -24,6 +24,11 @@ class BukkitServer implements de.codeinfection.quickwango.Abstraction.Server
 
         this.pm = new BukkitPluginManager(server.getPluginManager());
         this.scheduler = new BukkitScheduler(server.getScheduler());
+    }
+
+    public Server getHandle()
+    {
+        return this.server;
     }
 
     public void registerCommand(Plugin plugin, String name, CommandExecutor commandExecutor)

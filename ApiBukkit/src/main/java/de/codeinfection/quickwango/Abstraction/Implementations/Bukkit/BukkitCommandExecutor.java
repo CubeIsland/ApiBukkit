@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
  *
  * @author CodeInfection
  */
-class BukkitCommandExecutor implements org.bukkit.command.CommandExecutor
+public class BukkitCommandExecutor implements org.bukkit.command.CommandExecutor
 {
     private final CommandExecutor executor;
 

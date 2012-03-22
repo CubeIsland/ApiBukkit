@@ -3,13 +3,16 @@ package de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponseSerializer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiSerializable;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.MimeType;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ResponseSerializer;
 import java.util.Iterator;
 import java.util.Map;
 
-@ResponseSerializer(name = "plain")
 public class PlainSerializer implements ApiResponseSerializer
 {
+    public String getName()
+    {
+        return "plain";
+    }
+
     public MimeType getMime()
     {
         return MimeType.PLAIN;

@@ -7,7 +7,7 @@ import org.spout.api.command.CommandSource;
  *
  * @author CodeInfection
  */
-class SpoutCommandSender implements CommandSender
+public class SpoutCommandSender implements CommandSender
 {
     public SpoutCommandSender(CommandSource source)
     {

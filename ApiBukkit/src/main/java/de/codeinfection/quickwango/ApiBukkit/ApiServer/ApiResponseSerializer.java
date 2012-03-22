@@ -9,6 +9,13 @@ package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 public interface ApiResponseSerializer
 {
     /**
+     * Returns the name of the serializer
+     *
+     * @return hte name
+     */
+    public String getName();
+
+    /**
      * Serializes an object
      *
      * @param o the object to serialize

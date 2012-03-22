@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
  *
  * @author CodeInfection
  */
-class SpoutScheduler implements Scheduler
+public class SpoutScheduler implements Scheduler
 {
     private final org.spout.api.scheduler.Scheduler scheduler;
 

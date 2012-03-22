@@ -1,18 +1,15 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiNotImplementedException;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.UnauthorizedRequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import java.net.InetSocketAddress;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.StringTokenizer;
-import org.bukkit.Bukkit;
-import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -20,7 +17,6 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
-import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
@@ -40,206 +36,153 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
     public void exceptionCaught(ChannelHandlerContext context, ExceptionEvent event)
     {
         ApiBukkit.logException(event.getCause());
-        context.getChannel().write(this.toResponse(ApiError.UNKNONW_ERROR)).addListener(ChannelFutureListener.CLOSE);
+        context.getChannel().write(toResponse(ApiError.UNKNOWN_ERROR)).addListener(ChannelFutureListener.CLOSE);
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext context, MessageEvent message) throws Exception
     {
-        HttpResponse response = this.processRequest(message, (HttpRequest)message.getMessage());
-        if (response != null)
-        {
-            message.getChannel().write(response).addListener(ChannelFutureListener.CLOSE);
-        }
-        else
-        {
-            message.getChannel().close();
-        }
-    }
-
-    private HttpResponse processRequest(final MessageEvent message, final HttpRequest request)
-    {
         final InetSocketAddress remoteAddress = (InetSocketAddress)message.getRemoteAddress();
 
         if (manager.isBlacklisted(remoteAddress) || !manager.isWhitelisted(remoteAddress))
         {
-            return null;
+            message.getChannel().close();
         }
-
-        final HttpMethod method = request.getMethod();
-
-        if (method == HttpMethod.POST || method == HttpMethod.GET || method == HttpMethod.PUT || method == HttpMethod.DELETE)
+        else
         {
-            final String requestUri = request.getUri();
-            List<String> stringParts = explode("?", requestUri);
-            String requestPath;
-            String queryString = "";
-            if (stringParts.size() > 1)
+            ApiRequest request = new ApiRequest(remoteAddress, (HttpRequest)message.getMessage());
+            HttpResponse response = this.processRequest(request);
+            if (response != null)
             {
-                requestPath = stringParts.get(0);
-                queryString = stringParts.get(1);
+                message.getChannel().write(response).addListener(ChannelFutureListener.CLOSE);
             }
             else
             {
-                requestPath = requestUri;
+                message.getChannel().close();
             }
+        }
+    }
 
-            /**
-             * @TODO get rid of the direct bukkit dependency
-             */
-            ApiRequest apiRequest = new ApiRequest(Bukkit.getServer());
-            apiRequest.meta.put("REQUEST_URI", requestPath);
-
-            final Map<String, String> headers = new HashMap<String, String>();
-            for (Entry<String, String> entry : request.getHeaders())
-            {
-                headers.put(entry.getKey().toLowerCase(), entry.getValue());
-            }
-
-            parseQueryString(queryString, apiRequest.params);
-
-            ChannelBuffer content = request.getContent();
-            if (content.readable())
-            {
-                parseQueryString(content.toString(), apiRequest.params);
-            }
-
-
-            apiRequest.meta.put("REQUEST_PATH", requestUri);
-            apiRequest.meta.put("REQUEST_METHOD", method);
-            apiRequest.meta.put("REMOTE_ADDR", remoteAddress);
-            ApiBukkit.log(String.format("'%s' requested '%s'", remoteAddress.getAddress().getHostAddress(), requestPath), ApiLogLevel.INFO);
-            String useragent = apiRequest.headers.get("apibukkit-useragent");
+    private HttpResponse processRequest(ApiRequest request)
+    {
+            ApiBukkit.log(String.format("'%s' requested '%s'", request.getRemoteAddress().getAddress().getHostAddress(), request.getPath()), ApiLogLevel.INFO);
+            String useragent = request.headers.get("user-agent");
             if (useragent != null)
             {
-                apiRequest.meta.put("HTTP_USER_AGENT", useragent);
                 ApiBukkit.log("Useragent: " + useragent, ApiLogLevel.INFO);
             }
 
-            String route = requestPath.substring(1);
-            if (route.length() == 0)
-            {
-                ApiBukkit.error("Invalid route requested!");
-                return this.toResponse(ApiError.INVALID_PATH);
-            }
-            stringParts = explode("/", route);
+            String controllerName = request.getController();
+            String actionName = request.getAction();
 
-            String controllerName;
-            String actionName = null;
-            if (stringParts.size() >= 2)
+            if (actionName != null)
             {
-                controllerName = stringParts.get(0);
-                actionName = stringParts.get(1);
+                debug("Controller: " + controllerName);
             }
-            else if (stringParts.size() >= 1)
+            if (actionName != null)
             {
-                controllerName = stringParts.get(0);
+                debug("Action: " + actionName);
             }
-            else
-            {
-                ApiBukkit.error("Invalid route requested!");
-                return this.toResponse(ApiError.INVALID_PATH);
-            }
-
-            debug("Controllername: " + controllerName);
-            debug("Actionname: " + actionName);
 
             ApiController controller = manager.getController(controllerName);
-            ApiResponse apiResponse = new ApiResponse(manager.getDefaultSerializer());
+            ApiResponse response = new ApiResponse(manager.getDefaultSerializer());
             if (controller != null)
             {
-                ApiBukkit.debug("Selected controller '" + controller.getClass().getSimpleName() + "'");
+                debug("Controller found: " + controller.getClass().getName());
 
                 try
                 {
-                    final String AUTHKEY_PARAM_NAME = "authkey";
-                    String authKey = null;
-                    if (apiRequest.params.containsKey(AUTHKEY_PARAM_NAME))
+                    if (actionName != null)
                     {
-                        authKey = apiRequest.params.getString(AUTHKEY_PARAM_NAME);
-                    }
-                    apiRequest.params.remove(AUTHKEY_PARAM_NAME);
-
-                    ApiAction action = controller.getAction(actionName);
-                    if (manager.isActionDisabled(controllerName, actionName))
-                    {
-                        ApiBukkit.error("Requested action is disabled!");
-                        return this.toResponse(ApiError.ACTION_DISABLED);
-                    }
-                    if (action != null)
-                    {
-                        this.authorized(authKey, action);
-
-                        for (String param : action.getParameters())
+                        ApiAction action = controller.getAction(actionName);
+                        if (manager.isActionDisabled(controllerName, actionName))
                         {
-                            if (!apiRequest.params.containsKey(param))
-                            {
-                                ApiBukkit.error("Request had to few arguments!");
-                                return this.toResponse(ApiError.MISSING_PARAMETERS);
-                            }
+                            ApiBukkit.error("Requested action is disabled!");
+                            return toResponse(ApiError.ACTION_DISABLED);
                         }
+                        if (action != null)
+                        {
+                            authorized(request, action);
 
-                        apiResponse.setSerializer(this.getSerializer(apiRequest, action.getSerializer()));
-                        ApiBukkit.debug("Running action '" + actionName + "'");
-                        action.execute(apiRequest, apiResponse);
+                            for (String param : action.getParameters())
+                            {
+                                if (!request.params.containsKey(param))
+                                {
+                                    ApiBukkit.error("Request had to few arguments!");
+                                    return toResponse(ApiError.MISSING_PARAMETERS);
+                                }
+                            }
+
+                            response.setSerializer(getSerializer(request, action.getSerializer()));
+                            ApiBukkit.debug("Action found: " + actionName);
+                            action.execute(request, response);
+                        }
+                        else if (controller.isUnknownToDefaultRoutingAllowed())
+                        {
+                            authorized(request, controller);
+
+                            response.setSerializer(getSerializer(request, controller.getSerializer()));
+                            ApiBukkit.debug("action not found, routing to default action");
+                            controller.defaultAction(request, response);
+                        }
+                        else
+                        {
+                            ApiBukkit.log("Action not found");
+                            return toResponse(ApiError.ACTION_NOT_FOUND);
+                        }
                     }
                     else
                     {
-                        this.authorized(authKey, controller);
+                        authorized(request, controller);
 
-                        apiResponse.setSerializer(this.getSerializer(apiRequest, controller.getSerializer()));
+                        response.setSerializer(getSerializer(request, controller.getSerializer()));
                         ApiBukkit.debug("Runnung default action");
-                        controller.defaultAction(actionName, apiRequest, apiResponse);
+                        controller.defaultAction(request, response);
                     }
                 }
                 catch (UnauthorizedRequestException e)
                 {
                     ApiBukkit.error("Wrong authentication key!");
-                    return this.toResponse(ApiError.AUTHENTICATION_FAILURE);
+                    return toResponse(ApiError.AUTHENTICATION_FAILURE);
                 }
                 catch (ApiRequestException e)
                 {
                     ApiBukkit.error("ControllerException: " + e.getMessage());
-                    return this.toResponse(ApiError.REQUEST_EXCEPTION, e.getReason());
+                    return toResponse(ApiError.REQUEST_EXCEPTION, e);
                 }
-                catch (UnsupportedOperationException e)
+                catch (ApiNotImplementedException e)
                 {
                     ApiBukkit.error("action not implemented");
-                    return this.toResponse(ApiError.ACTION_NOT_IMPLEMENTED);
+                    return toResponse(ApiError.ACTION_NOT_IMPLEMENTED);
                 }
                 catch (Throwable t)
                 {
                     ApiBukkit.logException(t);
-                    return this.toResponse(ApiError.UNKNONW_ERROR);
+                    return toResponse(ApiError.UNKNOWN_ERROR);
                 }
             }
             else
             {
-                ApiBukkit.error("Controller not found!");
-                return this.toResponse(ApiError.CONTROLLER_NOT_FOUND);
+                ApiBukkit.log("Controller not found!");
+                return toResponse(ApiError.CONTROLLER_NOT_FOUND);
             }
 
-            return this.toResponse(apiResponse);
-        }
-        else
-        {
-            return this.toResponse(ApiError.METHOD_NOT_ALLOWED);
-        }
+            return toResponse(response);
     }
 
-    private static void authorized(String key, ApiController controller)
+    private static void authorized(ApiRequest request, ApiController controller)
     {
-        ApiBukkit.debug("Authkey: " + key);
-        if (controller.isAuthNeeded() && !server.getAuthenticationKey().equals(key))
+        ApiBukkit.debug("Authkey: " + request.getAuthenticationKey());
+        if (controller.isAuthNeeded() && !server.getAuthenticationKey().equals(request.getAuthenticationKey()))
         {
             throw new UnauthorizedRequestException();
         }
     }
 
-    private static void authorized(String key, ApiAction action)
+    private static void authorized(ApiRequest request, ApiAction action)
     {
-        ApiBukkit.debug("Authkey: " + key);
-        if (action.isAuthNeeded() && !server.getAuthenticationKey().equals(key))
+        ApiBukkit.debug("Authkey: " + request.getAuthenticationKey());
+        if (action.isAuthNeeded() && !server.getAuthenticationKey().equals(request.getAuthenticationKey()))
         {
             throw new UnauthorizedRequestException();
         }
@@ -251,13 +194,12 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
      * Order: format-parameter action serializer default serializer
      *
      * @param request
-     * @param acion
      * @param def
      * @return
      */
-    private ApiResponseSerializer getSerializer(ApiRequest request, String acionSerializer)
+    private static ApiResponseSerializer getSerializer(ApiRequest request, String acionSerializer)
     {
-        ApiResponseSerializer serializer = manager.getSerializer(request.params.getProperty("format"));
+        ApiResponseSerializer serializer = manager.getSerializer(request.getFormat());
 
         if (serializer == null)
         {
@@ -271,15 +213,15 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return serializer;
     }
 
-    private HttpResponse toResponse(ApiResponse response)
+    private static HttpResponse toResponse(ApiResponse response)
     {
         final Object content = response.getContent();
         HttpResponseStatus status = (content == null ? HttpResponseStatus.NO_CONTENT : HttpResponseStatus.OK);
 
-        return this.toResponse(status, response.getHeaders(), response.getSerializer(), content);
+        return toResponse(status, response.getHeaders(), response.getSerializer(), content);
     }
 
-    private HttpResponse toResponse(HttpVersion version, HttpResponseStatus status, Map<String, String> headers, final String content)
+    private static HttpResponse toResponse(HttpVersion version, HttpResponseStatus status, Map<String, String> headers, final String content)
     {
         HttpResponse response = new DefaultHttpResponse(version, status);
         response.setContent(ChannelBuffers.copiedBuffer(content, CharsetUtil.UTF_8));
@@ -291,152 +233,38 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return response;
     }
 
-    private HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, String content)
+    private static HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, String content)
     {
-        return this.toResponse(HttpVersion.HTTP_1_0, status, headers, content);
+        return toResponse(HttpVersion.HTTP_1_0, status, headers, content);
     }
 
-    private HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, ApiResponseSerializer serializer, Object contentObject)
+    private static HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, ApiResponseSerializer serializer, Object contentObject)
     {
         String contentString = serializer.serialize(contentObject);
 
         headers.put("Content-Length", String.valueOf(contentString.length()));
         headers.put("Content-Type", serializer.getMime().toString());
 
-        return this.toResponse(status, headers, contentString);
+        return toResponse(status, headers, contentString);
     }
 
-    private HttpResponse toResponse(ApiError error)
+    private static HttpResponse toResponse(ApiError error)
     {
-        return this.toResponse(error, null);
+        return toResponse(error, null);
     }
 
-    private HttpResponse toResponse(ApiError error, Object reason)
+    private static HttpResponse toResponse(ApiError error, ApiRequestException reason)
     {
         Map data = new HashMap();
         data.put("error", error);
+        data.put("description", error.getDescription());
 
         if (reason != null)
         {
-            data.put("reason", reason);
+            data.put("reason", reason.getReason());
+            data.put("description", reason.getMessage());
         }
 
-        return this.toResponse(error.getRepsonseStatus(), new HashMap<String, String>(1), manager.getDefaultSerializer(), data);
-    }
-
-    /**
-     * Decodes the percent encoding scheme. <br/> For example:
-     * "an+example%20string" -> "an example string"
-     */
-    private static String urlDecode(String string)
-    {
-        try
-        {
-            return URLDecoder.decode(string, "UTF-8");
-        }
-        catch (Exception e)
-        {
-            return string;
-        }
-    }
-
-    /**
-     * parses a querystring
-     */
-    private static void parseQueryString(String queryString, Parameters params)
-    {
-        parseQueryString(queryString, params, "&");
-    }
-
-    /**
-     * parses a querystring
-     */
-    private static void parseQueryString(String queryString, Parameters params, String pairDelim)
-    {
-        parseQueryString(queryString, params, pairDelim, "=");
-    }
-
-    /**
-     * parses a querystring
-     */
-    private static void parseQueryString(String queryString, Parameters params, String pairDelim, String valueDelim)
-    {
-        if (queryString == null || queryString.length() == 0)
-        {
-            return;
-        }
-
-        int queryDelimIndex = queryString.indexOf("?");
-        if (queryDelimIndex > -1)
-        {
-            queryString = queryString.substring(queryDelimIndex + 1);
-        }
-
-        StringTokenizer tokenizer = new StringTokenizer(queryString, pairDelim);
-        while (tokenizer.hasMoreTokens())
-        {
-            parseKeyValuePair(tokenizer.nextToken(), params, valueDelim);
-        }
-    }
-
-    private static void parseKeyValuePair(String keyValuePair, Parameters params, String valueDelim)
-    {
-        int delimPosition = keyValuePair.indexOf(valueDelim);
-        if (delimPosition > -1)
-        {
-            String key = keyValuePair.substring(0, delimPosition);
-            String value = urlDecode(keyValuePair.substring(delimPosition + 1));
-
-            params.put(parseKey(key), value);
-        }
-        else
-        {
-            List<String> path = parseKey(keyValuePair);
-            if (!params.containsKey(path))
-            {
-                params.put(path, null);
-            }
-        }
-    }
-
-    private static List<String> parseKey(String key)
-    {
-        List<String> path = new ArrayList<String>();
-        int firstOpenBracketPosition = key.indexOf("[");
-        if (firstOpenBracketPosition > -1)
-        {
-            String indicesString = key.substring(firstOpenBracketPosition);
-            int lastCloseBracketPosition = indicesString.lastIndexOf("]");
-            if (lastCloseBracketPosition == indicesString.length() - 1)
-            {
-                key = urlDecode(key.substring(0, firstOpenBracketPosition));
-                String delimitedIndices = indicesString.substring(1, lastCloseBracketPosition);
-
-                path.add(key);
-                for (String token : explode("][", delimitedIndices))
-                {
-                    path.add(urlDecode(token));
-                }
-                return path;
-            }
-        }
-
-        path.add(urlDecode(key));
-        return path;
-    }
-
-    private static List<String> explode(String delim, String string)
-    {
-        int pos, offset = 0, delimLen = delim.length();
-        List<String> tokens = new ArrayList<String>();
-
-        while ((pos = string.indexOf(delim, offset)) > -1)
-        {
-            tokens.add(string.substring(offset, pos));
-            offset = pos + delimLen;
-        }
-        tokens.add(string.substring(offset));
-
-        return tokens;
+        return toResponse(error.getRepsonseStatus(), new HashMap<String, String>(1), manager.getDefaultSerializer(), data);
     }
 }

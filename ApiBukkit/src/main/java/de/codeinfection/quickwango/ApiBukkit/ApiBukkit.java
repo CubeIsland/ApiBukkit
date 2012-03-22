@@ -6,9 +6,6 @@ import de.codeinfection.quickwango.Abstraction.Implementations.Bukkit.BukkitImpl
 import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.JsonSerializer;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.RawSerializer;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.XmlSerializer;
 import java.io.File;
 import java.net.InetAddress;
 import java.security.MessageDigest;
@@ -87,7 +84,13 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
 
         this.pm.registerEvents(this, this);
 
-        ApiManager.getInstance().registerController(new ApibukkitController(wrappedThis)).registerSerializer(new JsonSerializer()).registerSerializer(new XmlSerializer()).registerSerializer(new RawSerializer()).setWhitelist(this.apiConfig.whitelist).setWhitelistEnabled(this.apiConfig.whitelistEnabled).setBlacklist(this.apiConfig.blacklist).setBlacklistEnabled(this.apiConfig.blacklistEnabled).setDisabledActions(this.apiConfig.disabledActions);
+        ApiManager.getInstance()
+            .registerController(new ApibukkitController(wrappedThis))
+            .setWhitelist(this.apiConfig.whitelist)
+            .setWhitelistEnabled(this.apiConfig.whitelistEnabled)
+            .setBlacklist(this.apiConfig.blacklist)
+            .setBlacklistEnabled(this.apiConfig.blacklistEnabled)
+            .setDisabledActions(this.apiConfig.disabledActions);
 
         try
         {

@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
  *
  * @author CodeInfection
  */
-class BukkitScheduler implements Scheduler
+public class BukkitScheduler implements Scheduler
 {
     private final org.bukkit.scheduler.BukkitScheduler scheduler;
 

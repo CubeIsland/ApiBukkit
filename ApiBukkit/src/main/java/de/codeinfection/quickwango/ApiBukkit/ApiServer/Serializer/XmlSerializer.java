@@ -3,14 +3,17 @@ package de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponseSerializer;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiSerializable;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.MimeType;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ResponseSerializer;
 import java.util.Iterator;
 import java.util.Map;
 
-@ResponseSerializer(name = "xml")
 public class XmlSerializer implements ApiResponseSerializer
 {
     private final static String XMLDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
+
+    public String getName()
+    {
+        return "xml";
+    }
 
     public MimeType getMime()
     {

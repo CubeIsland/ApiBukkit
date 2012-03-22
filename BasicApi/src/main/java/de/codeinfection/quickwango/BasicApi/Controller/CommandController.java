@@ -5,9 +5,9 @@ import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
  *
  * @author CodeInfection
  */
-@Controller(name = "command", serializer = "json")
+@Controller(name = "command", serializer = "json", unknownToDefault = true)
 public class CommandController extends ApiController
 {
     private ApiCommandSender commandSender;
@@ -29,9 +29,10 @@ public class CommandController extends ApiController
     }
 
     @Override
-    public void defaultAction(String action, ApiRequest request, ApiResponse response) throws ApiRequestException
+    public void defaultAction(ApiRequest request, ApiResponse response) throws ApiRequestException
     {
         List<String> responseLines = null;
+        String action = request.getAction();
         if (action != null)
         {
             BasicApi.log("Command " + action + " requested");

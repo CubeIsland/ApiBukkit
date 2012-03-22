@@ -7,7 +7,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
@@ -36,17 +36,16 @@ public class ApibukkitController extends ApiController
     public void combined(ApiRequest request, ApiResponse response)
     {
         HashMap<String, Object> responses;
-        Parameters routes = request.params.getParameters("routes");
+        Map<Object, Object> routes = request.params.getJSONDecoded("routes");
         if (routes != null)
         {
             responses = new HashMap<String, Object>();
-
-            ApiRequest apiRequest;
+            
             ApiResponse apiResponse = new ApiResponse(this.manager.getDefaultSerializer());
 
-            for (Map.Entry<String, Object> entry : routes.entrySet())
+            for (Map.Entry entry : routes.entrySet())
             {
-                String route = entry.getKey();
+                String route = String.valueOf(entry.getKey());
                 debug("Route: " + route);
                 String controllerName = route;
                 String actionName = null;
@@ -63,27 +62,23 @@ public class ApibukkitController extends ApiController
                     debug("Got controller '" + controller.getClass().getSimpleName() + "'");
                     ApiAction action = controller.getAction(actionName);
 
-
-                    apiRequest = new ApiRequest(request.server);
-                    apiRequest.meta.putAll(request.meta);
-
                     Object routeParameters = entry.getValue();
                     if (routeParameters != null && routeParameters instanceof Parameters)
                     {
-                        apiRequest.params.putAll((Parameters)entry.getValue());
+                        request.params.putAll((Parameters)entry.getValue());
                     }
                     try
                     {
                         if (action != null)
                         {
                             debug("Running action '" + action.getClass().getSimpleName() + "'");
-                            action.execute(apiRequest, apiResponse);
+                            action.execute(request, apiResponse);
                             responses.put(route, apiResponse.getContent());
                         }
                         else
                         {
                             debug("Running default action");
-                            controller.defaultAction(actionName, apiRequest, apiResponse);
+                            controller.defaultAction(request, apiResponse);
                             responses.put(route, apiResponse.getContent());
                         }
                         apiResponse.clearHeaders().setContent(null);

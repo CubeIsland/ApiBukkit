@@ -1,33 +1,23 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import java.util.ArrayList;
+import com.google.gson.Gson;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  *
  * @author CodeInfection
  */
-public class Parameters extends HashMap<String, Object>
+public class Parameters extends HashMap<String, String>
 {
-    public Parameters(Map<? extends String, ? extends Object> m)
-    {
-        super(m);
-    }
-
     public Parameters()
     {
+        super();
     }
 
-    public Parameters(int initialCapacity)
+    public Parameters(Map<? extends String, ? extends String> m)
     {
-        super(initialCapacity);
-    }
-
-    public Parameters(int initialCapacity, float loadFactor)
-    {
-        super(initialCapacity, loadFactor);
+        super(m);
     }
 
     public String getString(String key)
@@ -37,173 +27,103 @@ public class Parameters extends HashMap<String, Object>
 
     public String getString(String key, String def)
     {
-        Object value = this.get(key);
-        if (value != null && value instanceof String)
-        {
-            return (String)value;
-        }
-        else
+        String value = this.get(key);
+        if (value == null)
         {
             return def;
         }
+        return value;
     }
 
-    public void setProperty(String key, String value)
+    public Integer getInt(String key)
     {
-        this.put(key, value);
+        return this.getInt(key, null);
     }
 
-    public String getProperty(String key)
+    public Integer getInt(String key, Integer def)
     {
-        return this.getString(key);
-    }
-
-    public String getProperty(String key, String def)
-    {
-        return this.getString(key, def);
-    }
-
-    public Parameters getParameters(String key)
-    {
-        Object value = this.get(key);
-        if (value != null && value instanceof Parameters)
+        String value = this.get(key);
+        if (value != null)
         {
-            return (Parameters)value;
+            try
+            {
+                return Integer.parseInt(value);
+            }
+            catch (NumberFormatException e)
+            {}
         }
-        else
+        return def;
+    }
+
+    public Long getLong(String key)
+    {
+        return this.getLong(key, null);
+    }
+
+    public Long getLong(String key, Long def)
+    {
+        String value = this.get(key);
+        if (value != null)
         {
+            try
+            {
+                return Long.parseLong(value);
+            }
+            catch (NumberFormatException e)
+            {}
+        }
+        return def;
+    }
+
+    public Double getDouble(String key)
+    {
+        return this.getDouble(key, null);
+    }
+
+    public Double getDouble(String key, Double def)
+    {
+        String value = this.get(key);
+        if (value != null)
+        {
+            try
+            {
+                return Double.parseDouble(value);
+            }
+            catch (NumberFormatException e)
+            {}
+        }
+        return def;
+    }
+
+    public Boolean getBoolean(String key)
+    {
+        return this.getBoolean(key, null);
+    }
+
+    public Boolean getBoolean(String key, Boolean def)
+    {
+        String value = this.get(key);
+        if (value != null)
+        {
+            try
+            {
+                return Boolean.parseBoolean(value);
+            }
+            catch (NumberFormatException e)
+            {}
+        }
+        return def;
+    }
+
+    public Map<Object, Object> getJSONDecoded(String key)
+    {
+        String value = this.getString(key);
+        if (value != null)
+        {
+            Gson parser = new Gson();
+            // implement
             return null;
         }
-    }
-
-    public List<Object> getList(String key, List<Object> def)
-    {
-        Object value = this.get(key);
-        if (value != null && value instanceof List)
-        {
-            return (List<Object>)value;
-        }
-        else
-        {
-            return def;
-        }
-    }
-
-    public void putList(String key, Object value)
-    {
-        Object tmp = this.get(key);
-        if (tmp != null)
-        {
-            if (tmp instanceof List)
-            {
-                ((List<Object>)tmp).add(value);
-            }
-            else
-            {
-                List<Object> list = new ArrayList<Object>();
-                list.add(tmp);
-                list.add(value);
-                this.put(key, list);
-            }
-        }
-        else
-        {
-            this.put(key, value);
-        }
-    }
-
-    public Object get(List<String> path)
-    {
-        int keyCount = path.size() - 1;
-
-        String key;
-        Parameters node = this;
-        Object tmpNode;
-        for (int i = 0; i < keyCount; ++i)
-        {
-            key = path.get(i);
-            tmpNode = node.get(key);
-            if (tmpNode != null)
-            {
-                if (tmpNode instanceof Parameters)
-                {
-                    node = (Parameters)tmpNode;
-                }
-                else
-                {
-                    throw new IllegalArgumentException("The given path cannot be mapped!");
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        return node.get(path.get(keyCount));
-    }
-
-    public void put(List<String> path, Object value)
-    {
-        int keyCount = path.size() - 1;
-
-        String key;
-        Parameters node = this;
-        Object tmpNode;
-        for (int i = 0; i < keyCount; ++i)
-        {
-            key = path.get(i);
-            tmpNode = node.get(key);
-            if (tmpNode != null)
-            {
-                if (tmpNode instanceof Parameters)
-                {
-                    node = (Parameters)tmpNode;
-                }
-                else
-                {
-                    throw new IllegalArgumentException("The given path cannot be mapped!");
-                }
-            }
-            else
-            {
-                Parameters newNode = new Parameters();
-                node.put(key, newNode);
-                node = newNode;
-            }
-        }
-
-        node.putList(path.get(keyCount), value);
-    }
-
-    public boolean containsKey(List<String> path)
-    {
-        int keyCount = path.size() - 1;
-
-        String key;
-        Parameters node = this;
-        Object tmpNode;
-        for (int i = 0; i < keyCount; ++i)
-        {
-            key = path.get(i);
-            tmpNode = node.get(key);
-            if (tmpNode != null)
-            {
-                if (tmpNode instanceof Parameters)
-                {
-                    node = (Parameters)tmpNode;
-                }
-                else
-                {
-                    throw new IllegalArgumentException("The given path cannot be mapped!");
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        return node.containsKey(path.get(keyCount));
+        return null;
     }
 }

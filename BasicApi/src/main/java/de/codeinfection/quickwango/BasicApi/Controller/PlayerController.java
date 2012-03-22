@@ -4,9 +4,9 @@ import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import de.codeinfection.quickwango.BasicApi.Utils;
 import java.util.ArrayList;
@@ -45,10 +45,7 @@ public class PlayerController extends ApiController
         response.setContent(players);
     }
 
-    @Action(parameters =
-    {
-        "player"
-    }, serializer = "json")
+    @Action(parameters = {"player"}, serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
         final String playerName = request.params.getString("player");
@@ -86,42 +83,38 @@ public class PlayerController extends ApiController
             if (playerLoc != null)
             {
                 data.put("world", playerLoc.getWorld().getName());
-                data.put("position", new Double[]
-                    {
-                        playerLoc.getX(),
-                        playerLoc.getY(),
-                        playerLoc.getZ()
-                    });
-                data.put("blockPosition", new Integer[]
-                    {
-                        playerLoc.getBlockX(),
-                        playerLoc.getBlockY(),
-                        playerLoc.getBlockZ()
-                    });
+                data.put("position", new Double[] {
+                    playerLoc.getX(),
+                    playerLoc.getY(),
+                    playerLoc.getZ()
+                });
+                data.put("blockPosition", new Integer[] {
+                    playerLoc.getBlockX(),
+                    playerLoc.getBlockY(),
+                    playerLoc.getBlockZ()
+                });
             }
 
             Location compassTarget = player.getCompassTarget();
             if (compassTarget != null)
             {
-                data.put("compassTarget", new Object[]
-                    {
-                        compassTarget.getWorld().getName(),
-                        compassTarget.getX(),
-                        compassTarget.getY(),
-                        compassTarget.getZ()
-                    });
+                data.put("compassTarget", new Object[] {
+                    compassTarget.getWorld().getName(),
+                    compassTarget.getX(),
+                    compassTarget.getY(),
+                    compassTarget.getZ()
+                });
             }
 
             Location bedSpawnLocation = player.getBedSpawnLocation();
             if (bedSpawnLocation != null)
             {
-                data.put("bedSpawnLocation", new Object[]
-                    {
-                        bedSpawnLocation.getWorld().getName(),
-                        bedSpawnLocation.getX(),
-                        bedSpawnLocation.getY(),
-                        bedSpawnLocation.getZ()
-                    });
+                data.put("bedSpawnLocation", new Object[] {
+                    bedSpawnLocation.getWorld().getName(),
+                    bedSpawnLocation.getX(),
+                    bedSpawnLocation.getY(),
+                    bedSpawnLocation.getZ()
+                });
             }
 
             HashMap<String, Object> orientation = new HashMap<String, Object>();
@@ -138,10 +131,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player"
-    })
+    @Action(parameters = {"player"})
     public void kill(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -157,10 +147,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player"
-    })
+    @Action(parameters = {"player"})
     public void burn(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -189,10 +176,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player"
-    })
+    @Action(parameters = {"player"})
     public void teleport(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -266,7 +250,8 @@ public class PlayerController extends ApiController
                 targetLocation.getX(),
                 targetLocation.getY(),
                 targetLocation.getZ(),
-                worldName));
+                worldName
+            ));
         }
         else
         {
@@ -274,10 +259,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player"
-    })
+    @Action(parameters = {"player"})
     public void heal(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -293,10 +275,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player", "itemid"
-    })
+    @Action(parameters = {"player", "itemid"})
     public void give(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -362,10 +341,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player"
-    })
+    @Action(parameters = {"player"})
     public void kick(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -381,10 +357,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player", "message"
-    })
+    @Action(parameters = {"player", "message"})
     public void tell(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -405,10 +378,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player"
-    })
+    @Action(parameters = {"player"})
     public void clearinventory(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -424,10 +394,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player", "displayname"
-    })
+    @Action(parameters = {"player", "displayname"})
     public void displayname(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
@@ -444,10 +411,7 @@ public class PlayerController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player"
-    }, serializer = "json")
+    @Action(parameters = {"player"}, serializer = "json")
     public void inventory(ApiRequest request, ApiResponse response)
     {
         String playerParam = request.params.getString("player");

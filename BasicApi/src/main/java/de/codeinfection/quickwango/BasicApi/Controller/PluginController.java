@@ -7,9 +7,10 @@ import de.codeinfection.quickwango.Abstraction.PluginDescription;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiNotImplementedException;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,10 +40,7 @@ public class PluginController extends ApiController
         response.setContent(data);
     }
 
-    @Action(parameters =
-    {
-        "plugin"
-    }, serializer = "json")
+    @Action(parameters = {"plugin"}, serializer = "json")
     public void info(ApiRequest request, ApiResponse response)
     {
         String pluginName = request.params.getString("plugin");
@@ -70,12 +68,21 @@ public class PluginController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "plugin"
-    }, serializer = "json")
+    @Action(parameters = {"plugin"}, serializer = "json")
     public void available(ApiRequest request, ApiResponse response)
     {
         response.setContent(request.server.getPluginManager().getPlugin(request.params.getString("plugin")) != null);
+    }
+
+    @Action(parameters = {"plugin"})
+    public void enable(ApiRequest request, ApiResponse response)
+    {
+        throw new ApiNotImplementedException();
+    }
+
+    @Action(parameters = {"plugin"})
+    public void disable(ApiRequest request, ApiResponse response)
+    {
+        throw new ApiNotImplementedException();
     }
 }

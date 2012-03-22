@@ -5,9 +5,9 @@ import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -33,10 +33,7 @@ public class PermissionController extends ApiController
         response.setContent(request.server.getPluginManager().getPermissions());
     }
 
-    @Action(parameters =
-    {
-        "node"
-    }, serializer = "json")
+    @Action(parameters = {"node"}, serializer = "json")
     public void getdefault(ApiRequest request, ApiResponse response)
     {
         Permission permission = request.server.getPluginManager().getPermission(request.params.getString("node"));
@@ -50,10 +47,7 @@ public class PermissionController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player"
-    }, serializer = "json")
+    @Action(parameters = {"player"}, serializer = "json")
     public void getplayerpermissions(ApiRequest request, ApiResponse response)
     {
         Permissible permissible = request.server.getPlayerExact(request.params.getString("player"));
@@ -75,10 +69,7 @@ public class PermissionController extends ApiController
         }
     }
 
-    @Action(parameters =
-    {
-        "player", "permission", "value", "ticks"
-    })
+    @Action(parameters = {"player", "permission", "value", "ticks"})
     public void setplayerpermissions(ApiRequest request, ApiResponse response)
     {
         Permissible permissible = request.server.getPlayerExact(request.params.getString("player"));
@@ -90,7 +81,8 @@ public class PermissionController extends ApiController
                     ((BukkitPlugin)getPlugin()).getHandle(),
                     request.params.getString("permission"),
                     Boolean.parseBoolean(request.params.getString("value")),
-                    Math.abs(Integer.parseInt(request.params.getString("ticks"))));
+                    Math.abs(Integer.parseInt(request.params.getString("ticks")))
+                );
             }
             catch (NumberFormatException e)
             {

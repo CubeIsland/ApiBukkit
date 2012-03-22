@@ -6,7 +6,7 @@ import de.codeinfection.quickwango.Abstraction.Command;
  *
  * @author CodeInfection
  */
-class SpoutCommand implements Command
+public class SpoutCommand implements Command
 {
     private final org.spout.api.command.Command command;
 

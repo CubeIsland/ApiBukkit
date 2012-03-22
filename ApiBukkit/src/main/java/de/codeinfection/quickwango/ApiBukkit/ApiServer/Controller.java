@@ -18,4 +18,6 @@ public @interface Controller
     public boolean authenticate() default true;
 
     public String serializer() default "plain";
+
+    public boolean unknownToDefault() default false;
 }

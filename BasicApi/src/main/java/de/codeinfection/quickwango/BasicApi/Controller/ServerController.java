@@ -6,9 +6,9 @@ import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.codeinfection.quickwango.BasicApi.BasicApi;
 import de.codeinfection.quickwango.BasicApi.Utils;
 import java.io.File;
@@ -28,7 +28,7 @@ import org.bukkit.World;
 @Controller(name = "server")
 public class ServerController extends ApiController
 {
-    protected static Long timeStamp = null;
+    private static Long timeStamp = null;
 
     public ServerController(Plugin plugin)
     {
@@ -134,10 +134,7 @@ public class ServerController extends ApiController
         request.server.shutdown();
     }
 
-    @Action(parameters =
-    {
-        "message"
-    })
+    @Action(parameters = {"message"})
     public void broadcast(ApiRequest request, ApiResponse response)
     {
         String message = request.params.getString("message");

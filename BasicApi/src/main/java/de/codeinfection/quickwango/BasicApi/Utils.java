@@ -3,7 +3,7 @@ package de.codeinfection.quickwango.BasicApi;
 import de.codeinfection.quickwango.Abstraction.Abstraction;
 import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequestException;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

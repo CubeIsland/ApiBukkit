@@ -9,7 +9,7 @@ import org.bukkit.plugin.PluginManager;
  *
  * @author CodeInfection
  */
-class BukkitPluginManager implements de.codeinfection.quickwango.Abstraction.PluginManager
+public class BukkitPluginManager implements de.codeinfection.quickwango.Abstraction.PluginManager
 {
     private final PluginManager pm;
 

@@ -1,6 +1,8 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.PlainSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.JsonSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.RawSerializer;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Serializer.XmlSerializer;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -38,8 +40,13 @@ public final class ApiManager
         this.whitelistEnabled = false;
         this.blacklistEnabled = false;
 
-        this.defaultSerializer = new PlainSerializer();
-        this.registerSerializer("json", this.defaultSerializer);
+        this.defaultSerializer = new JsonSerializer();
+        
+        this
+            .registerSerializer(new JsonSerializer())
+            .registerSerializer(new XmlSerializer())
+            .registerSerializer(new RawSerializer())
+            .registerSerializer(this.defaultSerializer);
     }
 
     /**
@@ -155,11 +162,11 @@ public final class ApiManager
      */
     public ApiController getController(String name)
     {
-        if (name != null)
+        if (name == null)
         {
-            return this.controllers.get(name.toLowerCase());
+            return null;
         }
-        return null;
+        return this.controllers.get(name.toLowerCase());
     }
 
     /**
@@ -170,12 +177,16 @@ public final class ApiManager
      */
     public Collection<ApiController> getControllers(Plugin plugin)
     {
-        Collection<ApiController> controllersOfPlugin = new ArrayList<ApiController>();
-        for (ApiController contorller : this.getControllers())
+        if (plugin == null)
         {
-            if (contorller.getPlugin().equals(plugin))
+            throw new IllegalArgumentException("plugin must not be null!");
+        }
+        Collection<ApiController> controllersOfPlugin = new ArrayList<ApiController>();
+        for (ApiController controller : this.getControllers())
+        {
+            if (controller.getPlugin().equals(plugin))
             {
-                controllersOfPlugin.add(contorller);
+                controllersOfPlugin.add(controller);
             }
         }
         return controllersOfPlugin;
@@ -222,7 +233,7 @@ public final class ApiManager
     {
         if (name == null)
         {
-            throw new IllegalArgumentException("name must not be null!");
+            return false;
         }
         return this.responseSerializers.containsKey(name.toLowerCase());
     }
@@ -235,28 +246,16 @@ public final class ApiManager
      */
     public ApiManager registerSerializer(ApiResponseSerializer serializer)
     {
-        ResponseSerializer annotation = serializer.getClass().getAnnotation(ResponseSerializer.class);
-        if (annotation == null)
+        if (serializer == null)
         {
-            throw new IllegalArgumentException("The class of serializer must be annotated with @ResponseSerializer");
+            throw new IllegalArgumentException("serializer must not be null!");
         }
-        this.registerSerializer(annotation.name().toLowerCase(), serializer);
-        return this;
-    }
+        if (serializer.getName() == null)
+        {
+            throw new IllegalArgumentException("The serializer has no name!");
+        }
 
-    /**
-     * Registeres a serializer with the given name
-     *
-     * @param name the name of the serializer
-     * @param serializer the instance of the serializer
-     * @return fluent interface
-     */
-    public ApiManager registerSerializer(String name, ApiResponseSerializer serializer)
-    {
-        if (name != null && serializer != null)
-        {
-            this.responseSerializers.put(name.toLowerCase(), serializer);
-        }
+        this.responseSerializers.put(serializer.getName().toLowerCase(), serializer);
         return this;
     }
 

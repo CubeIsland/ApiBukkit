@@ -10,7 +10,7 @@ import org.spout.api.Spout;
  *
  * @author CodeInfection
  */
-class SpoutPluginManager implements PluginManager
+public class SpoutPluginManager implements PluginManager
 {
     private org.spout.api.plugin.PluginManager pm;
 

@@ -11,25 +11,28 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus;
  */
 public enum ApiError
 {
-    UNKNONW_ERROR(-1, HttpResponseStatus.INTERNAL_SERVER_ERROR),
-    INVALID_PATH(1, HttpResponseStatus.BAD_REQUEST),
-    AUTHENTICATION_FAILURE(2, HttpResponseStatus.UNAUTHORIZED),
-    REQUEST_EXCEPTION(3, HttpResponseStatus.BAD_REQUEST),
-    ACTION_NOT_IMPLEMENTED(4, HttpResponseStatus.NOT_IMPLEMENTED),
-    CONTROLLER_NOT_FOUND(5, HttpResponseStatus.NOT_FOUND),
-    ACTION_DISABLED(6, HttpResponseStatus.FORBIDDEN),
-    METHOD_NOT_ALLOWED(7, HttpResponseStatus.METHOD_NOT_ALLOWED),
-    MISSING_PARAMETERS(8, HttpResponseStatus.BAD_REQUEST);
+    UNKNOWN_ERROR(100, HttpResponseStatus.INTERNAL_SERVER_ERROR, "An unhandled exception interrupted the request processing"),
+    ACTION_DISABLED(101, HttpResponseStatus.FORBIDDEN, "The requested action is disabled"),
+    AUTHENTICATION_FAILURE(200, HttpResponseStatus.UNAUTHORIZED, "Wrong authentication key given"),
+    REQUEST_EXCEPTION(201, HttpResponseStatus.BAD_REQUEST, "The called action was not satiesfied by the request"),
+    ACTION_NOT_IMPLEMENTED(301, HttpResponseStatus.NOT_IMPLEMENTED, "The called action is not yet implemented"),
+    CONTROLLER_NOT_FOUND(202, HttpResponseStatus.NOT_FOUND, "The requested controller was not found"),
+    ACTION_NOT_FOUND(203, HttpResponseStatus.NOT_FOUND, "The requested action was not found"),
+    METHOD_NOT_ALLOWED(204, HttpResponseStatus.METHOD_NOT_ALLOWED, "The method you used is not allowed here"),
+    MISSING_PARAMETERS(204, HttpResponseStatus.BAD_REQUEST, "Not all needed parameters where given");
+    
     private final int errorCode;
     private final HttpResponseStatus responseStatus;
+    private final String description;
 
     /**
      * initializes the ApiError with an error code and an HttpResponseStatus
      */
-    private ApiError(int errorCode, HttpResponseStatus responseStatus)
+    private ApiError(int errorCode, HttpResponseStatus responseStatus, String description)
     {
         this.errorCode = errorCode;
         this.responseStatus = responseStatus;
+        this.description = description;
     }
 
     /**
@@ -50,6 +53,11 @@ public enum ApiError
     public HttpResponseStatus getRepsonseStatus()
     {
         return this.responseStatus;
+    }
+
+    public String getDescription()
+    {
+        return this.description;
     }
 
     @Override
