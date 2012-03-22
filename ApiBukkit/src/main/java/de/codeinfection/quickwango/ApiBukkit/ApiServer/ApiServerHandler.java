@@ -68,7 +68,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 
         final HttpMethod method = request.getMethod();
 
-        if (method == HttpMethod.GET || method == HttpMethod.POST)
+        if (method == HttpMethod.POST || method == HttpMethod.GET || method == HttpMethod.PUT || method == HttpMethod.DELETE)
         {
             final String requestUri = request.getUri();
             List<String> stringParts = explode("?", requestUri);
