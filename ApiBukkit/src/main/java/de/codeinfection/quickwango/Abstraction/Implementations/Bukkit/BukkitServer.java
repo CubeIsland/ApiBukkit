@@ -1,9 +1,14 @@
 package de.codeinfection.quickwango.Abstraction.Implementations.Bukkit;
 
 import de.codeinfection.quickwango.Abstraction.CommandExecutor;
+import de.codeinfection.quickwango.Abstraction.GameMode;
+import de.codeinfection.quickwango.Abstraction.Player;
 import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.Abstraction.PluginManager;
 import de.codeinfection.quickwango.Abstraction.Scheduler;
+import de.codeinfection.quickwango.Abstraction.World;
+import java.io.File;
+import java.util.Set;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,5 +62,85 @@ public class BukkitServer implements de.codeinfection.quickwango.Abstraction.Ser
     public Scheduler getScheduler()
     {
         return this.scheduler;
+    }
+
+    public String getName()
+    {
+        return this.server.getServerName();
+    }
+
+    public String getIp()
+    {
+        return this.server.getIp();
+    }
+
+    public int getPort()
+    {
+        return this.server.getPort();
+    }
+
+    public Player[] getOnlinePlayer()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getMaxPlayers()
+    {
+        return this.server.getMaxPlayers();
+    }
+
+    public World getWorlds()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Set<Plugin> getPlugins()
+    {
+        return this.pm.getPlugins();
+    }
+
+    public boolean getOnlineMode()
+    {
+        return this.server.getOnlineMode();
+    }
+
+    public boolean isWhitelisted()
+    {
+        return this.server.hasWhitelist();
+    }
+
+    public int getSpawnRadius()
+    {
+        return this.server.getSpawnRadius();
+    }
+
+    public int getViewDistance()
+    {
+        return this.server.getViewDistance();
+    }
+
+    public GameMode getDefaultGameMode()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isEndAllwed()
+    {
+        return this.server.getAllowEnd();
+    }
+
+    public boolean isNetherAllowed()
+    {
+        return this.server.getAllowNether();
+    }
+
+    public boolean isFlyingAllowed()
+    {
+        return this.server.getAllowFlight();
+    }
+
+    public File getWorldContainer()
+    {
+        return this.server.getWorldContainer();
     }
 }

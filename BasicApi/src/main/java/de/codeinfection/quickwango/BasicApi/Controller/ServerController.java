@@ -52,7 +52,6 @@ public class ServerController extends ApiController
         Runtime runtime = Runtime.getRuntime();
         Map<String, Object> data = new HashMap<String, Object>();
 
-        data.put("id", request.server.getServerId());
         data.put("name", request.server.getServerName());
         data.put("ip", request.server.getIp());
         data.put("port", request.server.getPort());
@@ -69,7 +68,6 @@ public class ServerController extends ApiController
         data.put("allowEnd", request.server.getAllowEnd());
         data.put("allowNether", request.server.getAllowNether());
         data.put("allowFlight", request.server.getAllowFlight());
-        data.put("allowNether", request.server.getAllowNether());
         data.put("worldContainer", request.server.getWorldContainer().toString());
         data.put("updateFolder", request.server.getUpdateFolderFile().toString());
 
