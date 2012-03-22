@@ -294,6 +294,10 @@ public final class ApiManager
      */
     public ApiResponseSerializer getSerializer(String name)
     {
+        if (name == null)
+        {
+            return null;
+        }
         return this.responseSerializers.get(name);
     }
 
