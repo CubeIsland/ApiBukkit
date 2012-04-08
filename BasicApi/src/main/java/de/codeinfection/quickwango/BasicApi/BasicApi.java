@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.BasicApi;
 
-import de.codeinfection.quickwango.Abstraction.Abstraction;
-import de.codeinfection.quickwango.Abstraction.Plugin;
+import de.codeinfection.Abstraction.Abstraction;
+import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;

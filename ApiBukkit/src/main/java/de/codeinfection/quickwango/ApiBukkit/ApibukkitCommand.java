@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.Abstraction.Plugin;
+import de.codeinfection.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

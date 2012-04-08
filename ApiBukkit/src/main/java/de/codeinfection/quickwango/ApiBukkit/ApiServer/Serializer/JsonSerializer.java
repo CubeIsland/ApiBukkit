@@ -130,6 +130,13 @@ public class JsonSerializer implements ApiResponseSerializer
 
     private static String escape(String string)
     {
-        return string.replace("\\", "\\\\").replace("\"", "\\\"").replace("\t", "\\t").replace("\n", "\\n").replace("\r", "\\r");
+        return string
+            .replace("\\", "\\\\")
+            .replace("\0", "\\0")
+            .replace("\"", "\\\"")
+            .replace("\t", "\\t")
+            //.replace("\v", "\\v")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r");
     }
 }

@@ -261,8 +261,10 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 
         if (reason != null)
         {
-            data.put("reason", reason.getReason());
-            data.put("description", reason.getMessage());
+            Map reasonMap = new HashMap();
+            reasonMap.put("id", reason.getReason());
+            reasonMap.put("description", reason.getMessage());
+            data.put("reason", reasonMap);
         }
 
         return toResponse(error.getRepsonseStatus(), new HashMap<String, String>(2), manager.getDefaultSerializer(), data);

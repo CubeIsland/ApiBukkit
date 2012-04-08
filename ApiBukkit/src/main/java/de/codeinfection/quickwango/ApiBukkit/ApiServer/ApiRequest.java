@@ -1,7 +1,7 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.quickwango.Abstraction.Abstraction;
-import de.codeinfection.quickwango.Abstraction.Implementations.Bukkit.BukkitServer;
+import de.codeinfection.Abstraction.Abstraction;
+import de.codeinfection.Abstraction.Implementations.Bukkit.BukkitServer;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.ArrayList;

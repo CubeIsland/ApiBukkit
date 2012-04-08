@@ -1,6 +1,6 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.Abstraction.Configuration;
+import de.codeinfection.Abstraction.Configuration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -27,21 +27,21 @@ public class ApiConfiguration
         ApiLogLevel tmpLogLevel = ApiLogLevel.DEFAULT;
         try
         {
-            tmpLogLevel = ApiLogLevel.getLogLevel(config.<String>get("General.logLevel"));
+            tmpLogLevel = ApiLogLevel.getLogLevel(config.getString("General.logLevel"));
         }
         catch (Exception e)
         {
             ApiBukkit.logException(e);
         }
         this.logLevel = tmpLogLevel;
-        this.port = config.<Integer>get("Network.port");
-        this.authKey = config.<String>get("Network.authKey");
-        this.maxContentLength = config.<Integer>get("Network.maxContentLength");
+        this.port = config.getInt("Network.port");
+        this.authKey = config.getString("Network.authKey");
+        this.maxContentLength = config.getInt("Network.maxContentLength");
 
-        this.whitelistEnabled = config.<Boolean>get("Whitelist.enabled", this.whitelistEnabled);
+        this.whitelistEnabled = config.getBoolean("Whitelist.enabled", this.whitelistEnabled);
         this.whitelist = config.<String>getList("Whitelist.IPs");
 
-        this.blacklistEnabled = config.<Boolean>get("Blacklist.enabled");
+        this.blacklistEnabled = config.getBoolean("Blacklist.enabled");
         this.blacklist = config.<String>getList("Blacklist.IPs");
 
         Map<String, Object> map = config.getMap("DisabledActions");
