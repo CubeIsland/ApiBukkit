@@ -32,6 +32,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
 {
     private final static ApiServer server = ApiServer.getInstance();
     private final static ApiManager manager = ApiManager.getInstance();
+    private ApiRequest request;
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, ExceptionEvent event)
@@ -51,7 +52,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         }
         else
         {
-            ApiRequest request = new ApiRequest(remoteAddress, (HttpRequest)message.getMessage());
+            request = new ApiRequest(remoteAddress, (HttpRequest)message.getMessage());
             HttpResponse response = this.processRequest(request);
             if (response != null)
             {
@@ -198,7 +199,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
      * @param def
      * @return
      */
-    private static ApiResponseSerializer getSerializer(ApiRequest request, String acionSerializer)
+    private ApiResponseSerializer getSerializer(ApiRequest request, String acionSerializer)
     {
         ApiResponseSerializer serializer = manager.getSerializer(request.getFormat());
 
@@ -214,15 +215,31 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return serializer;
     }
 
-    private static HttpResponse toResponse(ApiResponse response)
+    private HttpResponse toResponse(ApiResponse response)
     {
-        final Object content = response.getContent();
-        HttpResponseStatus status = (content == null ? HttpResponseStatus.NO_CONTENT : HttpResponseStatus.OK);
+        Object content = response.getContent();
+        HttpResponseStatus status = HttpResponseStatus.OK;
+        if (content == null)
+        {
+            if (request.ignoreResponseStatus())
+            {
+                Map<String, Object> data = new HashMap<String, Object>(1);
+                
+                data.put("status", HttpResponseStatus.NO_CONTENT.getCode());
+                data.put("description", "The request was successful, but there was nothing to return");
+                
+                content = data;
+            }
+            else
+            {
+                status = HttpResponseStatus.NO_CONTENT;
+            }
+        }
 
         return toResponse(status, response.getHeaders(), response.getSerializer(), content);
     }
 
-    private static HttpResponse toResponse(HttpVersion version, HttpResponseStatus status, Map<String, String> headers, final String content)
+    private HttpResponse toResponse(HttpVersion version, HttpResponseStatus status, Map<String, String> headers, final String content)
     {
         HttpResponse response = new DefaultHttpResponse(version, status);
         response.setContent(ChannelBuffers.copiedBuffer(content, CharsetUtil.UTF_8));
@@ -234,12 +251,12 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return response;
     }
 
-    private static HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, String content)
+    private HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, String content)
     {
         return toResponse(HttpVersion.HTTP_1_1, status, headers, content);
     }
 
-    private static HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, ApiResponseSerializer serializer, Object contentObject)
+    private HttpResponse toResponse(HttpResponseStatus status, Map<String, String> headers, ApiResponseSerializer serializer, Object contentObject)
     {
         String contentString = serializer.serialize(contentObject);
 
@@ -249,15 +266,21 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return toResponse(status, headers, contentString);
     }
 
-    private static HttpResponse toResponse(ApiError error)
+    private HttpResponse toResponse(ApiError error)
     {
         return toResponse(error, null);
     }
 
-    private static HttpResponse toResponse(ApiError error, ApiRequestException reason)
+    private HttpResponse toResponse(ApiError error, ApiRequestException reason)
     {
+        HttpResponseStatus status = error.getRepsonseStatus();
         Map data = new HashMap();
-        data.put("error", error);
+        if (request.ignoreResponseStatus())
+        {
+            status = HttpResponseStatus.OK;
+            data.put("status", error.getRepsonseStatus().getCode());
+        }
+        data.put("error", error.getCode());
         data.put("description", error.getDescription());
 
         if (reason != null)
@@ -268,6 +291,6 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             data.put("reason", reasonMap);
         }
 
-        return toResponse(error.getRepsonseStatus(), new HashMap<String, String>(2), manager.getDefaultSerializer(), data);
+        return toResponse(status, new HashMap<String, String>(2), manager.getDefaultSerializer(), data);
     }
 }

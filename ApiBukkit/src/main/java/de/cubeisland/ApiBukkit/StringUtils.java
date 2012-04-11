@@ -43,6 +43,10 @@ public final class StringUtils
      */
     public static void parseQueryString(String queryString, Map<String, String> params)
     {
+        if (queryString == null || params == null)
+        {
+            return;
+        }
         if (queryString.length() > 0)
         {
             String token;

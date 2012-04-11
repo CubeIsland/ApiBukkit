@@ -29,6 +29,7 @@ public final class ApiRequest
     private final String controller;
     private final String action;
     private final String userAgent;
+    private final boolean ignoreResponseStatus;
 
     public final Parameters params;
     public final Map<String, String> headers;
@@ -70,7 +71,7 @@ public final class ApiRequest
         this.path = tempPath;
 
         Map<String, String> tempParams = new HashMap<String, String>();
-        StringUtils.parseQueryString(queryString, tempParams);
+        StringUtils.parseQueryString(this.queryString, tempParams);
         final ChannelBuffer content = request.getContent();
         if (content.readable())
         {
@@ -82,7 +83,7 @@ public final class ApiRequest
 
         this.params = new Parameters(tempParams);
 
-        RequestMethod tempMethod = RequestMethod.getByName(params.get("http_method"));
+        RequestMethod tempMethod = RequestMethod.getByName(params.get("method"));
         if (tempMethod == null)
         {
             tempMethod = RequestMethod.getByName(request.getMethod().getName());
@@ -119,6 +120,8 @@ public final class ApiRequest
             this.controller = null;
             this.action = null;
         }
+
+        this.ignoreResponseStatus = this.params.containsKey("ignoreResponseStatus");
     }
 
     public RequestMethod getMethod()
@@ -169,5 +172,10 @@ public final class ApiRequest
     public String getUserAgent()
     {
         return this.userAgent;
+    }
+
+    public boolean ignoreResponseStatus()
+    {
+        return this.ignoreResponseStatus;
     }
 }

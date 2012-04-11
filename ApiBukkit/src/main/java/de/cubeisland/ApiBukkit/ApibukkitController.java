@@ -29,10 +29,7 @@ public class ApibukkitController extends ApiController
         this.manager = ApiManager.getInstance();
     }
 
-    @Action(authenticate = true, parameters =
-    {
-        "routes"
-    })
+    @Action(authenticate = true, parameters = {"routes"})
     public void combined(ApiRequest request, ApiResponse response)
     {
         HashMap<String, Object> responses;
@@ -100,10 +97,9 @@ public class ApibukkitController extends ApiController
         }
     }
 
-    @Action
+    @Action(authenticate = false)
     public void testing(ApiRequest request, ApiResponse response)
     {
-        response.setSerializer(ApiManager.getInstance().getSerializer("json"));
-        response.setContent(request.params);
+        //response.setContent(request.params);
     }
 }
