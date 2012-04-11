@@ -1,10 +1,11 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.Abstraction.Configuration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 
 /**
  *
@@ -39,19 +40,22 @@ public class ApiConfiguration
         this.maxContentLength = config.getInt("Network.maxContentLength");
 
         this.whitelistEnabled = config.getBoolean("Whitelist.enabled", this.whitelistEnabled);
-        this.whitelist = config.<String>getList("Whitelist.IPs");
+        this.whitelist = config.getStringList("Whitelist.IPs");
 
         this.blacklistEnabled = config.getBoolean("Blacklist.enabled");
-        this.blacklist = config.<String>getList("Blacklist.IPs");
+        this.blacklist = config.getStringList("Blacklist.IPs");
 
-        Map<String, Object> map = config.getMap("DisabledActions");
+        ConfigurationSection map = config.getConfigurationSection("DisabledActions");
         this.disabledActions = new HashMap<String, Collection<String>>();
-        for (Map.Entry<String, Object> entry : map.entrySet())
+        if (map != null)
         {
-            if (entry.getValue() instanceof List)
+            for (Map.Entry<String, Object> entry : map.getValues(false).entrySet())
             {
-                List<String> list = (List<String>)entry.getValue();
-                disabledActions.put(entry.getKey(), list);
+                if (entry.getValue() instanceof List)
+                {
+                    List<String> list = (List<String>)entry.getValue();
+                    disabledActions.put(entry.getKey(), list);
+                }
             }
         }
     }

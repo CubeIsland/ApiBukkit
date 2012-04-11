@@ -1,9 +1,5 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.Abstraction.Abstraction;
-import de.codeinfection.Abstraction.Configuration;
-import de.codeinfection.Abstraction.Implementations.Bukkit.BukkitImplementation;
-import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiServer;
 import java.io.File;
@@ -12,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 import org.bukkit.Server;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -40,8 +37,6 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
     @Override
     public void onEnable()
     {
-        Abstraction.initialize(new BukkitImplementation());
-        Plugin wrappedThis = Abstraction.getPluginManager().getPlugin(this.getName());
         logger = this.getLogger();
         this.pdf = this.getDescription();
         this.server = this.getServer();
@@ -52,15 +47,12 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
             this.dataFolder.mkdirs();
         }
 
-        this.config = Abstraction.loadConfiguration(new File(dataFolder, "config.yml"));
-        this.config.load();
+        this.reloadConfig();
+        this.config = this.getConfig();
 
         try
         {
-            if (this.config.<String>get("Network.authKey") == null)
-            {
-                this.config.set("Network.authKey", this.generateAuthKey());
-            }
+            this.config.addDefault("Network.authKey", this.generateAuthKey());
         }
         catch (NoSuchAlgorithmException e)
         {
@@ -68,7 +60,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
             error("Failed to generate an auth key!", e);
             error("Staying in a zombie state...");
             error("#################################");
-            wrappedThis.disable();
+            this.pm.disablePlugin(this);
             return;
         }
 
@@ -76,16 +68,16 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
 
         logLevel = this.apiConfig.logLevel;
 
-        this.config.save();
+        this.saveConfig();
 
-        ApiBukkit.log("Log level is: " + this.apiConfig.logLevel.name(), ApiLogLevel.INFO);
+        log("Log level is: " + this.apiConfig.logLevel.name(), ApiLogLevel.INFO);
 
-        this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(wrappedThis));
+        this.getCommand("apibukkit").setExecutor(new ApibukkitCommand(this));
 
         this.pm.registerEvents(this, this);
 
         ApiManager.getInstance()
-            .registerController(new ApibukkitController(wrappedThis))
+            .registerController(new ApibukkitController(this))
             .setWhitelist(this.apiConfig.whitelist)
             .setWhitelistEnabled(this.apiConfig.whitelistEnabled)
             .setBlacklist(this.apiConfig.blacklist)
@@ -98,7 +90,12 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
             log(String.format("Using %s as the auth key", this.apiConfig.authKey));
             log(String.format("with a maximum of %s parallel sessions!", this.apiConfig.maxContentLength));
 
-            ApiServer.getInstance().setIp(InetAddress.getByName(this.server.getIp())).setPort(this.apiConfig.port).setAuthenticationKey(this.apiConfig.authKey).setMaxContentLength(this.apiConfig.maxContentLength).start();
+            ApiServer.getInstance()
+                .setIp(InetAddress.getByName(this.server.getIp()))
+                .setPort(this.apiConfig.port)
+                .setAuthenticationKey(this.apiConfig.authKey)
+                .setMaxContentLength(this.apiConfig.maxContentLength)
+                .start();
 
             log("Web server started!");
         }
@@ -106,11 +103,8 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
         {
             error("Failed to start the web server!", t);
             error("Staying in a zombie state...");
-            wrappedThis.disable();
-            return;
+            this.pm.disablePlugin(this);
         }
-
-        log(String.format("Version %s is now enabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
     }
 
     @Override
@@ -125,8 +119,6 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
 
         ApiServer.getInstance().stop();
         this.apiConfig = null;
-
-        log(String.format("Version %s is now disabled!", this.pdf.getVersion()), ApiLogLevel.QUIET);
     }
 
     protected String generateAuthKey() throws NoSuchAlgorithmException

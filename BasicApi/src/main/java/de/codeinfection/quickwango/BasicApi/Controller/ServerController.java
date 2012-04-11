@@ -1,7 +1,5 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.Abstraction.Abstraction;
-import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
@@ -18,8 +16,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -43,7 +44,7 @@ public class ServerController extends ApiController
     @Action(serializer = "json", authenticate = false)
     public Object maxplayers(ApiRequest request, ApiResponse response)
     {
-        return request.server.getMaxPlayers();
+        return getServer().getMaxPlayers();
     }
 
     @Action(serializer = "json")
@@ -51,34 +52,34 @@ public class ServerController extends ApiController
     {
         Runtime runtime = Runtime.getRuntime();
         Map<String, Object> data = new HashMap<String, Object>();
+        Server server = getServer();
 
-        data.put("name", request.server.getServerName());
-        data.put("ip", request.server.getIp());
-        data.put("port", request.server.getPort());
-        data.put("players", request.server.getOnlinePlayers().length);
-        data.put("maxplayers", request.server.getMaxPlayers());
-        data.put("worlds", request.server.getWorlds().size());
-        data.put("plugins", request.server.getPluginManager().getPlugins().length);
+        data.put("name", server.getName());
+        data.put("ip", server.getIp());
+        data.put("port", server.getPort());
+        data.put("players", server.getOnlinePlayers().length);
+        data.put("maxplayers", server.getMaxPlayers());
+        data.put("worlds", server.getWorlds().size());
+        data.put("plugins", getPluginManager().getPlugins().length);
         data.put("uptime", (System.currentTimeMillis() / 1000) - timeStamp);
-        data.put("onlinemode", request.server.getOnlineMode());
-        data.put("whitelisted", request.server.hasWhitelist());
-        data.put("spawnRadius", request.server.getSpawnRadius());
-        data.put("viewDistance", request.server.getViewDistance());
-        data.put("defaultGamemode", request.server.getDefaultGameMode().getValue());
-        data.put("allowEnd", request.server.getAllowEnd());
-        data.put("allowNether", request.server.getAllowNether());
-        data.put("allowFlight", request.server.getAllowFlight());
-        data.put("worldContainer", request.server.getWorldContainer().toString());
-        data.put("updateFolder", request.server.getUpdateFolderFile().toString());
+        data.put("onlinemode", server.getOnlineMode());
+        data.put("whitelisted", server.hasWhitelist());
+        data.put("spawnRadius", server.getSpawnRadius());
+        data.put("viewDistance", server.getViewDistance());
+        data.put("defaultGamemode", server.getDefaultGameMode().getValue());
+        data.put("allowEnd", server.getAllowEnd());
+        data.put("allowNether", server.getAllowNether());
+        data.put("allowFlight", server.getAllowFlight());
+        data.put("worldContainer", server.getWorldContainer().toString());
+        data.put("updateFolder", server.getUpdateFolder().toString());
 
         data.put("maxmemory", runtime.maxMemory());
         data.put("freememory", runtime.freeMemory());
 
         Map<String, Object> versions = new HashMap<String, Object>();
-        versions.put("bukkit", request.server.getBukkitVersion());
-        versions.put("server", request.server.getVersion());
+        versions.put("server", server.getVersion());
         versions.put("apibukkit", ApiBukkit.getInstance().getDescription().getVersion());
-        versions.put("basicapi", getPlugin().getVersion());
+        versions.put("basicapi", getPlugin().getDescription().getVersion());
 
         data.put("versions", versions);
         data.put("os", Utils.getPropertiesByPrefix("os."));
@@ -89,19 +90,19 @@ public class ServerController extends ApiController
     @Action(serializer = "json", authenticate = false)
     public void online(ApiRequest request, ApiResponse response)
     {
-        response.setContent(request.server.getOnlinePlayers().length);
+        response.setContent(getServer().getOnlinePlayers().length);
     }
 
     @Action(serializer = "json", authenticate = false)
     public void version(ApiRequest request, ApiResponse response)
     {
-        response.setContent(request.server.getVersion());
+        response.setContent(getServer().getVersion());
     }
 
     @Action
     public void garbagecollect(ApiRequest request, ApiResponse response)
     {
-        Abstraction.getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable()
+        getServer().getScheduler().scheduleAsyncDelayedTask(getPlugin(), new Runnable()
         {
             public void run()
             {
@@ -125,25 +126,33 @@ public class ServerController extends ApiController
     @Action
     public void stop(ApiRequest request, ApiResponse response)
     {
-        for (World world : request.server.getWorlds())
+        for (World world : getServer().getWorlds())
         {
             world.save();
         }
-        request.server.shutdown();
+        getServer().shutdown();
     }
 
     @Action(parameters = {"message"})
     public void broadcast(ApiRequest request, ApiResponse response)
     {
         String message = request.params.getString("message");
-        request.server.broadcastMessage(message.replaceAll("&([0-9a-f])", "§$1"));
+        String permission = ChatColor.translateAlternateColorCodes('&', request.params.getString("permission"));
+        if (permission != null)
+        {
+            getServer().broadcast(message, permission);
+        }
+        else
+        {
+            getServer().broadcastMessage(message);
+        }
         BasicApi.log("broadcasted message '" + message + "'");
     }
 
     @Action
     public Object reload(ApiRequest request, ApiResponse response)
     {
-        request.server.reload();
+        getServer().reload();
         return null;
     }
 
@@ -195,7 +204,7 @@ public class ServerController extends ApiController
     @Action(serializer = "json")
     public void offlineplayers(ApiRequest request, ApiResponse response)
     {
-        OfflinePlayer[] players = request.server.getOfflinePlayers();
+        OfflinePlayer[] players = getServer().getOfflinePlayers();
         List<String> data;
         if (request.params.containsKey("minlastplayed"))
         {

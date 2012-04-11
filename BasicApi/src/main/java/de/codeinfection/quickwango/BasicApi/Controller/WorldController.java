@@ -1,8 +1,5 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.Abstraction.Abstraction;
-import de.codeinfection.Abstraction.Implementations.Bukkit.BukkitPlugin;
-import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -21,6 +18,7 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -38,7 +36,7 @@ public class WorldController extends ApiController
     public void info(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world != null)
         {
             Map<String, Object> data = new HashMap<String, Object>();
@@ -84,7 +82,7 @@ public class WorldController extends ApiController
     public void create(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world == null)
         {
             String environmentParam = request.params.getString("environment");
@@ -111,7 +109,7 @@ public class WorldController extends ApiController
                 {
                     String[] split = generatorParam.split(":", 2);
                     String id = (split.length > 1) ? split[1] : null;
-                    Plugin plugin = Abstraction.getPluginManager().getPlugin(split[0]);
+                    Plugin plugin = getPluginManager().getPlugin(split[0]);
 
                     if (plugin == null || !plugin.isEnabled())
                     {
@@ -120,7 +118,7 @@ public class WorldController extends ApiController
                     }
                     else
                     {
-                        generator = ((BukkitPlugin)plugin).getHandle().getDefaultWorldGenerator(worldName, id);
+                        generator = getPlugin().getDefaultWorldGenerator(worldName, id);
                     }
                 }
             }
@@ -156,7 +154,7 @@ public class WorldController extends ApiController
     public void time(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world != null)
         {
             String timeParam = request.params.getString("time");
@@ -180,7 +178,7 @@ public class WorldController extends ApiController
     public void pvp(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world != null)
         {
             String state = request.params.getString("state");
@@ -214,7 +212,7 @@ public class WorldController extends ApiController
     public void storm(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world != null)
         {
             String state = request.params.getString("state");
@@ -244,7 +242,7 @@ public class WorldController extends ApiController
     public Object spawn(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world != null)
         {
             String locationParam = request.params.getString("location");
@@ -274,7 +272,7 @@ public class WorldController extends ApiController
             }
             else if (playerName != null)
             {
-                Player player = request.server.getPlayerExact(playerName);
+                Player player = getServer().getPlayerExact(playerName);
                 if (player != null)
                 {
                     Location playerLocation = player.getLocation();
@@ -301,7 +299,7 @@ public class WorldController extends ApiController
     public void list(ApiRequest request, ApiResponse response)
     {
         List<String> data = new ArrayList<String>();
-        for (World currentWorld : request.server.getWorlds())
+        for (World currentWorld : getServer().getWorlds())
         {
             data.add(currentWorld.getName());
         }
@@ -312,7 +310,7 @@ public class WorldController extends ApiController
     public void players(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world != null)
         {
             List<String> data = new ArrayList<String>();
@@ -332,7 +330,7 @@ public class WorldController extends ApiController
     public void spawnflags(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world != null)
         {
             boolean monsters = world.getAllowMonsters();
@@ -375,7 +373,7 @@ public class WorldController extends ApiController
     public void save(ApiRequest request, ApiResponse response)
     {
         String worldName = request.params.getString("world");
-        World world = request.server.getWorld(worldName);
+        World world = getServer().getWorld(worldName);
         if (world != null)
         {
             world.save();
@@ -389,7 +387,7 @@ public class WorldController extends ApiController
     @Action
     public void saveall(ApiRequest request, ApiResponse response)
     {
-        for (World world : request.server.getWorlds())
+        for (World world : getServer().getWorlds())
         {
             world.save();
         }

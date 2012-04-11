@@ -1,7 +1,5 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.Abstraction.Implementations.Bukkit.BukkitPlugin;
-import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -14,6 +12,7 @@ import java.util.Set;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -30,13 +29,13 @@ public class PermissionController extends ApiController
     @Action(serializer = "json")
     public void getall(ApiRequest request, ApiResponse response)
     {
-        response.setContent(request.server.getPluginManager().getPermissions());
+        response.setContent(getServer().getPluginManager().getPermissions());
     }
 
     @Action(parameters = {"node"}, serializer = "json")
     public void getdefault(ApiRequest request, ApiResponse response)
     {
-        Permission permission = request.server.getPluginManager().getPermission(request.params.getString("node"));
+        Permission permission = getServer().getPluginManager().getPermission(request.params.getString("node"));
         if (permission != null)
         {
             response.setContent(permission.getDefault().toString());
@@ -50,7 +49,7 @@ public class PermissionController extends ApiController
     @Action(parameters = {"player"}, serializer = "json")
     public void getplayerpermissions(ApiRequest request, ApiResponse response)
     {
-        Permissible permissible = request.server.getPlayerExact(request.params.getString("player"));
+        Permissible permissible = getServer().getPlayerExact(request.params.getString("player"));
         if (permissible != null)
         {
             Set<PermissionAttachmentInfo> permissionInfo = permissible.getEffectivePermissions();
@@ -72,13 +71,13 @@ public class PermissionController extends ApiController
     @Action(parameters = {"player", "permission", "value", "ticks"})
     public void setplayerpermissions(ApiRequest request, ApiResponse response)
     {
-        Permissible permissible = request.server.getPlayerExact(request.params.getString("player"));
+        Permissible permissible = getServer().getPlayerExact(request.params.getString("player"));
         if (permissible != null)
         {
             try
             {
                 permissible.addAttachment(
-                    ((BukkitPlugin)getPlugin()).getHandle(),
+                    getPlugin(),
                     request.params.getString("permission"),
                     Boolean.parseBoolean(request.params.getString("value")),
                     Math.abs(Integer.parseInt(request.params.getString("ticks")))

@@ -1,11 +1,11 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.log;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 
 /**
  *
@@ -13,13 +13,15 @@ import org.bukkit.entity.Player;
  */
 public class ApibukkitCommand implements CommandExecutor
 {
-    private final Plugin plugin;
+    private final ApiBukkit plugin;
+    private final PluginManager pm;
     private final ApiConfiguration config;
 
-    public ApibukkitCommand(Plugin plugin)
+    public ApibukkitCommand(ApiBukkit plugin)
     {
         this.plugin = plugin;
-        this.config = ApiBukkit.getInstance().getApiConfiguration();
+        this.pm = plugin.getServer().getPluginManager();
+        this.config = plugin.getApiConfiguration();
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -47,8 +49,8 @@ public class ApibukkitCommand implements CommandExecutor
             }
             else if (action.equalsIgnoreCase("reload"))
             {
-                this.plugin.disable();
-                this.plugin.enable();
+                this.pm.disablePlugin(this.plugin);
+                this.pm.enablePlugin(this.plugin);
             }
             else
             {

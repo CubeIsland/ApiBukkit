@@ -1,11 +1,13 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.error;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.bukkit.Server;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 /**
  * The ApiController is the base class for all controllers The extending class
@@ -19,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class ApiController
 {
     private final Plugin plugin;
+    private final Server server;
+    private final PluginManager pluginManager;
     private final boolean authNeeded;
     private final Map<String, ApiAction> actions;
     private final String name;
@@ -35,6 +39,8 @@ public abstract class ApiController
     public ApiController(Plugin plugin)
     {
         this.plugin = plugin;
+        this.server = plugin.getServer();
+        this.pluginManager = this.server.getPluginManager();
         this.authNeeded = true;
         this.actions = new ConcurrentHashMap<String, ApiAction>();
 
@@ -100,6 +106,26 @@ public abstract class ApiController
     public final Plugin getPlugin()
     {
         return this.plugin;
+    }
+
+    /**
+     * Returns the server of this controller's plugin
+     *
+     * @return the server
+     */
+    public final Server getServer()
+    {
+        return this.server;
+    }
+
+    /**
+     * Returns the plugin manager of this controller's plugin
+     *
+     * @return the plugin manager
+     */
+    public final PluginManager getPluginManager()
+    {
+        return this.pluginManager;
     }
 
     /**

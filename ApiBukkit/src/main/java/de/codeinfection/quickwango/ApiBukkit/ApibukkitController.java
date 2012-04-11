@@ -1,6 +1,5 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiAction;
@@ -13,6 +12,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestExce
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.plugin.Plugin;
 
 /**
  *

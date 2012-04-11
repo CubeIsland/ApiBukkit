@@ -1,7 +1,5 @@
 package de.codeinfection.quickwango.BasicApi;
 
-import de.codeinfection.Abstraction.Abstraction;
-import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
@@ -92,18 +90,17 @@ public class BasicApi extends JavaPlugin
         this.config = new BasicApiConfiguration(configFile);
         this.saveConfig();
 
-        Plugin wrappedThis = Abstraction.getPluginManager().getPlugin(this.getName());
         ApiManager.getInstance()
-            .registerController(new CommandController(wrappedThis))
-            .registerController(new PluginController(wrappedThis))
-            .registerController(new ServerController(wrappedThis))
-            .registerController(new PlayerController(wrappedThis))
-            .registerController(new WorldController(wrappedThis))
-            .registerController(new BanController(wrappedThis))
-            .registerController(new WhitelistController(wrappedThis))
-            .registerController(new OperatorController(wrappedThis))
-            .registerController(new ConfigurationController(wrappedThis, this.config.configFiles))
-            .registerController(new PermissionController(wrappedThis));
+            .registerController(new CommandController(this))
+            .registerController(new PluginController(this))
+            .registerController(new ServerController(this))
+            .registerController(new PlayerController(this))
+            .registerController(new WorldController(this))
+            .registerController(new BanController(this))
+            .registerController(new WhitelistController(this))
+            .registerController(new OperatorController(this))
+            .registerController(new ConfigurationController(this, this.config.configFiles))
+            .registerController(new PermissionController(this));
 
         log("Version " + this.pdf.getVersion() + " enabled!");
     }

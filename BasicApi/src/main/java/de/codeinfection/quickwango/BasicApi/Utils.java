@@ -1,7 +1,5 @@
 package de.codeinfection.quickwango.BasicApi;
 
-import de.codeinfection.Abstraction.Abstraction;
-import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import java.util.HashMap;
@@ -13,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -21,10 +20,9 @@ import org.bukkit.inventory.PlayerInventory;
 public class Utils
 {
     private Utils()
-    {
-    }
-    private static final double armorPoints[] =
-    {
+    {}
+
+    private static final double armorPoints[] = {
         3, 6, 8, 3
     };
 
@@ -173,7 +171,7 @@ public class Utils
     {
         final Thread executionThread = Thread.currentThread();
 
-        if (Abstraction.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        if (plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
             public void run()
             {

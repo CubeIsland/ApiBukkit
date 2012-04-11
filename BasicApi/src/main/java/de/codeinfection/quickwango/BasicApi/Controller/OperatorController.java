@@ -1,6 +1,5 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -10,6 +9,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestExce
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -29,7 +29,7 @@ public class OperatorController extends ApiController
         String playerName = request.params.getString("player");
         if (playerName != null)
         {
-            OfflinePlayer player = request.server.getOfflinePlayer(playerName);
+            OfflinePlayer player = getServer().getOfflinePlayer(playerName);
             if (!player.isOp())
             {
                 player.setOp(true);
@@ -49,7 +49,7 @@ public class OperatorController extends ApiController
     public void remove(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        OfflinePlayer player = request.server.getOfflinePlayer(playerName);
+        OfflinePlayer player = getServer().getOfflinePlayer(playerName);
         if (player.isOp())
         {
             player.setOp(false);
@@ -66,7 +66,7 @@ public class OperatorController extends ApiController
         String playerName = request.params.getString("player");
         if (playerName != null)
         {
-            response.setContent(request.server.getOfflinePlayer(playerName).isOp());
+            response.setContent(getServer().getOfflinePlayer(playerName).isOp());
         }
         else
         {
@@ -78,7 +78,7 @@ public class OperatorController extends ApiController
     public Object get(ApiRequest request, ApiResponse response)
     {
         List<String> operators = new ArrayList<String>();
-        for (OfflinePlayer operator : request.server.getOperators())
+        for (OfflinePlayer operator : getServer().getOperators())
         {
             operators.add(operator.getName());
         }

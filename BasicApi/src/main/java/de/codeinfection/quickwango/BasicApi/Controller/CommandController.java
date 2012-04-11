@@ -1,7 +1,5 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.Abstraction.Implementations.Bukkit.BukkitPlugin;
-import de.codeinfection.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -12,6 +10,7 @@ import de.codeinfection.quickwango.BasicApi.BasicApi;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -25,7 +24,7 @@ public class CommandController extends ApiController
     public CommandController(Plugin plugin)
     {
         super(plugin);
-        this.commandSender = new ApiCommandSender(((BukkitPlugin)getPlugin()).getHandle().getServer());
+        this.commandSender = new ApiCommandSender(getServer());
     }
 
     @Override
@@ -48,7 +47,7 @@ public class CommandController extends ApiController
             String senderParam = request.params.getString("sender");
             if (senderParam != null)
             {
-                player = request.server.getPlayerExact(senderParam);
+                player = getServer().getPlayerExact(senderParam);
             }
 
             BasicApi.debug("Commandline: " + commandLine);
@@ -56,13 +55,13 @@ public class CommandController extends ApiController
             if (player != null)
             {
                 BasicApi.debug("Using the player " + player.getName() + " as CommandSender");
-                commandSuccessful = request.server.dispatchCommand(player, commandLine);
+                commandSuccessful = getServer().dispatchCommand(player, commandLine);
             }
             else
             {
                 BasicApi.debug("Using the ApiCommandSender");
                 this.commandSender.toggleActive();
-                commandSuccessful = request.server.dispatchCommand(this.commandSender, commandLine);
+                commandSuccessful = getServer().dispatchCommand(this.commandSender, commandLine);
                 this.commandSender.toggleActive();
                 responseLines = this.commandSender.getResponse();
             }
