@@ -3,8 +3,9 @@ package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 import java.util.HashMap;
 
 /**
+ * A list of supported request methods
  *
- * @author CodeInfection
+ * @author Phillip Schichtel
  */
 public enum RequestMethod
 {
@@ -30,6 +31,12 @@ public enum RequestMethod
         }
     }
 
+    /**
+     * Returns a request method by its name
+     *
+     * @param name the name of the method (will be normalized)
+     * @return the request method or null
+     */
     public static RequestMethod getByName(String name)
     {
         if (name == null)

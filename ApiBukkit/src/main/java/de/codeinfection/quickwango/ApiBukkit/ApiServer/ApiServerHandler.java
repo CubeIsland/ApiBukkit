@@ -24,8 +24,9 @@ import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.jboss.netty.util.CharsetUtil;
 
 /**
+ * This class handles all requests
  *
- * @author CodeInfection
+ * @author Phillip Schichtel
  */
 public class ApiServerHandler extends SimpleChannelUpstreamHandler
 {
