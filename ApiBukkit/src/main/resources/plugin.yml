@@ -1,10 +1,11 @@
 name: ApiBukkit
-main: de.codeinfection.quickwango.ApiBukkit.ApiBukkit
-version: "${project.version}"
+main: de.cubeisland.ApiBukkit.ApiBukkit
+version: ${project.version}
+website: http://cubeisland.de
+dev-url: http://dev.bukkit.org/server-mods/apibukkit
 description: "Provides an API to mak Web APIs."
 authors:
   - Quick_Wango
-website: http://parallel-universe.de
 commands:
   apibukkit:
     usage: /<command> [action]

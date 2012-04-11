@@ -1,9 +1,10 @@
 name: BasicApi
-main: de.codeinfection.quickwango.BasicApi.BasicApi
-version: "${project.version}"
+main: de.cubeisland.BasicApi.BasicApi
+version: ${project.version}
+website: http://cubeisland.de
+dev-url: http://dev.bukkit.org/server-mods/apibukkit
 description: "Exposes many parts of Bukkit as a Web API."
 authors:
   - Quick_Wango
-website: http://parallel-universe.de
 depend:
   - ApiBukkit
