@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.BasicApi.Controller;
+package de.codeinfection.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
@@ -7,8 +7,8 @@ import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
-import de.codeinfection.quickwango.BasicApi.BasicApi;
-import de.codeinfection.quickwango.BasicApi.Utils;
+import de.codeinfection.BasicApi.BasicApi;
+import de.codeinfection.BasicApi.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;

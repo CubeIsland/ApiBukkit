@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.BasicApi.Controller;
+package de.codeinfection.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;

@@ -1,9 +1,18 @@
-package de.codeinfection.quickwango.BasicApi;
+package de.codeinfection.BasicApi;
 
+import de.codeinfection.BasicApi.Controller.PermissionController;
+import de.codeinfection.BasicApi.Controller.PlayerController;
+import de.codeinfection.BasicApi.Controller.WorldController;
+import de.codeinfection.BasicApi.Controller.PluginController;
+import de.codeinfection.BasicApi.Controller.OperatorController;
+import de.codeinfection.BasicApi.Controller.ConfigurationController;
+import de.codeinfection.BasicApi.Controller.CommandController;
+import de.codeinfection.BasicApi.Controller.ServerController;
+import de.codeinfection.BasicApi.Controller.BanController;
+import de.codeinfection.BasicApi.Controller.WhitelistController;
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiLogLevel;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
-import de.codeinfection.quickwango.BasicApi.Controller.*;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

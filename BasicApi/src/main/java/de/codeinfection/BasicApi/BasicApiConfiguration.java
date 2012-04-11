@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.BasicApi;
+package de.codeinfection.BasicApi;
 
 import java.util.List;
 import org.bukkit.configuration.Configuration;

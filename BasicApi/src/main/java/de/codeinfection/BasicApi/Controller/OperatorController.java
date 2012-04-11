@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.BasicApi.Controller;
+package de.codeinfection.BasicApi.Controller;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
@@ -7,6 +7,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 
@@ -14,10 +15,10 @@ import org.bukkit.plugin.Plugin;
  *
  * @author CodeInfection
  */
-@Controller(name = "whitelist")
-public class WhitelistController extends ApiController
+@Controller(name = "operator")
+public class OperatorController extends ApiController
 {
-    public WhitelistController(Plugin plugin)
+    public OperatorController(Plugin plugin)
     {
         super(plugin);
     }
@@ -26,14 +27,21 @@ public class WhitelistController extends ApiController
     public void add(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        OfflinePlayer player = getServer().getOfflinePlayer(playerName);
-        if (!player.isWhitelisted())
+        if (playerName != null)
         {
-            player.setWhitelisted(true);
+            OfflinePlayer player = getServer().getOfflinePlayer(playerName);
+            if (!player.isOp())
+            {
+                player.setOp(true);
+            }
+            else
+            {
+                throw new ApiRequestException("Player already Op!", 2);
+            }
         }
         else
         {
-            throw new ApiRequestException("Player already whitelisted!", 1);
+            throw new ApiRequestException("No player given!", 1);
         }
     }
 
@@ -42,13 +50,13 @@ public class WhitelistController extends ApiController
     {
         String playerName = request.params.getString("player");
         OfflinePlayer player = getServer().getOfflinePlayer(playerName);
-        if (player.isWhitelisted())
+        if (player.isOp())
         {
-            player.setWhitelisted(false);
+            player.setOp(false);
         }
         else
         {
-            throw new ApiRequestException("Player not whitelisted!", 1);
+            throw new ApiRequestException("Player is not a Op!", 1);
         }
     }
 
@@ -56,18 +64,24 @@ public class WhitelistController extends ApiController
     public void is(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-
-        response.setContent(getServer().getOfflinePlayer(playerName).isWhitelisted());
+        if (playerName != null)
+        {
+            response.setContent(getServer().getOfflinePlayer(playerName).isOp());
+        }
+        else
+        {
+            throw new ApiRequestException("No player given!", 1);
+        }
     }
 
     @Action(serializer = "json")
-    public void get(ApiRequest request, ApiResponse response)
+    public Object get(ApiRequest request, ApiResponse response)
     {
-        ArrayList<String> whitelist = new ArrayList<String>();
-        for (OfflinePlayer offlinePlayer : getServer().getWhitelistedPlayers())
+        List<String> operators = new ArrayList<String>();
+        for (OfflinePlayer operator : getServer().getOperators())
         {
-            whitelist.add(offlinePlayer.getName());
+            operators.add(operator.getName());
         }
-        response.setContent(whitelist);
+        return operators;
     }
 }

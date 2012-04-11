@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.BasicApi;
+package de.codeinfection.BasicApi;
 
 import de.codeinfection.quickwango.ApiBukkit.ApiBukkit;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
