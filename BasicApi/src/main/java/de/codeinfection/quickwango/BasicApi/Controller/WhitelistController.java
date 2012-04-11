@@ -1,6 +1,5 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -9,6 +8,7 @@ import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import java.util.ArrayList;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -26,7 +26,7 @@ public class WhitelistController extends ApiController
     public void add(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        OfflinePlayer player = request.server.getOfflinePlayer(playerName);
+        OfflinePlayer player = getServer().getOfflinePlayer(playerName);
         if (!player.isWhitelisted())
         {
             player.setWhitelisted(true);
@@ -41,7 +41,7 @@ public class WhitelistController extends ApiController
     public void remove(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        OfflinePlayer player = request.server.getOfflinePlayer(playerName);
+        OfflinePlayer player = getServer().getOfflinePlayer(playerName);
         if (player.isWhitelisted())
         {
             player.setWhitelisted(false);
@@ -57,14 +57,14 @@ public class WhitelistController extends ApiController
     {
         String playerName = request.params.getString("player");
 
-        response.setContent(request.server.getOfflinePlayer(playerName).isWhitelisted());
+        response.setContent(getServer().getOfflinePlayer(playerName).isWhitelisted());
     }
 
     @Action(serializer = "json")
     public void get(ApiRequest request, ApiResponse response)
     {
         ArrayList<String> whitelist = new ArrayList<String>();
-        for (OfflinePlayer offlinePlayer : request.server.getWhitelistedPlayers())
+        for (OfflinePlayer offlinePlayer : getServer().getWhitelistedPlayers())
         {
             whitelist.add(offlinePlayer.getName());
         }

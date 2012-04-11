@@ -1,18 +1,18 @@
 package de.codeinfection.quickwango.ApiBukkit;
 
-import de.codeinfection.quickwango.Abstraction.Plugin;
 import static de.codeinfection.quickwango.ApiBukkit.ApiBukkit.debug;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiAction;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiManager;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
+import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Parameters;
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.plugin.Plugin;
 
 /**
  *

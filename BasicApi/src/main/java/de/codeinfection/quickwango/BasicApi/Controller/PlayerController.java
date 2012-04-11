@@ -1,6 +1,5 @@
 package de.codeinfection.quickwango.BasicApi.Controller;
 
-import de.codeinfection.quickwango.Abstraction.Plugin;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.Action;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
 import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
@@ -19,6 +18,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -35,7 +35,7 @@ public class PlayerController extends ApiController
     @Action(authenticate = false, serializer = "json")
     public void list(ApiRequest request, ApiResponse response)
     {
-        Player[] online = request.server.getOnlinePlayers();
+        Player[] online = getServer().getOnlinePlayers();
         List<String> players = new ArrayList<String>();
         for (Player player : online)
         {
@@ -49,7 +49,7 @@ public class PlayerController extends ApiController
     public void info(ApiRequest request, ApiResponse response)
     {
         final String playerName = request.params.getString("player");
-        final Player player = request.server.getPlayerExact(playerName);
+        final Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             Map<String, Object> data = new HashMap<String, Object>();
@@ -135,7 +135,7 @@ public class PlayerController extends ApiController
     public void kill(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             player.setHealth(0);
@@ -151,7 +151,7 @@ public class PlayerController extends ApiController
     public void burn(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             int seconds = 5;
@@ -180,14 +180,14 @@ public class PlayerController extends ApiController
     public void teleport(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             World world;
             String worldName = request.params.getString("world");
             if (worldName != null)
             {
-                world = request.server.getWorld(worldName);
+                world = getServer().getWorld(worldName);
                 if (world == null)
                 {
                     throw new ApiRequestException("World '" + worldName + "' not found!", 3);
@@ -203,7 +203,7 @@ public class PlayerController extends ApiController
             String targetPlayerName = request.params.getString("targetplayer");
             if (targetPlayerName != null)
             {
-                Player targetPlayer = request.server.getPlayerExact(targetPlayerName);
+                Player targetPlayer = getServer().getPlayerExact(targetPlayerName);
                 if (targetPlayer != null)
                 {
                     targetLocation = targetPlayer.getLocation();
@@ -263,7 +263,7 @@ public class PlayerController extends ApiController
     public void heal(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             player.setHealth(20);
@@ -279,7 +279,7 @@ public class PlayerController extends ApiController
     public void give(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             String itemidParam = request.params.getString("itemid");
@@ -345,7 +345,7 @@ public class PlayerController extends ApiController
     public void kick(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             player.kickPlayer(request.params.getString("reason"));
@@ -361,7 +361,7 @@ public class PlayerController extends ApiController
     public void tell(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             String message = request.params.getString("message");
@@ -382,7 +382,7 @@ public class PlayerController extends ApiController
     public void clearinventory(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             player.getInventory().clear();
@@ -398,7 +398,7 @@ public class PlayerController extends ApiController
     public void displayname(ApiRequest request, ApiResponse response)
     {
         String playerName = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerName);
+        Player player = getServer().getPlayerExact(playerName);
         if (player != null)
         {
             String displayname = request.params.getString("displayname");
@@ -415,7 +415,7 @@ public class PlayerController extends ApiController
     public void inventory(ApiRequest request, ApiResponse response)
     {
         String playerParam = request.params.getString("player");
-        Player player = request.server.getPlayerExact(playerParam);
+        Player player = getServer().getPlayerExact(playerParam);
         if (player != null)
         {
             List<List<Number>> contents = new ArrayList<List<Number>>();

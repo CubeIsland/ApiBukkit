@@ -1,7 +1,5 @@
 package de.codeinfection.quickwango.ApiBukkit.ApiServer;
 
-import de.codeinfection.quickwango.Abstraction.Abstraction;
-import de.codeinfection.quickwango.Abstraction.Server;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -37,7 +35,6 @@ public final class ApiRequest
 
     public final Parameters params;
     public final Map<String, String> headers;
-    public final Server server;
 
     /**
      * Initializes the ApiRequest with an Server instance
@@ -115,9 +112,6 @@ public final class ApiRequest
             this.controller = null;
             this.action = null;
         }
-
-        // TODO remove bukkit dependency
-        this.server = Abstraction.getServer();
     }
 
     public String getMethod()
