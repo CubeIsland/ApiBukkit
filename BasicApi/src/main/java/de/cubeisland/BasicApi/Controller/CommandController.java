@@ -1,11 +1,11 @@
 package de.cubeisland.BasicApi.Controller;
 
-import de.codeinfection.quickwango.ApiBukkit.ApiCommandSender;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiController;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiRequest;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.ApiResponse;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Controller;
-import de.codeinfection.quickwango.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
+import de.cubeisland.ApiBukkit.ApiCommandSender;
+import de.cubeisland.ApiBukkit.ApiServer.ApiController;
+import de.cubeisland.ApiBukkit.ApiServer.ApiRequest;
+import de.cubeisland.ApiBukkit.ApiServer.ApiResponse;
+import de.cubeisland.ApiBukkit.ApiServer.Controller;
+import de.cubeisland.ApiBukkit.ApiServer.Exceptions.ApiRequestException;
 import de.cubeisland.BasicApi.BasicApi;
 import java.util.Arrays;
 import java.util.List;

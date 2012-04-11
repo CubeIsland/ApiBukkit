@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>de.cubeisland</groupId>
-            <artifactId>ApiBukkit</artifactId>
+            <artifactId>apibukkit</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
