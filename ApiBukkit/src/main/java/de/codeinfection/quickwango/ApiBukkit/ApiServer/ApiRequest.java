@@ -23,7 +23,7 @@ public final class ApiRequest
     private static final String AUTHKEY_PARAM_NAME = "authkey";
 
     private final InetSocketAddress remoteAddress;
-    private final String method;
+    private final RequestMethod method;
     private final String uri;
     private final String path;
     private final String queryString;
@@ -43,7 +43,7 @@ public final class ApiRequest
     {
         int offset;
         this.remoteAddress = remoteAddress;
-        this.method = request.getMethod().getName();
+        this.method = RequestMethod.getByName(request.getMethod().getName());
 
         String tempUri = request.getUri();
         // we process a maximum of 1024 characters
@@ -114,7 +114,7 @@ public final class ApiRequest
         }
     }
 
-    public String getMethod()
+    public RequestMethod getMethod()
     {
         return this.method;
     }
