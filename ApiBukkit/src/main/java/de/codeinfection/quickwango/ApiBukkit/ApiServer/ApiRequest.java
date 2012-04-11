@@ -43,7 +43,6 @@ public final class ApiRequest
     {
         int offset;
         this.remoteAddress = remoteAddress;
-        this.method = RequestMethod.getByName(request.getMethod().getName());
 
         String tempUri = request.getUri();
         // we process a maximum of 1024 characters
@@ -85,6 +84,17 @@ public final class ApiRequest
         tempParams.remove(AUTHKEY_PARAM_NAME);
 
         this.params = new Parameters(tempParams);
+
+        RequestMethod tempMethod = RequestMethod.getByName(params.get("http_method"));
+        if (tempMethod == null)
+        {
+            tempMethod = RequestMethod.getByName(request.getMethod().getName());
+        }
+        if (tempMethod == null)
+        {
+            tempMethod = RequestMethod.GET;
+        }
+        this.method = tempMethod;
 
         final Map<String, String> tempHeaders = new HashMap<String, String>();
         for (Map.Entry<String, String> entry : request.getHeaders())

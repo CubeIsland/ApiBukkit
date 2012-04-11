@@ -32,6 +32,10 @@ public enum RequestMethod
 
     public static RequestMethod getByName(String name)
     {
-        return BY_NAME.get(name);
+        if (name == null)
+        {
+            return null;
+        }
+        return BY_NAME.get(name.toUpperCase());
     }
 }
