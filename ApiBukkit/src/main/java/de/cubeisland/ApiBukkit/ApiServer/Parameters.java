@@ -114,16 +114,4 @@ public class Parameters extends HashMap<String, String>
         }
         return def;
     }
-
-    public Map<Object, Object> getJSONDecoded(String key)
-    {
-        String value = this.getString(key);
-        if (value != null)
-        {
-            Gson parser = new Gson();
-            // implement
-            return null;
-        }
-        return null;
-    }
 }

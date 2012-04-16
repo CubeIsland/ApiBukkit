@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -45,24 +46,19 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
     public void messageReceived(ChannelHandlerContext context, MessageEvent message) throws Exception
     {
         final InetSocketAddress remoteAddress = (InetSocketAddress)message.getRemoteAddress();
-
         if (manager.isBlacklisted(remoteAddress) || !manager.isWhitelisted(remoteAddress))
         {
             message.getChannel().close();
+            return;
         }
-        else
-        {
-            request = new ApiRequest(remoteAddress, (HttpRequest)message.getMessage());
-            HttpResponse response = this.processRequest(request);
-            if (response != null)
-            {
-                message.getChannel().write(response).addListener(ChannelFutureListener.CLOSE);
-            }
-            else
-            {
-                message.getChannel().close();
-            }
-        }
+        
+        message.getFuture().addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+        request = new ApiRequest(remoteAddress, (HttpRequest)message.getMessage());
+        HttpResponse response = this.processRequest(request);
+
+        ChannelFuture future = message.getChannel().write(response);
+
+        future.addListener(ChannelFutureListener.CLOSE);
     }
 
     private HttpResponse processRequest(ApiRequest request)
@@ -77,14 +73,14 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
             String controllerName = request.getController();
             String actionName = request.getAction();
 
-            if (actionName != null)
-            {
-                debug("Controller: " + controllerName);
-            }
-            if (actionName != null)
-            {
-                debug("Action: " + actionName);
-            }
+//            if (actionName != null)
+//            {
+//                debug("Controller: " + controllerName);
+//            }
+//            if (actionName != null)
+//            {
+//                debug("Action: " + actionName);
+//            }
 
             ApiController controller = manager.getController(controllerName);
             ApiResponse response = new ApiResponse(manager.getDefaultSerializer());
@@ -271,7 +267,7 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         return toResponse(error, null);
     }
 
-    private HttpResponse toResponse(ApiError error, ApiRequestException reason)
+    private HttpResponse toResponse(ApiError error, ApiRequestException cause)
     {
         HttpResponseStatus status = error.getRepsonseStatus();
         Map data = new HashMap();
@@ -283,12 +279,9 @@ public class ApiServerHandler extends SimpleChannelUpstreamHandler
         data.put("error", error.getCode());
         data.put("description", error.getDescription());
 
-        if (reason != null)
+        if (cause != null)
         {
-            Map reasonMap = new HashMap();
-            reasonMap.put("id", reason.getReason());
-            reasonMap.put("description", reason.getMessage());
-            data.put("reason", reasonMap);
+            data.put("cause", cause);
         }
 
         return toResponse(status, new HashMap<String, String>(2), manager.getDefaultSerializer(), data);
