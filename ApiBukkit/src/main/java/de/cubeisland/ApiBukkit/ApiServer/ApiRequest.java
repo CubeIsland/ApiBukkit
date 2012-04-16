@@ -104,7 +104,7 @@ public final class ApiRequest
         this.userAgent = this.headers.get("user-agent");
         
         String route = this.path.substring(1);
-        String[] routeSegments = StringUtils.explode("/", route);
+        String[] routeSegments = StringUtils.explode("/", route, false);
         if (routeSegments.length >= 2)
         {
             this.controller = routeSegments[0];

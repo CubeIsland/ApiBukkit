@@ -22,15 +22,37 @@ public final class StringUtils
      */
     public static String[] explode(String delim, String string)
     {
+        return explode(delim, string, true);
+    }
+    
+    /**
+     * This method splits a string without RegExes
+     *
+     * @param delim the delimiter
+     * @param string the string to split
+     * @param keepEmptyParts whether to keep empty parts
+     * @return an array containing the parts
+     */
+    public static String[] explode(String delim, String string, boolean keepEmptyParts)
+    {
         int pos, offset = 0, delimLen = delim.length();
         List<String> tokens = new ArrayList<String>();
+        String part;
 
         while ((pos = string.indexOf(delim, offset)) > -1)
         {
-            tokens.add(string.substring(offset, pos));
+            part = string.substring(offset, pos);
+            if (part.length() > 0 || keepEmptyParts)
+            {
+                tokens.add(part);
+            }
             offset = pos + delimLen;
         }
-        tokens.add(string.substring(offset));
+        part = string.substring(offset);
+        if (part.length() > 0 || keepEmptyParts)
+        {
+            tokens.add(part);
+        }
 
         return tokens.toArray(new String[tokens.size()]);
     }
