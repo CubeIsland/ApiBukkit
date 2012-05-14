@@ -20,7 +20,7 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 public final class ApiServer
 {
     private static ApiServer instance = null;
-    private int port;
+    private short port;
     private int maxContentLength;
     private String authenticationKey;
     private InetAddress ip;
@@ -111,7 +111,7 @@ public final class ApiServer
      * @param port the port
      * @return fluent interface
      */
-    public ApiServer setPort(int port)
+    public ApiServer setPort(short port)
     {
         this.port = port;
         return this;
