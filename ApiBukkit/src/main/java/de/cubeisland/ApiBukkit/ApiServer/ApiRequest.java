@@ -1,6 +1,5 @@
 package de.cubeisland.ApiBukkit.ApiServer;
 
-import de.cubeisland.libMinecraft.StringUtils;
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.HashMap;
