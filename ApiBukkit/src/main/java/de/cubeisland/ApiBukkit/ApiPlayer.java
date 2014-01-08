@@ -8,17 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.Achievement;
-import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
-import org.bukkit.GameMode;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.Server;
-import org.bukkit.Statistic;
-import org.bukkit.World;
+
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -31,16 +22,14 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.InventoryView.Property;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
 /**
@@ -184,6 +173,18 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void playSound(Location location, Sound sound, float volume, float pitch)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void playSound(Location location, String sound, float volume, float pitch)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public void playEffect(Location lctn, Effect effect, int i)
     {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -270,7 +271,31 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void setPlayerWeather(WeatherType type)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public WeatherType getPlayerWeather()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void resetPlayerWeather()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public void giveExp(int i)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void giveExpLevels(int amount)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -345,6 +370,12 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void setBedSpawnLocation(Location location, boolean force)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public boolean getAllowFlight()
     {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -370,7 +401,101 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public boolean isOnGround()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isFlying()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setFlying(boolean value)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setFlySpeed(float value) throws IllegalArgumentException
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setWalkSpeed(float value) throws IllegalArgumentException
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public float getFlySpeed()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public float getWalkSpeed()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setTexturePack(String url)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setResourcePack(String url)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Scoreboard getScoreboard()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setScoreboard(Scoreboard scoreboard) throws IllegalArgumentException, IllegalStateException
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isHealthScaled() {
+        return false;
+    }
+
+    @Override
+    public void setHealthScaled(boolean scale)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setHealthScale(double scale) throws IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public double getHealthScale()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public PlayerInventory getInventory()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Inventory getEnderChest()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -450,7 +575,55 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getHealth()
+    @Override
+    public void damage(double amount)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void _INVALID_damage(int amount)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void damage(double amount, Entity source)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void _INVALID_damage(int amount, Entity source)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public double getHealth()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int _INVALID_getHealth()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setHealth(double health)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void _INVALID_setHealth(int health)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public double getMaxHealth()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -460,7 +633,26 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getMaxHealth()
+    @Override
+    public int _INVALID_getMaxHealth()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setMaxHealth(double health)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void _INVALID_setMaxHealth(int health)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void resetMaxHealth()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -538,16 +730,6 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void damage(int i)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void damage(int i, Entity entity)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public int getMaximumNoDamageTicks()
     {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -558,12 +740,25 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int getLastDamage()
+    public double getLastDamage()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setLastDamage(int i)
+    @Override
+    public int _INVALID_getLastDamage()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setLastDamage(double damage)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void _INVALID_setLastDamage(int damage)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -613,7 +808,91 @@ public class ApiPlayer extends ApiCommandSender implements Player
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public boolean hasLineOfSight(Entity other)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean getRemoveWhenFarAway()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setRemoveWhenFarAway(boolean remove)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public EntityEquipment getEquipment()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCanPickupItems(boolean pickup)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean getCanPickupItems()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCustomName(String name)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getCustomName()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCustomNameVisible(boolean flag)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isCustomNameVisible()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isLeashed()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Entity getLeashHolder() throws IllegalStateException
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean setLeashHolder(Entity holder)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public Location getLocation()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Location getLocation(Location loc)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -684,6 +963,12 @@ public class ApiPlayer extends ApiCommandSender implements Player
     }
 
     public boolean isDead()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isValid()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -864,6 +1149,12 @@ public class ApiPlayer extends ApiCommandSender implements Player
     }
 
     public boolean isBlocking()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getExpToLevel()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
