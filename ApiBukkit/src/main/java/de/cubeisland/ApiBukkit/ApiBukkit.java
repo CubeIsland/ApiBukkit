@@ -48,6 +48,7 @@ public class ApiBukkit extends JavaPlugin implements ApiPlugin, Listener
         }
 
         this.reloadConfig();
+        this.getConfig().options().copyDefaults(true);
         this.config = this.getConfig();
 
         try
